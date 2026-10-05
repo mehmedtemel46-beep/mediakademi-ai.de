@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ATA KENNTNISPRÜFUNG - Kompendium & Prüfungs-Trainer</title>
+    <title>ATA KENNTNISPRÜFUNG - Intensiv-Testtrainer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -15,216 +15,202 @@
     <script type="text/babel">
       const { useState } = React;
 
-      // UMFANGREICHE ATA DATENBANK
-      const ATA_DATA = {
-        title: "ATA KENNTNISPRÜFUNG - Kompendium & Prüfungs-Trainer",
-        equipment: [
-          {
-            id: 'airway',
-            title: 'Atemwegsmanagement',
-            icon: '🫁',
-            items: [
-              { name: 'Endotrachealtubus (ETT)', desc: 'Cuffed/Uncuffed. Cuffdruck: 20-30 cmH2O. Größen: Damen 7.0-7.5, Herren 8.0-8.5.', details: 'Sichere Aspirationsprophylaxe. Lagekontrolle: Kontinuierliche Kapnografie (etCO2) & Auskultation beidseits.' },
-              { name: 'Supraglottische Atemwege (LMA / iGel)', desc: 'SGA der 1. und 2. Generation (mit gastralem Zugang). Cuffdruck max. 60 cmH2O.', details: 'Kein vollständiger Aspirationsschutz! Kontraindikation: Nicht nüchtern, Adipositas permagna, hoher Atemwegswiderstand.' },
-              { name: 'Videolaryngoskopie (Macintosh / D-Blade)', desc: 'Kameraunterstützte Intubation bei schwierigem Atemweg.', details: 'Indiziert bei Cormack-Lehane III & IV. Führend im DGAI-Atemwegs-Algorithmus.' },
-              { name: 'Koniotomie-Set (Cricothyreotomie)', desc: 'Ultima Ratio bei "Cannot Ventilate, Cannot Intubate" (CVCI).', details: 'Punktion/Inzision der Membrana cricothyroidea.' }
-            ]
-          },
-          {
-            id: 'systems',
-            title: 'Narkosesysteme & Beatmung',
-            icon: '📟',
-            items: [
-              { name: 'Halboffenes System', desc: 'Keine Rückatmung des Ausatemgases. Hoher Frischgasfluss (FGF > Ausatemvolumen).', details: 'Kein CO2-Absorber nötig. Vorteil: Schnelle Narkosesteuerung. Nachteil: Hoher Gasverbrauch, Austrocknung der Atemwege.' },
-              { name: 'Halbgeschlossenes Kreissystem', desc: 'Teilweise Rückatmung des Ausatemgases nach CO2-Absorption.', details: 'Standard in der modernen Anästhesie. Erfordert Atemkalk. Ökonomisch und feuchtigkeitserhaltend.' },
-              { name: 'Geschlossenes System (Closed Circuit)', desc: 'Vollständige Rückatmung. Nur verbrauchter O2 und Anästhetikum werden ersetzt.', details: 'Minimaler FGF (Low-Flow / Minimal-Flow). Extrem sparsam, erfordert hochpräzise Überwachung.' },
-              { name: 'Low-Flow & Minimal-Flow Anästhesie', desc: 'Low-Flow: FGF 0.5 - 1.0 l/min. Minimal-Flow: FGF < 0.5 l/min.', details: 'Voraussetzung: Dichtes System, Aufwärmphase mit High-Flow, kontinuierliche O2- und Gasüberwachung.' }
-            ]
-          },
-          {
-            id: 'positioning',
-            title: 'Patientenlagerung & Neurologische Gefahren',
-            icon: '🛌',
-            items: [
-              { name: 'Rückenlagerung (Standard)', desc: 'Arme auf Armstützen (< 90° Abduktion) oder angelegt.', details: 'Gefahr: Plexus brachialis Überdehnung bei Abduktion > 90°. Fersen und Sakrum gegen Dekubitus polstern.' },
-              { name: 'Steinschnittlagerung (Lithotomie)', desc: 'Beine in Beinhaltern hochgelagert.', details: 'Gefahr: Läsion des N. peroneus communis am Fibulaköpfchen durch Druck. Beine immer synchron lagern und anheben!' },
-              { name: 'Bauchlagerung', desc: 'Lagerung auf Spezialpolstern zur Entlastung von Thorax und Abdomen.', details: 'Gefahr: Augendrucksteigerung (Erblindung!), HWS-Schäden, Dislokation des Tubus. Genitalien und Brust frei lagern.' },
-              { name: 'Seitenlagerung', desc: 'Einsatz bei Thorax- oder Nieren-OPs.', details: 'Achselpolster zur Entlastung des N. axillaris/Plexus. Unteres Bein gebogen, oberes gestreckt.' }
-            ]
-          }
-        ],
-        meds: [
-          // HYPNOTIKA
-          { name: 'Propofol', group: 'Hypnotikum', dose: '1.5 - 2.5 mg/kg i.v.', effect: 'Rapid-onset Narkoseeinleitung (30-40 Sek). Kurz wirksam.', sideEffects: 'Blutdruckabfall (Vasodilatation), Injektionsschmerz, Apnoe.', pearls: 'Streng aseptisch aufziehen (Fettemulsion = Nährboden für Bakterien).' },
-          { name: 'Etomidat', group: 'Hypnotikum', dose: '0.2 - 0.3 mg/kg i.v.', effect: 'Sehr kardiovaskulär stabil. Ideal bei Herzerkrankungen/Schock.', sideEffects: 'Myoklonien, Nebennierenrindensuppression (Inhibition der 11-beta-Hydroxylase).', pearls: 'Keine Langzeitinfusion wegen Nebennierenrinden-Insuffizienz!' },
-          { name: 'Ketamin (Ketanest S)', group: 'Dissoziatives Anästhetikum', dose: '0.5 - 2 mg/kg i.v. (Analgesie: 0.1-0.25 mg/kg)', effect: 'Analgetisch und hypnotisch. Erhält Spontanatmung und Schutzreflexe.', sideEffects: 'Halluzinationen (Horrortrips), Tachykardie, Hypertonie, Speichelfluss.', pearls: 'Kombination mit Benzodiazepinen (Midazolam) zur Kupierung von Alpträumen.' },
-          { name: 'Midazolam (Dormicum)', group: 'Benzodiazepam', dose: '0.05 - 0.1 mg/kg i.v.', effect: 'Anxiolytisch, sedierend, amnestisch, antikonvulsiv.', sideEffects: 'Atemdepression, paradoxe Reaktion.', pearls: 'Antidot: Flumazenil (Anexate).' },
-          
-          // OPIOIDE
-          { name: 'Fentanyl', group: 'Synthetisches Opioid', dose: '1 - 5 µg/kg i.v.', effect: 'Starke Analgesie (100x stärkere Potenz als Morphin). Wirkdauer ~30 Min.', sideEffects: 'Atemdepression, Bradykardie, Thoraxrigidität bei schneller Injektion.', pearls: 'Antidot: Naloxon (Narcanti).' },
-          { name: 'Sufentanil', group: 'Hochpotentes Opioid', dose: '0.2 - 0.5 µg/kg i.v.', effect: '7-10x stärkere analgetische Potenz als Fentanyl (700-1000x Morphin).', sideEffects: 'Massive Atemdepression, Bradykardie, Übelkeit.', pearls: 'Standard-Opioid in der balancierten Anästhesie.' },
-          { name: 'Remifentanil', group: 'Ultra-kurz wirksames Opioid', dose: '0.1 - 0.5 µg/kg/min (Perfusor)', effect: 'Extrem schnelle Steuerbarkeit. Abbau durch unspezifische Plasmaesterasen.', sideEffects: 'Rasch einsetzende Atemdepression, Hypotension, postoperatives Shivering.', pearls: 'Keine Kumulation bei Nieren-/Leberinsuffizienz! Postoperative Schmerztherapie rechtzeitig starten.' },
-
-          // MUSKELRELAXANZIEN & ANTAGONISTEN
-          { name: 'Rocuronium (Esmeron)', group: 'Nicht-depolarisierendes Muskelrelaxans', dose: '0.6 mg/kg (RSI: 1.2 mg/kg)', effect: 'Neuromuskuläre Blockade. Anschlagzeit: 60 Sek (bei 1.2 mg/kg). Wirkdauer: 30-45 Min.', sideEffects: 'Anaphylaxie, Tachykardie.', pearls: 'Antidot: Sugammadex (Bridion).' },
-          { name: 'Succinylcholin (Lysthenon)', group: 'Depolarisierendes Muskelrelaxans', dose: '1.0 - 1.5 mg/kg i.v.', effect: 'Extrem schnelle Wirkung (30 Sek) und kurze Dauer (5-10 Min).', sideEffects: 'Faszikulationen, Hyperkaliämie, Maligne Hyperthermie Trigger, Rhabdomyolyse.', pearls: 'Kontraindiziert bei Verbrennungen, Paraplegie und Muskelperforationsverletzungen.' },
-          { name: 'Sugammadex (Bridion)', group: 'Selective Relaxant Binding Agent', dose: '2 - 16 mg/kg i.v.', effect: 'Selektive und blitzschnelle Bindung von Rocuronium/Vecuronium.', sideEffects: 'Dysgeusie, selten Anaphylaxie.', pearls: 'Ermöglicht sofortige Reversierung auch direkt nach RSI-Dosierung.' },
-
-          // LOKALANÄSTHETIKA
-          { name: 'Bupivacain', group: 'Lokalanästhetikum (Amid-Typ)', dose: 'Max. 2 mg/kg kgKG', effect: 'Lang wirksam. Einsatz bei Spinalanästhesie (SPA) und Periduralanästhesie (PDA).', sideEffects: 'Hohe Kardiotoxizität (Arrhythmien, AV-Block) bei versehentlicher i.v. Injektion.', pearls: 'Bei Intoxikation: Lipidrettung (Intralipid 20%) verabreichen!' },
-          { name: 'Ropivacain', group: 'Lokalanästhetikum (Amid-Typ)', dose: 'Max. 3-4 mg/kg kgKG', effect: 'Geringere Kardiomyo- und Neurotoxizität als Bupivacain. Gute sensorische/motorische Trennung.', sideEffects: 'Hypotension, Bradykardie.', pearls: 'Mittel der Wahl für periphere Nervenblockaden und epidurale Infusionen.' },
-          { name: 'Lidocain', group: 'Lokalanästhetikum / Antiarrhythmikum', dose: 'Max. 3-5 mg/kg (mit Adrenalin bis 7 mg/kg)', effect: 'Schneller Wirkungseintritt, mittellange Dauer.', sideEffects: 'ZNS-Toxizität (Metallischer Geschmack, Tinnitus, Krämpfe).', pearls: 'Wird auch i.v. zur Minderung des Propofol-Injektionsschmerzes genutzt.' },
-
-          // KATECHOLAMINE & NOTFALLMEDIKAMENTE
-          { name: 'Noradrenalin', group: 'Alpha-1 Sympathomimetikum', dose: '0.01 - 0.1 µg/kg/min (Perfusor)', effect: 'Massive Vasokonstriktion -> Anstieg des mittleren arteriellen Drucks (MAD).', sideEffects: 'Reflexbradykardie, Gewebsnekrose bei Paravasat.', pearls: 'Applikation bevorzugt über ZVK.' },
-          { name: 'Akrinor (Cafedrin/Theodrenalin)', group: 'Sympathomimetikum', dose: '0.5 - 2 ml i.v. Bolus', effect: 'Steigerung von Blutdruck und Herzzeitvolumen ohne stärkere Frequenzänderung.', sideEffects: 'Arrhythmien, Stenokardien.', pearls: 'Beliebter Narkose-Bolus bei Blutdruckabfall nach Einleitung.' },
-          { name: 'Atropin', group: 'Parasympatholytikum', dose: '0.5 - 1.0 mg i.v. Bolus', effect: 'Herzfrequenzsteigerung durch Vagolyse.', sideEffects: 'Tachykardie, Mundtrockenheit, Mydriasis.', pearls: 'Erste Wahl bei vagal bedingter Bradykardie.' },
-          { name: 'Adrenalin (Epinephrin)', group: 'Alpha- & Beta-Sympathomimetikum', dose: 'Reanimation: 1 mg i.v. / Anaphylaxie: 10-50 µg i.v. Bolus', effect: 'Positiv inotrop, chronotrop, dromotrop und massive Vasokonstriktion.', sideEffects: 'Schwere Tachykardie, Kammerflimmern, Hyperglykämie.', pearls: 'Bei Reanimation alle 3-5 Min 1 mg i.v.' },
-
-          // ANALGETIKA (NICHT-OPIOIDE)
-          { name: 'Metamizol (Novalgin)', group: 'Nicht-Opioid-Analgetikum', dose: '1000 mg Kurzinfusion (15 Min)', effect: 'Stark analgetisch, antipyretisch, spasmolytisch.', sideEffects: 'Kritischer Blutdruckabfall bei zu rascher i.v. Gabe! Agranulozytose (selten).', pearls: 'Niemals als unverdünnten i.v. Bolus spritzen!' },
-          { name: 'Paracetamol', group: 'Nicht-Opioid-Analgetikum', dose: '1000 mg Kurzinfusion (max. 4g/Tag)', effect: 'Analgetisch und antipyretisch.', sideEffects: 'Hepatotoxizität bei Überdosierung.', pearls: 'Bei Patienten < 50 kg Dosisanpassung (15 mg/kg) durchführen!' }
-        ],
-        pacu: {
-          title: "Aufwachraum (PACU - Post-Anesthesia Care Unit)",
-          process: [
-            {
-              phase: "1. Übergabe & Übernahme aus dem OP",
-              items: [
-                "SBAR-Schema: Situation, Background, Assessment, Recommendation.",
-                "Inhalte: Patientendaten, OP-Verfahren, Anästhesieverfahren, Bilanzierung (Blutverlust, Einfuhr), Besonderheiten (schwieriger Atemweg, Komplikationen).",
-                "Sofortige Überwachung: EKG, NIBP, SpO2, Atemfrequenz, etCO2 (falls intubiert/LMA), Vigilanz und Schmerzscore."
-              ]
-            },
-            {
-              phase: "2. Überwachung & Komplikationsmanagement",
-              items: [
-                "Atemwege: Überwachung auf Hypoxie, Laryngospasmus, Bronchospasmus, Zungengrundrückfall.",
-                "Hämodynamik: Monitoring von Hypotonie (Volumenmangel?), Hypertonie, Arrhythmien, Nachblutungen.",
-                "Körpertemperatur: Hypothermie-Prophylaxe/Therapie mittels Wärmedecke (Bair Hugger) bei Temp < 36.0°C (Verhinderung von Shivering und Gerinnungsstörungen)."
-              ]
-            },
-            {
-              phase: "3. Entlassungskriterien (Aldrete-Score)",
-              items: [
-                "Vigilanz: Vollständig orientiert und ansprechbar.",
-                "Atmung: Ausreichende Spontanatmung, husten und tief durchatmen möglich.",
-                "Kreislauf: Blutdruck innerhalb ± 20% des Ausgangswerts.",
-                "Sauerstoffsättigung: SpO2 > 92% unter Raumluft.",
-                "Motorik: Gezielte Bewegung aller 4 Extremitäten (bzw. Rückbildung der Motorikblockade nach Regionalanästhesie).",
-                "Schmerz & PONV: Schmerzniveau akzeptabel (NRS < 3), keine akute Übelkeit/Erbrechen, Verband trocken."
-              ]
-            }
-          ],
-          painManagement: [
-            {
-              title: "Schmerzerfassung (NRS / VRS)",
-              desc: "Regelmäßige Abfrage der Numerischen Rating Skala (NRS 0-10) in Ruhe und bei Belastung (Husten, Bewegung)."
-            },
-            {
-              title: "Multimodale Analgesie & WHO-Stufenschema",
-              desc: "Kombination aus Nicht-Opioiden (Metamizol/Paracetamol) als Basismedikation + Opioiden (Piritramid/Morphin) bei Durchbruchschmerzen (NRS ≥ 4)."
-            },
-            {
-              title: "Piritramid (Dipidolor) im Aufwachraum",
-              desc: "Standard-Opioid im AWR. Dosierung: 2.5 - 5 mg i.v. fraktioniert alle 10-15 Minuten unter Titration bis NRS < 3. Achten auf Sedierung und Atemdepression!"
-            },
-            {
-              title: "Patientenkontrollierte Analgesie (PCA)",
-              desc: "Intravenöse Schmerzpumpe durch den Patienten. Parameter: Lockout-Zeit (z.B. 10 Min), Dosis-Limit, Bolusdosis. Regelmäßige Kontrolle der Förderrate!"
-            },
-            {
-              title: "Regionalanästhesie-Kathetersysteme",
-              desc: "Kontinuierliche Infusion von Lokalanästhetika (z.B. Ropivacain 0.2%) über Peridural- (PDA) oder Wundkatheter. Regelmäßige Motorik- und Sensibilitätsprüfung."
-            }
-          ]
-        },
-        dialogues: [
-          { de: "Guten Tag Herr X, die Operation ist gut verlaufen. Sie sind jetzt im Aufwachraum.", tr: "Merhaba Bay X, ameliyat iyi geçti. Şu an ayılma odasındasınız." },
-          { de: "Haben Sie Schmerzen? Bitte nennen Sie mir eine Zahl von 0 bis 10.", tr: "Ağrınız var mı? Lütfen bana 0 ile 10 arasında bir sayı söyleyin." },
-          { de: "Ich gebe Ihnen jetzt ein Schmerzmittel über den Tropf.", tr: "Şimdi size serumdan bir ağrı kesici veriyorum." },
-          { de: "Übernahme aus Saal 3: Patient männlich, 65 J., Z.n. Laparotomie. Narkose verflief stabil.", tr: "Salon 3'ten devir teslim: Erkek hasta, 65 yaşında, Laparotomi sonrası. Anestezi stabil geçti." }
-        ],
-        vocab: [
-          { de: "die Einleitung", tr: "Anestezi indüksiyonu / uyutma" },
-          { de: "die Ausleitung", tr: "Anestezi sonlandırma / uyandırma" },
-          { de: "der Aufwachraum (PACU)", tr: "Ayılma / Uyanma odası" },
-          { de: "der Cuffdruck", tr: "Tüp kaf basıncı" },
-          { de: "der Laryngospasmus", tr: "Larenks spazmı" },
-          { de: "die Nachblutung", tr: "Ameliyat sonrası kanama" },
-          { de: "die Auskühlung / Hypothermie", tr: "Vücut sıcaklığı düşmesi" }
-        ]
-      };
-
-      const DEFAULT_20_QUESTIONS = [
+      // STANDARD 20 ALLGEMEINE ATA FRAGEN (5 OPTIONEN A-E)
+      const DEFAULT_GENERAL_QUESTIONS = [
         {
-          question: "Wie hoch sollte der optimale Cuffdruck eines Endotrachealtubus eingestellt sein?",
-          options: ["10 - 15 cmH2O", "20 - 30 cmH2O", "40 - 50 cmH2O", "60 - 80 cmH2O"],
+          question: "Wie hoch sollte der optimale Cuffdruck eines Endotrachealtubus eingestellt sein, um sowohl Aspirationen als auch Schleimhautischämien zu vermeiden?",
+          options: ["10 - 15 cmH2O", "20 - 30 cmH2O", "35 - 45 cmH2O", "50 - 60 cmH2O", "70 - 80 cmH2O"],
           answer: 1,
-          explanation: "Der Cuffdruck sollte zwischen 20 und 30 cmH2O liegen, um Microaspirationen zu vermeiden und Schleimhautischämien vorzubeugen."
+          explanation: "Der Cuffdruck sollte konstant zwischen 20 und 30 cmH2O gehalten werden. Drücke unter 20 cmH2O erhöhen das Aspirationseisiko; Drücke über 30 cmH2O drosseln die Kapillarperfusion der Trachealschleimhaut."
         },
         {
-          question: "Welche Indikation erfordert zwingend eine Rapid Sequence Induction (RSI / Blitzeinleitung)?",
-          options: ["Elektiver Knie-Eingriff beim nüchternen Patienten", "Notfall-OP bei akuter Ileus-Symptomatik", "Diagnostische Bronchoskopie", "Gynäkologische LEEP-Konisation"],
-          answer: 1,
-          explanation: "Ein Ileus gilt als 'nicht nüchtern' und birgt ein hohes Aspirationsrisiko (Mendelson-Syndrom). Hier ist eine RSI indiziert."
-        },
-        {
-          question: "Welches Medikament ist das spezifische Antidot zur Aufhebung von Rocuronium?",
-          options: ["Naloxon", "Flumazenil", "Sugammadex (Bridion)", "Atropin"],
-          answer: 2,
-          explanation: "Sugammadex kapselt Rocuronium- und Vecuronium-Moleküle im Plasma blitzschnell ein und hebt deren Wirkung auf."
-        },
-        {
-          question: "Was ist der sicherste klinische Nachweis für die korrekte endotracheale Tubuslage?",
-          options: ["Beidseitiges Heben des Brustkorbs", "Fehlen von Magen-Geräuschen", "Kontinuierliche Kapnografie (etCO2 Auslenkung)", "Beschlagen des Tubus"],
-          answer: 2,
-          explanation: "Die kontinuierliche Kapnografie (etCO2-Kurve über mind. 3-6 Beatmungshübe) ist der Goldstandard zur Bestätigung der intratrachealen Lage."
-        },
-        {
-          question: "Welche Rocuronium-Dosierung wird für eine RSI (Blitzeinleitung) empfohlen?",
-          options: ["0.1 mg/kg", "0.3 mg/kg", "0.6 mg/kg", "1.2 mg/kg"],
+          question: "Welches spezifische Antidot wird zur blitzschnellen Aufhebung einer neuromuskulären Blockade durch Rocuronium verwendet?",
+          options: ["Naloxon", "Flumazenil", "Atropin", "Sugammadex (Bridion)", "Neostigmin"],
           answer: 3,
-          explanation: "Bei der RSI wird die doppelte Standarddosis (1.2 mg/kg kgKG) verwendet, um innerhalb von ca. 60 Sekunden Intubationsbedingungen zu schaffen."
+          explanation: "Sugammadex umschließt Rocuronium-Moleküle im Plasma in einem 1:1-Komplex und hebt deren Wirkung innerhalb kürzester Zeit auf."
         },
         {
-          question: "Was ist ein absoluter Trigger für die gefährliche Maligne Hyperthermie (MH)?",
-          options: ["Propofol", "Volatile Anästhetika (z.B. Sevofluran) & Succinylcholin", "Fentanyl & Remifentanil", "Rocuronium & Sugammadex"],
+          question: "Welches Gesetz regelt in Deutschland primär die Aufklärungspflicht des Arztes und die Rechte des Patienten vor einem Eingriff?",
+          options: ["Arbeitsschutzgesetz (ArbSchG)", "Patientenrechtegesetz (§ 630e BGB)", "Infektionsschutzgesetz (IfSG)", "Betäubungsmittelgesetz (BtMG)", "Medizinproduktegesetz (MPG)"],
           answer: 1,
-          explanation: "Volatile Anästhetika (Narkosegase) und Succinylcholin triggern bei genetischer Disposition eine Maligne Hyperthermie."
+          explanation: "Gemäß § 630e BGB (Patientenrechtegesetz) muss die Aufklärung rechtzeitig, verständlich und umfassend über Risiken und Alternativen erfolgen."
         },
         {
-          question: "Welche Nervenschädigung droht bei unsachgemäßer Steinschnittlagerung am Bein?",
-          options: ["Nervus peroneus communis Läsion", "Nervus opticus Läsion", "Nervus vagus Reizung", "Plexus cervicalis Schädigung"],
+          question: "Was ist der sicherste klinische Nachweis für die korrekte endotracheale Tubuslage direkt nach der Intubation?",
+          options: ["Beidseitig sichtbare Thoraxhebung", "Auskultation der Lungenfelder", "Kontinuierliche Kapnografie (etCO2-Messung über mind. 3 Beatmungshübe)", "Fehlen von Magengeräuschen", "Beschlagen des Tubuskanals"],
+          answer: 2,
+          explanation: "Die kontinuierliche Kapnografie mit einer regelrechten CO2-Auslenkung über mehrere Beatmungshübe gilt als unumstrittener Goldstandard zur Lagenachweis-Bestätigung."
+        },
+        {
+          question: "Welche Rocuronium-Dosierung ist nach aktuellen Leitlinien für eine Rapid Sequence Induction (RSI / Blitzeinleitung) indiziert?",
+          options: ["0,1 mg/kg kgKG", "0,3 mg/kg kgKG", "0,6 mg/kg kgKG", "1,2 mg/kg kgKG", "2,0 mg/kg kgKG"],
+          answer: 3,
+          explanation: "Bei der RSI wird die doppelte Standarddosis (1,2 mg/kg kgKG) verabreicht, um innerhalb von ca. 60 Sekunden optimale Intubationsbedingungen zu schaffen."
+        },
+        {
+          question: "Welche Kombination von Substanzen gilt als absoluter Haupttrigger für eine Maligne Hyperthermie (MH)?",
+          options: ["Propofol und Fentanyl", "Volatile Anästhetika (z. B. Sevofluran) und Succinylcholin", "Midazolam und Remifentanil", "Rocuronium und Sugammadex", "Ketamin und Atropin"],
+          answer: 1,
+          explanation: "Inhalationsanästhetika sowie Succinylcholin triggern bei genetischer Disposition eine unkontrollierte Calciumfreisetzung in der Skelettmuskulatur."
+        },
+        {
+          question: "Was beschreibt der Begriff 'MAC-1-Wert' bei inhalativen Anästhetika?",
+          options: ["Minimaler Atemwegsdruck unter Beatmung", "Konzentration, bei der 50 % der Patienten auf einen Hautschnitt nicht mehr mit einer Abwehrbewegung reagieren", "Maximale Sauerstoffkonzentration im Kreisteil", "Narkosegasdruck im Verdampfer", "Konzentration zur vollständigen Muskelrelaxierung"],
+          answer: 1,
+          explanation: "Der MAC-Wert (Minimale Alveoläre Konzentration) ist ein Maß für die Potenz eines Narkosegases. MAC 1 unterdrückt Schmerzreaktionen bei 50 % der Patienten."
+        },
+        {
+          question: "Welche Folge hat ein vollständig erschöpfter Atemkalk (CO2-Absorber) im halbgeschlossenen Kreissystem?",
+          options: ["Starker Abfall des Systemdrucks", "Anstieg des inspiratorischen CO2-Wertes (Rebreathing / Hyperkapnie)", "Plötzlicher Abfall der Sauerstoffsättigung", "Schnellere Narkosegas-Verdampfung", "Ausfall des EKG-Monitors"],
+          answer: 1,
+          explanation: "Erschöpfter Atemkalk kann ausgeatmetes CO2 nicht mehr binden. Das CO2 wird wieder eingeatmet, was zu Hyperkapnie beim Patienten führt."
+        },
+        {
+          question: "Welches Erstlinien-Medikament wird typischerweise als Bolus gegeben, um einen Narkose-induzierten Blutdruckabfall zu therapieren?",
+          options: ["Akrinor (Cafedrin/Theodrenalin)", "Atropin", "Amiodaron", "Furosemid", "Propofol"],
           answer: 0,
-          explanation: "Der N. peroneus verläuft am Fibulaköpfchen sehr oberflächlich und kann durch Druck an den Beinhaltern geschädigt werden."
+          explanation: "Akrinor steigert effektiv den Blutdruck und das Herzzeitvolumen nach der Narkoseeinleitung, ohne eine ausgeprägte Frequenzänderung zu bewirken."
         },
         {
-          question: "Was gilt als Standard-Opioid zur Titration bei postoperativen Schmerzen im Aufwachraum?",
-          options: ["Fentanyl", "Piritramid (Dipidolor)", "Remifentanil", "Sufentanil"],
-          answer: 1,
-          explanation: "Piritramid (Dipidolor) ist das Standard-Opioid im Aufwachraum zur fraktionierten Schmerztherapie (2.5 - 5 mg i.v. Schritte)."
+          question: "Bei welcher Cormack-Lehane-Klassifikation ist bei der Laryngoskopie ausschließlich der weiche Gaumen/Zungengrund sichtbar?",
+          options: ["Grad I", "Grad II", "Grad III", "Grad IV", "Grad V"],
+          answer: 3,
+          explanation: "Grad IV bedeutet, dass weder Epiglottis noch Stimmbänder einsehbar sind. Es liegt ein extrem schwieriger Atemweg vor."
         },
         {
-          question: "Was ist der Hauptnachteil eines halboffenen Narkosesystems?",
-          options: ["Atemkalk-Vergiftung", "Hoher Frischgasverbrauch und Auskühlung/Austrocknung der Atemwege", "Unmöglichkeit der Beatmung", "Hyperkapnie-Pflicht"],
-          answer: 1,
-          explanation: "Da keine Rückatmung stattfindet, ist ein hoher Frischgasfluss (FGF) nötig, was zu Wärmeverlust und Austrocknung führt."
+          question: "Welches Opioid weist in der klinischen Anästhesie die stärkste analgetische Potenz auf?",
+          options: ["Morphin", "Fentanyl", "Sufentanil", "Remifentanil", "Piritramid"],
+          answer: 2,
+          explanation: "Sufentanil besitzt etwa die 700- bis 1000-fache analgetische Potenz von Morphin und ist damit das potenteste verfügbare Opioid."
         },
         {
-          question: "Welches Erstlinien-Medikament wird bei toxischen Herzrhythmusstörungen durch Lokalanästhetika (LAIT) empfohlen?",
-          options: ["Atropin 1mg", "Lipidemulsion (Intralipid 20%)", "Metamizol 1g", "Amiodaron 300mg"],
+          question: "Welches Notfallmedikament muss bei der Erstbehandlung einer Malignen Hyperthermie unverzüglich i.v. verabreicht werden?",
+          options: ["Dantrolen", "Noradrenalin", "Prednisolon", "Physostigmin", "Amiodaron"],
+          answer: 0,
+          explanation: "Dantrolen hemmt die Freisetzung von Calcium aus dem sarkoplasmatischen Retikulum und ist das einzige spezifische Notfalltherapeutikum bei MH."
+        },
+        {
+          question: "Wie berechnet sich das Ziel-Zugvolumen (Vt) bei der lungenprotektiven Beatmung?",
+          options: ["12 - 15 ml/kg tatsächliches Körpergewicht", "6 - 8 ml/kg ideales Körpergewicht (IBW)", "15 - 20 ml/kg ideales Körpergewicht", "Pauschal immer 800 ml", "2 - 4 ml/kg tatsächliches Körpergewicht"],
           answer: 1,
-          explanation: "Bei einer Lokalanästhetika-Intoxikation ist die sofortige Gabe von Lipidlösung (Intralipid) die entscheidende Rettungsmaßnahme."
+          explanation: "Lungenprotektive Beatmung vermeidet Baro- und Volutraumen durch Begrenzung des Tidalvolumens auf 6-8 ml/kg des berechneten idealen Körpergewichts."
+        },
+        {
+          question: "Welcher TOF-Quotient (Train-of-Four) muss vor der Extubation erreicht sein, um eine postoperative Restrelaxierung sicher auszuschließen?",
+          options: ["TOF-Ratio > 0,25 (25 %)", "TOF-Ratio > 0,50 (50 %)", "TOF-Ratio > 0,75 (75 %)", "TOF-Ratio > 0,90 (90 %)", "TOF-Count 1/4"],
+          answer: 3,
+          explanation: "Ein TOF-Quotient von mindestens 0,90 (90 %) garantiert die Wiederherstellung der vollen Muskelkraft und verhindert hypoxische Komplikationen."
+        },
+        {
+          question: "Welche Gefahr besteht bei der Nutzung von ausgetrocknetem Atemkalk in Kombination mit Sevofluran?",
+          options: ["Bildung von nephrotoxischem Compound A sowie Kohlenmonoxid (CO)", "Laryngospasmus", "Hyperglykämie", "Maligne Hyperthermie", "Anaphylaktischer Schock"],
+          answer: 0,
+          explanation: "Ausgetrockneter Atemkalk degradiert Sevofluran zu toxischem Compound A und kann zudem lebensgefährliches Kohlenmonoxid freisetzen."
+        },
+        {
+          question: "Welcher Venenzugang entspricht nach der internationalen ISO-Farbcodierung einer Nadelgröße von 18 Gauge (G18)?",
+          options: ["Blau (22 G)", "Rosa (20 G)", "Grün (18 G)", "Weiß (16 G)", "Orange (14 G)"],
+          answer: 2,
+          explanation: "Die Farbcodierung lautet: Blau = 22G, Rosa = 20G, Grün = 18G, Weiß = 16G, Orange = 14G."
+        },
+        {
+          question: "Welche Leitsymptom-Trias deutet unter Anästhesie auf das Vorliegen einer schweren Anaphylaxie hin?",
+          options: ["Blutdruckabfall, Bronchospasmus/Exanthem, Tachykardie", "Bradykardie, Hypertonie, Miosis", "Hyperthermie, Muskelrigor, Mydriasis", "Polyurie, Hypokapnie, Erbrechen", "Hypothermie, Bradypnoe, Tremor"],
+          answer: 0,
+          explanation: "Eine Anaphylaxie manifestiert sich am kardiovaskulären System (Hypotonie, Tachykardie), am Respirationstrakt (Bronchospasmus) und an der Haut."
+        },
+        {
+          question: "Welcher Nerv droht bei einer unzureichend gepolsterten Steinschnittlagerung am Fibulaköpfchen geschädigt zu werden?",
+          options: ["Nervus femoralis", "Nervus peroneus communis", "Nervus ischiadicus", "Nervus obturatorius", "Nervus saphenus"],
+          answer: 1,
+          explanation: "Der N. peroneus communis verläuft direkt um das Fibulaköpfchen und ist bei Steinschnittlagerung extrem druckempfindlich."
+        },
+        {
+          question: "Was ist das primäre Ziel der Präoxygenierung mit 100 % Sauerstoff vor der Narkoseeinleitung?",
+          options: ["Senkung des arteriellen Blutdrucks", "Auswaschen von Stickstoff aus der FRC zur Verlängerung der Apnoetoleranzzeit", "Vermeidung einer Hyperkapnie", "Aktivierung der Muskelrelaxanzien", "Reduktion des Speichelflusses"],
+          answer: 1,
+          explanation: "Durch die Denitrogenierung der funktionellen Residualkapazität (FRC) wird ein Sauerstoffreservoir aufgebaut, das die sicher tolerierte Apnoezeit deutlich erhöht."
+        },
+        {
+          question: "Wer trägt nach deutschem Recht die strafrechtliche Durchführungsverantwortung bei der Verabreichung von Anästhetika?",
+          options: ["Ausschließlich der Chefarzt", "Die durchführende Fachkraft (z. B. ATA/Pflegekraft)", "Der Hersteller des Medikaments", "Der Klinikleiter", "Die OP-Leitung"],
+          answer: 1,
+          explanation: "Neben der Anordnungsverantwortung des Arztes trägt die Person, die das Medikament aufzieht und injiziert, die persönliche Durchführungsverantwortung."
+        }
+      ];
+
+      // STANDARD 20 FALLBASIERTE ATA FRAGEN (CASE-BASED, 5 OPTIONEN)
+      const DEFAULT_CASE_QUESTIONS = [
+        {
+          patientInfo: "PATIENTENFALL: 68-jähriger Patient (82 kg), Notfall-OP bei akutem Ileus. Vorerkrankungen: COPD und arterielle Hypertonie. Letzte Nahrungsaufnahme vor 2 Stunden.",
+          question: "Welches Anästhesieverfahren ist für die Narkoseeinleitung zwingend indiziert?",
+          options: [
+            "Klassische balancierte Einleitung mit Maskenbeatmung",
+            "Rapid Sequence Induction (RSI) ohne Zwischenbeatmung",
+            "Total Intravenöse Anästhesie (TIVA) mit Larynxmaske",
+            "Spinalanästhesie im Sitzen",
+            "Regionalanästhesie des Plexus brachialis"
+          ],
+          answer: 1,
+          explanation: "Bei akutem Ileus besteht hohes Aspirationsrisiko (Nicht-Nüchternheit). Indiziert ist eine RSI ohne Zwischenbeatmung, um Mageninhalt-Aspiration zu verhindern."
+        },
+        {
+          patientInfo: "PATIENTENFALL: 45-jährige Patientin während einer laparoskopischen Cholezystektomie. Narkoseführung mit Sevofluran und Sufentanil. Plötzlich steigen etCO2 von 36 auf 65 mmHg, die Frequenz auf 130/min und die Körpertemperatur rasch an.",
+          question: "Welche akute Narkosekomplikation liegt hier vor und was ist die erste Maßnahme?",
+          options: [
+            "Anaphylaxie; Gabe von Adrenalin",
+            "Maligne Hyperthermie; Stopp aller Triggergase, 100% O2 High-Flow, Dantrolengabe",
+            "CO2-Embolie; Patient in Kopftieflagerung bringen",
+            "Opioid-Überdosierung; Gabe von Naloxon",
+            "Pneumothorax; Sofortige Entlastungspunktion"
+          ],
+          answer: 1,
+          explanation: "Anstieg von etCO2, Tachykardie und Hyperthermie sind Leitsymptome der Malignen Hyperthermie. Inhalationsanästhetika sofort stoppen, mit 100% O2 überbeatmen und Dantrolen verabreichen."
+        },
+        {
+          patientInfo: "PATIENTENFALL: 72-jähriger Patient nach einer 4-stündigen Baucheingriff im Aufwachraum. Der Patient ist schläfrig, die Atemfrequenz liegt bei 6/min und die SpO2 fällt unter Raumluft auf 88 %.",
+          question: "Welche Ursache ist am wahrscheinlichsten und wie wird primär therapiert?",
+          options: [
+            "Postoperative Restrelaxierung; Reversierung mit Sugammadex",
+            "Opioid-Überhang; Atemstimulierung, O2-Gabe, ggf. fraktionierte Naloxongabe",
+            "Lungenembolie; Sofortige Thrombolyse",
+            "Volumenmangel; Rasche Infusion von 2000 ml Vollblut",
+            "Pneumonie; Einleitung einer Antibiose"
+          ],
+          answer: 1,
+          explanation: "Eine Bradypnoe (AF 6/min) mit Hypoxie nach OP deutet auf einen Opioid-Überhang hin. Nach O2-Sicherung kann vorsichtig Naloxon titriert werden."
+        },
+        {
+          patientInfo: "PATIENTENFALL: 30-jährige Patientin, 2 Minuten nach Injektion von 150 mg Propofol und 20 µg Sufentanil zur Einleitung. Der Blutdruck fällt von 120/70 auf 80/45 mmHg. Die Herzfrequenz bleibt stabil bei 72/min.",
+          question: "Was ist die physiologische Ursache für diesen Blutdruckabfall?",
+          options: [
+            "Anaphylaktischer Schock Grad IV",
+            "Akuter Myokardinfarkt",
+            "Propofol-induzierte Vasodilatation und Senkung des sympathischen Tonus",
+            "Volumenüberladung",
+            "Maligne Hyperthermie"
+          ],
+          answer: 2,
+          explanation: "Propofol führt zur peripheren Vasodilatation (Venodilation) und Dämpfung des Sympathikus, was zu einem häufigen, typischen Blutdruckabfall nach Einleitung führt."
+        },
+        {
+          patientInfo: "PATIENTENFALL: 55-jähriger Patient, Intubation geplant. Bei der Laryngoskopie sieht der Anästhesist lediglich die Epiglottis, jedoch keine Stimmbandstrukturen (Cormack-Lehane Grad III).",
+          question: "Welche Maßnahme ist im Algorithmus für den schwierigen Atemweg nun am sinnvollsten?",
+          options: [
+            "Narkose sofort beenden und Patient aufwecken",
+            "Einsatz eines Videolaryngoskops oder Intubations-Bougies (Führungsstab)",
+            "Blinde Koniotomie durchführen",
+            "Tubus ohne Sicht in die Speiseröhre schieben",
+            "Tracheotomie im OP-Saal veranlassen"
+          ],
+          answer: 1,
+          explanation: "Bei Cormack-Lehane III verbessert das Videolaryngoskop oder die Nutzung eines elastischen Bougies die Sicht bzw. Führung des Tubus entscheidend."
         }
       ];
 
       function App() {
-        const [activeTab, setActiveTab] = useState('quiz'); // quiz, equipment, meds, pacu, dialogues, ai
-        const [selectedEquipCategory, setSelectedEquipCategory] = useState(0);
-
-        // Quiz State
-        const [questionsList, setQuestionsList] = useState(DEFAULT_20_QUESTIONS);
+        const [activeMode, setActiveMode] = useState('general'); // 'general' oder 'case'
+        const [questionsList, setQuestionsList] = useState(DEFAULT_GENERAL_QUESTIONS);
         const [currentQ, setCurrentQ] = useState(0);
         const [selectedOption, setSelectedOption] = useState(null);
         const [score, setScore] = useState(0);
@@ -235,33 +221,39 @@
         // AI State
         const [apiKey, setApiKey] = useState(localStorage.getItem('gemini_api_key') || '');
         const [isApiKeySaved, setIsApiKeySaved] = useState(!!localStorage.getItem('gemini_api_key'));
-        const [aiResponse, setAiResponse] = useState('');
-        const [loading, setLoading] = useState(false);
 
         const handleSaveApiKey = () => {
           localStorage.setItem('gemini_api_key', apiKey);
           setIsApiKeySaved(true);
         };
 
+        const switchMode = (mode) => {
+          setActiveMode(mode);
+          if (mode === 'general') {
+            setQuestionsList(DEFAULT_GENERAL_QUESTIONS);
+          } else {
+            setQuestionsList(DEFAULT_CASE_QUESTIONS);
+          }
+          resetQuiz();
+        };
+
         const generate20QuestionsWithAI = async () => {
           if (!apiKey) {
-            alert("Bitte geben Sie zuerst Ihren Gemini API-Schlüssel ein!");
+            alert("Bitte geben Sie zuerst oben Ihren Gemini API-Schlüssel ein!");
             return;
           }
           setAiGeneratingQuestions(true);
 
-          const prompt = `Erstelle genau 10-20 anspruchsvolle Multiple-Choice-Fragen auf Deutsch für die Anästhesietechnische Assistent (ATA) Kenntnisprüfung (KP) in Deutschland.
-          Themen: Anästhesie-Pharmakologie (Hypnotika, Opioide, Relaxanzien, Lokalanästhetika, Katecholamine), Aufwachraum-Management, Lagerungsschäden, Beatmungssysteme.
-
-          Antworte STRENG als JSON-Array ohne Codeblock-Tags:
-          [
-            {
-              "question": "Fragetext auf Deutsch",
-              "options": ["Option A", "Option B", "Option C", "Option D"],
-              "answer": 0,
-              "explanation": "Klinische Begründung auf Deutsch"
-            }
-          ]`;
+          const isCaseMode = activeMode === 'case';
+          const prompt = isCaseMode
+            ? `Erstelle genau 20 anspruchsvolle fallbasierte Multiple-Choice-Fragen auf Deutsch für die Anästhesietechnische Assistent (ATA) Kenntnisprüfung (KP) in Deutschland.
+               Jede Frage MUSS ein Objekt mit "patientInfo" (kurzer klinischer Fall), "question" (Frage), "options" (genau 5 Antwortoptionen A-E), "answer" (Index 0-4) und "explanation" (Erklärung) sein.
+               Themen: Anästhesie-Pharmakologie, Notfälle, Rechtskunde, Atemweg, Geräte.
+               Antworte STRENG als JSON-Array von 20 Objekten ohne Codeblock-Tags.`
+            : `Erstelle genau 20 anspruchsvolle allgemeine Multiple-Choice-Fragen auf Deutsch für die Anästhesietechnische Assistent (ATA) Kenntnisprüfung (KP) in Deutschland.
+               Jede Frage MUSS ein Objekt mit "question" (Frage), "options" (genau 5 Antwortoptionen A-E), "answer" (Index 0-4) und "explanation" (Erklärung) sein.
+               Themen: Anästhesietechnik, Pharmakologie, Notfallmedizin, Rechtskunde, Krankenhausrecht, Narkosegeräte.
+               Antworte STRENG als JSON-Array von 20 Objekten ohne Codeblock-Tags.`;
 
           try {
             const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
@@ -277,10 +269,9 @@
             if (Array.isArray(newQuestions) && newQuestions.length > 0) {
               setQuestionsList(newQuestions);
               resetQuiz();
-              alert("✨ Neue KI-Prüfungsfragen wurden erfolgreich geladen!");
             }
           } catch (err) {
-            alert("Fehler beim Generieren der Fragen: " + err.message);
+            alert("Fehler bei der KI-Generierung: " + err.message);
           } finally {
             setAiGeneratingQuestions(false);
           }
@@ -313,70 +304,35 @@
           setQuizFinished(false);
         };
 
-        const generateAICase = async () => {
-          if (!apiKey) {
-            alert("Bitte geben Sie Ihren API-Schlüssel ein.");
-            return;
-          }
-          setLoading(true);
-          setAiResponse('');
-
-          const prompt = `Erstelle ein hochkomplexes klinisches Fallbeispiel (Prüfungsfall für Kenntnisprüfung KP in Deutschland) für einen Anästhesietechnischen Assistenten (ATA).
-          Themenbereich: Anästhesieführung, Komplikation im Aufwachraum oder Schmerztherapie.
-          
-          Struktur auf Deutsch:
-          1. PATIENTENDATEN & ANAMNESE
-          2. VITALPARAMETER & BEFUND
-          3. AKUTE KOMPLIKATION
-          4. 3 PRÜFUNGSFRAGEN (Pharmakologie, Atemweg, Aufwachraum)
-          5. MUSTERLÖSUNG FÜR PRÜFER.`;
-
-          try {
-            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-            });
-            const data = await res.json();
-            if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
-              setAiResponse(data.candidates[0].content.parts[0].text);
-            }
-          } catch (err) {
-            setAiResponse("Fehler: " + err.message);
-          } finally {
-            setLoading(false);
-          }
-        };
-
-        const optionLabels = ["A", "B", "C", "D"];
+        const optionLabels = ["A", "B", "C", "D", "E"];
 
         return (
-          <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100">
+          <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100 font-sans">
             {/* Header */}
-            <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50 px-6 py-4">
-              <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-                <div className="flex items-center gap-3">
-                  <span className="text-3xl">🫁</span>
+            <header className="border-b border-slate-800 bg-slate-900/90 sticky top-0 z-50 px-6 py-5">
+              <div className="max-w-7xl mx-auto flex flex-col lg:flex-row justify-between items-center gap-4">
+                <div className="flex items-center gap-4">
+                  <span className="text-5xl">🫁</span>
                   <div>
-                    <h1 className="text-2xl font-extrabold bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
+                    <h1 className="text-3xl lg:text-4xl font-black bg-gradient-to-r from-teal-400 via-cyan-300 to-amber-300 bg-clip-text text-transparent tracking-wide">
                       ATA KENNTNISPRÜFUNG
                     </h1>
-                    <p className="text-xs text-slate-400">Kompendium & Prüfungs-Trainer</p>
+                    <p className="text-base text-slate-400 font-semibold">Exklusiver KI-Prüfungs-Trainer für Anästhesie & Recht</p>
                   </div>
                 </div>
 
                 {/* API Key Box */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3 bg-slate-950 p-2 rounded-2xl border border-slate-800">
                   <input 
                     type="password" 
-                    placeholder="Gemini API Key" 
+                    placeholder="Gemini API Key eingeben" 
                     value={apiKey} 
                     onChange={(e) => setApiKey(e.target.value)}
-                    className="bg-slate-950 text-slate-200 px-3 py-1.5 rounded-lg border border-slate-800 text-xs focus:outline-none focus:border-teal-500 w-32 md:w-44"
+                    className="bg-slate-900 text-slate-100 px-4 py-2 rounded-xl border border-slate-700 text-sm focus:outline-none focus:border-teal-400 w-48 lg:w-60"
                   />
                   <button 
                     onClick={handleSaveApiKey}
-                    className="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-teal-400 px-3 py-1.5 rounded-lg text-xs font-semibold"
+                    className="bg-teal-500 hover:bg-teal-400 text-slate-950 font-extrabold px-4 py-2 rounded-xl text-sm transition"
                   >
                     {isApiKeySaved ? 'Gespeichert ✓' : 'Speichern'}
                   </button>
@@ -384,316 +340,175 @@
               </div>
             </header>
 
-            {/* Main Navigation */}
-            <div className="bg-slate-900 border-b border-slate-800 px-6">
-              <div className="max-w-7xl mx-auto flex overflow-x-auto gap-2 md:gap-4 py-3 no-scrollbar">
+            {/* Test Modus Auswahl */}
+            <div className="bg-slate-900 border-b border-slate-800 px-6 py-4">
+              <div className="max-w-7xl mx-auto flex flex-col sm:flex-row gap-4 justify-center">
                 <button
-                  onClick={() => setActiveTab('quiz')}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition ${activeTab === 'quiz' ? 'bg-amber-500/20 border border-amber-500/50 text-amber-400 shadow-lg' : 'text-slate-400 hover:text-white'}`}
+                  onClick={() => switchMode('general')}
+                  className={`px-6 py-4 rounded-2xl text-xl font-extrabold transition flex items-center justify-center gap-3 border-2 ${
+                    activeMode === 'general'
+                      ? 'bg-amber-500/20 border-amber-400 text-amber-300 shadow-lg shadow-amber-500/10'
+                      : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
+                  }`}
                 >
-                  📝 KP Prüfungstest
+                  📝 1. Allgemeiner Prüfungstest (Anästhesie & Recht)
                 </button>
                 <button
-                  onClick={() => setActiveTab('meds')}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition ${activeTab === 'meds' ? 'bg-teal-500/10 border border-teal-500/40 text-teal-400' : 'text-slate-400 hover:text-white'}`}
+                  onClick={() => switchMode('case')}
+                  className={`px-6 py-4 rounded-2xl text-xl font-extrabold transition flex items-center justify-center gap-3 border-2 ${
+                    activeMode === 'case'
+                      ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300 shadow-lg shadow-cyan-500/10'
+                      : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
+                  }`}
                 >
-                  💊 Pharmakologie ({ATA_DATA.meds.length})
-                </button>
-                <button
-                  onClick={() => setActiveTab('pacu')}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition ${activeTab === 'pacu' ? 'bg-teal-500/10 border border-teal-500/40 text-teal-400' : 'text-slate-400 hover:text-white'}`}
-                >
-                  🏥 Aufwachraum (PACU) & Schmerz
-                </button>
-                <button
-                  onClick={() => setActiveTab('equipment')}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition ${activeTab === 'equipment' ? 'bg-teal-500/10 border border-teal-500/40 text-teal-400' : 'text-slate-400 hover:text-white'}`}
-                >
-                  ⚙️ Systeme & Lagerung
-                </button>
-                <button
-                  onClick={() => setActiveTab('dialogues')}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition ${activeTab === 'dialogues' ? 'bg-teal-500/10 border border-teal-500/40 text-teal-400' : 'text-slate-400 hover:text-white'}`}
-                >
-                  🗣️ Kommunikation & Begriffe
-                </button>
-                <button
-                  onClick={() => setActiveTab('ai')}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition ${activeTab === 'ai' ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-slate-950 shadow-lg shadow-teal-500/20' : 'text-slate-400 hover:text-white'}`}
-                >
-                  ✨ KI-Fall-Simulator
+                  🏥 2. Fallbasierter Prüfungstest (Vaka Testi)
                 </button>
               </div>
             </div>
 
-            {/* Main Content */}
-            <main className="max-w-7xl mx-auto p-6 flex-1 w-full">
+            {/* Main Content Area */}
+            <main className="max-w-5xl mx-auto p-6 flex-1 w-full space-y-6">
               
-              {/* TAB: QUIZ */}
-              {activeTab === 'quiz' && (
-                <div className="max-w-3xl mx-auto space-y-6">
-                  <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <div>
-                      <h4 className="text-sm font-bold text-teal-300">Dynamischer KI-Prüfungsmodus</h4>
-                      <p className="text-xs text-slate-400">Generieren Sie neue Fragen zu Medikamenten, AWR und Anästhesietechnik.</p>
+              {/* KI-Generierung Bar */}
+              <div className="bg-slate-900 border border-slate-800 p-5 rounded-3xl flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div>
+                  <h3 className="text-xl font-bold text-teal-300">Unendlicher KI-Prüfungsmodus</h3>
+                  <p className="text-base text-slate-400">Generieren Sie per Knopfdruck 20 völlig neue Fragen auf deutschem Prüfungsniveau.</p>
+                </div>
+                <button
+                  onClick={generate20QuestionsWithAI}
+                  disabled={aiGeneratingQuestions}
+                  className="bg-gradient-to-r from-amber-400 to-teal-400 hover:opacity-90 text-slate-950 text-base font-black px-6 py-3.5 rounded-2xl transition shadow-lg shadow-teal-500/20 disabled:opacity-50 whitespace-nowrap"
+                >
+                  {aiGeneratingQuestions ? 'Generiere 20 Fragen...' : '✨ 20 Neue KI-Fragen Laden'}
+                </button>
+              </div>
+
+              {!quizFinished ? (
+                <div className="bg-slate-900 border-2 border-slate-800 p-6 sm:p-10 rounded-3xl space-y-8 relative shadow-2xl">
+                  
+                  {/* Fortschrittsbalken */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center text-lg font-bold">
+                      <span className="text-teal-400 font-mono">
+                        Frage {currentQ + 1} von {questionsList.length}
+                      </span>
+                      <span className="bg-slate-950 px-4 py-1.5 rounded-full border border-slate-800 text-amber-300 font-mono">
+                        Aktueller Score: {score}
+                      </span>
                     </div>
-                    <button
-                      onClick={generate20QuestionsWithAI}
-                      disabled={aiGeneratingQuestions}
-                      className="bg-gradient-to-r from-amber-500 to-teal-500 hover:opacity-90 text-slate-950 text-xs font-black px-4 py-2.5 rounded-xl transition whitespace-nowrap disabled:opacity-50"
-                    >
-                      {aiGeneratingQuestions ? 'Generiere Fragen...' : '✨ Neue KI-Fragen laden'}
-                    </button>
+                    <div className="w-full bg-slate-950 h-3 rounded-full overflow-hidden border border-slate-800">
+                      <div 
+                        className="bg-gradient-to-r from-teal-400 via-cyan-400 to-amber-400 h-full transition-all duration-300"
+                        style={{ width: `${((currentQ + 1) / questionsList.length) * 100}%` }}
+                      ></div>
+                    </div>
                   </div>
 
-                  {!quizFinished ? (
-                    <div className="bg-slate-900 border border-slate-800 p-6 md:p-8 rounded-3xl space-y-6 relative overflow-hidden">
-                      <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-800">
-                        <div 
-                          className="bg-gradient-to-r from-teal-400 to-amber-400 h-full transition-all duration-300"
-                          style={{ width: `${((currentQ + 1) / questionsList.length) * 100}%` }}
-                        ></div>
-                      </div>
-
-                      <div className="flex justify-between items-center border-b border-slate-800 pb-3">
-                        <span className="text-xs font-extrabold text-teal-400 uppercase tracking-wider">
-                          Frage {currentQ + 1} von {questionsList.length}
-                        </span>
-                        <span className="bg-slate-800 text-amber-300 text-xs px-3 py-1 rounded-full font-bold">
-                          Punktestand: {score}
-                        </span>
-                      </div>
-
-                      <h3 className="text-lg md:text-xl font-bold text-slate-100 leading-snug">
-                        {questionsList[currentQ].question}
-                      </h3>
-
-                      <div className="grid gap-3">
-                        {questionsList[currentQ].options.map((opt, idx) => {
-                          let btnStyle = "bg-slate-950 border-slate-800 text-slate-300 hover:border-teal-500/50";
-                          if (selectedOption !== null) {
-                            if (idx === questionsList[currentQ].answer) {
-                              btnStyle = "bg-emerald-950/90 border-emerald-500 text-emerald-200 font-bold";
-                            } else if (idx === selectedOption) {
-                              btnStyle = "bg-rose-950/90 border-rose-500 text-rose-200 font-bold";
-                            } else {
-                              btnStyle = "bg-slate-950/40 border-slate-900 text-slate-600 opacity-40";
-                            }
-                          }
-                          return (
-                            <button
-                              key={idx}
-                              onClick={() => handleOptionClick(idx)}
-                              disabled={selectedOption !== null}
-                              className={`w-full text-left p-4 rounded-xl border transition text-sm flex items-center gap-3 ${btnStyle}`}
-                            >
-                              <span className="w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center font-mono font-bold text-xs text-amber-400 shrink-0">
-                                {optionLabels[idx]}
-                              </span>
-                              <span className="flex-1">{opt}</span>
-                            </button>
-                          );
-                        })}
-                      </div>
-
-                      {showExplanation && (
-                        <div className="space-y-4 pt-4 border-t border-slate-800">
-                          <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-1">
-                            <strong className="text-teal-400 block mb-1">Klinische Erklärung:</strong>
-                            {questionsList[currentQ].explanation}
-                          </div>
-                          <button
-                            onClick={handleNextQuestion}
-                            className="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-extrabold py-3.5 rounded-xl transition shadow-lg shadow-teal-500/20"
-                          >
-                            {currentQ + 1 < questionsList.length ? 'Nächste Frage →' : 'Testergebnis anzeigen 🏆'}
-                          </button>
-                        </div>
-                      )}
+                  {/* Fallbeispiel Anzeige (Falls Fallbasierter Modus) */}
+                  {questionsList[currentQ]?.patientInfo && (
+                    <div className="bg-slate-950 p-6 rounded-2xl border-l-8 border-l-cyan-400 border border-slate-800 space-y-2">
+                      <span className="text-sm font-black text-cyan-400 uppercase tracking-widest block">Klinischer Patientenfall</span>
+                      <p className="text-xl text-slate-200 leading-relaxed font-medium">
+                        {questionsList[currentQ].patientInfo}
+                      </p>
                     </div>
-                  ) : (
-                    <div className="bg-slate-900 border border-slate-800 p-8 rounded-3xl text-center space-y-6">
-                      <span className="text-6xl">🏆</span>
-                      <h3 className="text-2xl font-black text-teal-300">Prüfung Beendet!</h3>
-                      <div className="bg-slate-950 p-6 rounded-2xl border border-slate-800 max-w-sm mx-auto space-y-2">
-                        <p className="text-xs text-slate-400 uppercase tracking-widest font-bold">Ergebnis</p>
-                        <p className="text-4xl font-extrabold text-amber-400 font-mono">
-                          {score} / {questionsList.length}
-                        </p>
+                  )}
+
+                  {/* Fragetext */}
+                  <h2 className="text-2xl sm:text-3xl font-extrabold text-amber-300 leading-snug">
+                    {questionsList[currentQ]?.question}
+                  </h2>
+
+                  {/* 5 Antwort-Optionen (A, B, C, D, E) */}
+                  <div className="grid gap-4">
+                    {questionsList[currentQ]?.options.map((opt, idx) => {
+                      let btnStyle = "bg-indigo-950/40 border-indigo-900/60 text-slate-100 hover:border-teal-400 hover:bg-slate-800";
+                      
+                      if (selectedOption !== null) {
+                        if (idx === questionsList[currentQ].answer) {
+                          btnStyle = "bg-emerald-950 border-2 border-emerald-400 text-emerald-100 font-extrabold shadow-lg shadow-emerald-500/20";
+                        } else if (idx === selectedOption) {
+                          btnStyle = "bg-rose-950 border-2 border-rose-500 text-rose-200 font-extrabold";
+                        } else {
+                          btnStyle = "bg-slate-950 border-slate-900 text-slate-600 opacity-30";
+                        }
+                      }
+
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => handleOptionClick(idx)}
+                          disabled={selectedOption !== null}
+                          className={`w-full text-left p-5 sm:p-6 rounded-2xl border-2 transition-all duration-150 text-xl flex items-center gap-4 ${btnStyle}`}
+                        >
+                          <span className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center font-mono font-black text-lg text-amber-400 shrink-0">
+                            {optionLabels[idx]}
+                          </span>
+                          <span className="flex-1 leading-relaxed">{opt}</span>
+                          {selectedOption !== null && idx === questionsList[currentQ].answer && (
+                            <span className="text-emerald-400 font-black text-2xl">✓</span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Erklärung und Nächste Frage */}
+                  {showExplanation && (
+                    <div className="space-y-6 pt-6 border-t border-slate-800 animate-fadeIn">
+                      <div className="bg-slate-950 p-6 rounded-2xl border border-teal-500/40 text-lg text-slate-200 space-y-2">
+                        <strong className="text-teal-400 text-xl block">Klinische / Rechtliche Begründung:</strong>
+                        <p className="leading-relaxed">{questionsList[currentQ].explanation}</p>
                       </div>
                       <button
-                        onClick={resetQuiz}
-                        className="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold px-6 py-3 rounded-xl transition border border-slate-700"
+                        onClick={handleNextQuestion}
+                        className="w-full bg-gradient-to-r from-teal-400 to-cyan-400 hover:opacity-90 text-slate-950 font-black py-5 rounded-2xl text-2xl transition shadow-xl shadow-teal-500/20"
                       >
-                        Test Wiederholen 🔄
+                        {currentQ + 1 < questionsList.length ? 'Nächste Frage →' : 'Testergebnis & Statistik Anzeigen 🏆'}
                       </button>
                     </div>
                   )}
-                </div>
-              )}
 
-              {/* TAB: PHARMAKOLOGIE */}
-              {activeTab === 'meds' && (
-                <div className="space-y-6">
-                  <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
-                    <p className="text-xs text-slate-400">
-                      💡 <strong>KP-Anforderung:</strong> Nennen Sie stets Substanzgruppe, Indikation, Standarddosierung (mg/kg), spezifische Nebenwirkungen und Antidote.
-                    </p>
-                  </div>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    {ATA_DATA.meds.map((med, idx) => (
-                      <div key={idx} className="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-3 hover:border-slate-700 transition">
-                        <div className="flex justify-between items-start border-b border-slate-800 pb-3">
-                          <div>
-                            <h4 className="text-xl font-extrabold text-teal-300">{med.name}</h4>
-                            <span className="text-xs text-slate-400 font-semibold">{med.group}</span>
-                          </div>
-                          <span className="bg-teal-500/10 border border-teal-500/30 text-teal-400 text-xs px-2.5 py-1 rounded-full font-mono font-bold">
-                            {med.dose}
-                          </span>
-                        </div>
-                        <div className="text-xs space-y-2">
-                          <p><strong className="text-slate-300">Wirkung:</strong> <span className="text-slate-400">{med.effect}</span></p>
-                          <p><strong className="text-rose-400">Nebenwirkungen:</strong> <span className="text-slate-400">{med.sideEffects}</span></p>
-                          <div className="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-amber-300/90 mt-2">
-                            <strong>Prüfungswissen:</strong> {med.pearls}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
                 </div>
-              )}
-
-              {/* TAB: AUFWACHRAUM (PACU) */}
-              {activeTab === 'pacu' && (
-                <div className="space-y-8">
-                  {/* Prozess & Ablauf */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-bold text-teal-300 border-b border-slate-800 pb-2">
-                      Standardprozess: Aufwachraum-Management & Entlassung
-                    </h3>
-                    <div className="grid md:grid-cols-3 gap-4">
-                      {ATA_DATA.pacu.process.map((p, idx) => (
-                        <div key={idx} className="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-3">
-                          <h4 className="font-bold text-amber-400 text-sm">{p.phase}</h4>
-                          <ul className="text-xs space-y-2 text-slate-300 list-disc list-inside">
-                            {p.items.map((item, i) => (
-                              <li key={i}>{item}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      ))}
+              ) : (
+                /* Ausführliche Statistik nach 20 Fragen */
+                <div className="bg-slate-900 border-2 border-slate-800 p-8 sm:p-12 rounded-3xl text-center space-y-8 shadow-2xl">
+                  <span className="text-8xl">🏆</span>
+                  <h2 className="text-4xl font-black text-teal-300">Prüfungsdurchgang Beendet!</h2>
+                  
+                  <div className="grid sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
+                    <div className="bg-slate-950 p-6 rounded-2xl border border-slate-800 space-y-2">
+                      <p className="text-sm text-slate-400 font-bold uppercase tracking-wider">Erreichte Punkte</p>
+                      <p className="text-5xl font-black text-amber-400 font-mono">{score} / {questionsList.length}</p>
+                    </div>
+                    <div className="bg-slate-950 p-6 rounded-2xl border border-slate-800 space-y-2">
+                      <p className="text-sm text-slate-400 font-bold uppercase tracking-wider">Erfolgsquote</p>
+                      <p className="text-5xl font-black text-cyan-400 font-mono">
+                        {Math.round((score / questionsList.length) * 100)} %
+                      </p>
+                    </div>
+                    <div className="bg-slate-950 p-6 rounded-2xl border border-slate-800 space-y-2">
+                      <p className="text-sm text-slate-400 font-bold uppercase tracking-wider">Bewertung</p>
+                      <p className="text-3xl font-black text-emerald-400 font-mono pt-2">
+                        {(score / questionsList.length) >= 0.75 ? "BESTANDEN ✓" : "NICHT BESTANDEN ✗"}
+                      </p>
                     </div>
                   </div>
 
-                  {/* Postoperative Schmerztherapie */}
-                  <div className="space-y-4 pt-4">
-                    <h3 className="text-lg font-bold text-teal-300 border-b border-slate-800 pb-2">
-                      Unterthema: Akute Postoperative Schmerztherapie
-                    </h3>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      {ATA_DATA.pacu.painManagement.map((pm, idx) => (
-                        <div key={idx} className="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-2">
-                          <h4 className="font-bold text-teal-300 text-sm">{pm.title}</h4>
-                          <p className="text-xs text-slate-300 leading-relaxed">{pm.desc}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* TAB: SYSTEME & LAGERUNG */}
-              {activeTab === 'equipment' && (
-                <div className="grid md:grid-cols-3 gap-6">
-                  <div className="space-y-3">
-                    <h3 className="text-xs uppercase tracking-wider font-bold text-slate-400 mb-2">Kategorien</h3>
-                    {ATA_DATA.equipment.map((cat, idx) => (
-                      <button
-                        key={cat.id}
-                        onClick={() => setSelectedEquipCategory(idx)}
-                        className={`w-full text-left p-4 rounded-xl border transition flex items-center gap-3 ${selectedEquipCategory === idx ? 'bg-slate-850 border-teal-500/50 text-white shadow-md' : 'bg-slate-900 border-slate-800 text-slate-400 hover:bg-slate-850'}`}
-                      >
-                        <span className="text-2xl">{cat.icon}</span>
-                        <span className="font-semibold text-sm">{cat.title}</span>
-                      </button>
-                    ))}
-                  </div>
-
-                  <div className="md:col-span-2 space-y-4">
-                    <h3 className="text-xs uppercase tracking-wider font-bold text-slate-400 mb-2">
-                      {ATA_DATA.equipment[selectedEquipCategory]?.title}
-                    </h3>
-                    <div className="grid gap-4">
-                      {ATA_DATA.equipment[selectedEquipCategory]?.items.map((item, idx) => (
-                        <div key={idx} className="bg-slate-900 border border-slate-800 p-5 rounded-2xl hover:border-slate-700 transition space-y-2">
-                          <h4 className="text-lg font-bold text-teal-300">{item.name}</h4>
-                          <p className="text-slate-300 text-sm">{item.desc}</p>
-                          <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs text-slate-400">
-                            <strong className="text-teal-400">Klinische Besonderheit: </strong>{item.details}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* TAB: DIALOGE & BEGRIFFE */}
-              {activeTab === 'dialogues' && (
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <h3 className="text-xs uppercase tracking-wider font-bold text-slate-400">Fachkommunikation</h3>
-                    {ATA_DATA.dialogues.map((d, idx) => (
-                      <div key={idx} className="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-1">
-                        <p className="text-teal-300 font-semibold text-sm">"{d.de}"</p>
-                        <p className="text-slate-400 text-xs italic">{d.tr}</p>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="space-y-4">
-                    <h3 className="text-xs uppercase tracking-wider font-bold text-slate-400">Fachbegriffe</h3>
-                    <div className="grid gap-2">
-                      {ATA_DATA.vocab.map((v, idx) => (
-                        <div key={idx} className="bg-slate-900 border border-slate-800 p-3 rounded-xl flex justify-between items-center text-xs">
-                          <span className="font-bold text-teal-300">{v.de}</span>
-                          <span className="text-slate-400">{v.tr}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* TAB: AI FALL-SIMULATOR */}
-              {activeTab === 'ai' && (
-                <div className="grid md:grid-cols-3 gap-6">
-                  <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 space-y-4">
-                    <h3 className="text-lg font-bold text-teal-300">KP Prüfungsfall-Generator</h3>
-                    <p className="text-xs text-slate-400">Generieren Sie komplexe Fallbeispiele für die mündliche Kenntnisprüfung.</p>
+                  <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
                     <button
-                      onClick={generateAICase}
-                      disabled={loading}
-                      className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 hover:opacity-90 text-slate-950 font-extrabold py-3.5 rounded-xl transition shadow-lg shadow-teal-500/20 disabled:opacity-50"
+                      onClick={resetQuiz}
+                      className="bg-slate-800 hover:bg-slate-700 text-slate-100 text-xl font-bold px-8 py-4 rounded-2xl transition border border-slate-700"
                     >
-                      {loading ? 'Generiere Fall...' : 'Neuen Fall erstellen ✨'}
+                      Diesen Test Wiederholen 🔄
                     </button>
-                  </div>
-
-                  <div className="md:col-span-2 bg-slate-900 p-6 rounded-2xl border border-slate-800 min-h-[450px]">
-                    <h3 className="text-lg font-bold text-teal-300 mb-4">Szenario & Fragen</h3>
-                    {loading ? (
-                      <div className="text-slate-400 animate-pulse text-sm">Prüfungsfall wird geladen...</div>
-                    ) : aiResponse ? (
-                      <div className="whitespace-pre-line text-slate-200 text-sm leading-relaxed bg-slate-950 p-5 rounded-xl border border-slate-800 font-mono">
-                        {aiResponse}
-                      </div>
-                    ) : (
-                      <div className="text-slate-500 text-sm">
-                        Klicken Sie auf "Neuen Fall erstellen", um zu starten.
-                      </div>
-                    )}
+                    <button
+                      onClick={generate20QuestionsWithAI}
+                      className="bg-gradient-to-r from-teal-400 to-amber-400 text-slate-950 text-xl font-black px-8 py-4 rounded-2xl transition shadow-lg shadow-teal-500/20"
+                    >
+                      ✨ 20 Neue KI-Fragen Generieren
+                    </button>
                   </div>
                 </div>
               )}
@@ -701,8 +516,8 @@
             </main>
 
             {/* Footer */}
-            <footer className="border-t border-slate-800 bg-slate-950 p-4 text-center text-xs text-slate-500">
-              ATA KENNTNISPRÜFUNG • Anästhesietechnischer Assistent Preparation Platform
+            <footer className="border-t border-slate-800 bg-slate-950 p-6 text-center text-sm text-slate-500 font-medium">
+              ATA KENNTNISPRÜFUNG • Anästhesietechnischer Assistent Online-Testtrainer
             </footer>
           </div>
         );
