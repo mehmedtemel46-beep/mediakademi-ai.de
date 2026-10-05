@@ -302,6 +302,7 @@
           resetQuiz();
         };
 
+        // YENİDEN DENEME LOHİĞİ İLE DESTEKLENMİŞ API SORGUSU
         const generate10QuestionsWithAI = async () => {
           if (!apiKey || apiKey.trim() === '') {
             alert("Bitte geben Sie oben Ihren Gemini API-Schlüssel ein!");
@@ -321,20 +322,20 @@
                Jede Frage MUSS ein Objekt mit "question" (Frage in leichtem B1-B2 Deutsch), "options" (genau 5 Optionen A-E), "answer" (Index 0-4) und "explanation" (Erklärung warum genau diese Antwort richtig ist) sein.
                Antworte STRENG als JSON-Array von 10 Objekten ohne Codeblock-Tags.`;
 
-          // Otomatik Yedekli Model Listesi (Google 3.8-flash şart koşuyor, tıkandığında 1.5-flash devreye girer)
-          const modelsToTry = ['gemini-3.8-flash', 'gemini-1.5-flash'];
           let success = false;
           let lastErrorMsg = '';
+          const maxRetries = 3;
 
-          for (const model of modelsToTry) {
+          for (let attempt = 1; attempt <= maxRetries; attempt++) {
             try {
-              const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${cleanApiKey}`, {
+              const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${cleanApiKey}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
               });
 
               const data = await res.json();
+
               if (res.ok && !data.error && data.candidates?.[0]?.content?.parts?.[0]?.text) {
                 const text = data.candidates[0].content.parts[0].text;
                 const cleanJson = text.replace(/```json|```/g, '').trim();
@@ -352,10 +353,15 @@
             } catch (err) {
               lastErrorMsg = err.message;
             }
+
+            // Anlık High Demand durumlarında pes etmeyip 1.5 saniye bekleyip tekrar dene
+            if (attempt < maxRetries) {
+              await new Promise(resolve => setTimeout(resolve, 1500));
+            }
           }
 
           if (!success) {
-            alert("Fehler bei der KI-Generierung: " + (lastErrorMsg || "Bitte versuchen Sie es in wenigen Minuten erneut."));
+            alert("Fehler bei der KI-Generierung: " + (lastErrorMsg || "Google Server ist derzeit überlastet. Bitte erneut klicken."));
           }
           setAiGeneratingQuestions(false);
         };
