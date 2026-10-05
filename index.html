@@ -15,11 +15,10 @@
     <script type="text/babel">
       const { useState } = React;
 
-      // 10 ALLGEMEINE ATA FRAGEN (Mit B1-B2 Fachsprache, Vorerkrankungen COPD/Diabetes/KHK & Geräten)
+      // 10 ALLGEMEINE ATA FRAGEN (B1-B2 DEUTSCH, PHARMA, BEATMUNG, ANATOMIE, RECHT)
       const DEFAULT_GENERAL_QUESTIONS = [
         {
-          question: "Ein 68-jähriger Patient mit COPD und KHK soll operiert werden. Wie hoch sollte der Cuffdruck des Endotrachealtubus eingestellt werden?",
-          svgType: "ett",
+          question: "Ein 68-jähriger Patient mit bekannter COPD Gold III und Koronarer Herzkrankheit (KHK) wird für eine elektive Laparotomie intubiert. Wie hoch sollte der Cuffdruck des Endotrachealtubus eingestellt werden?",
           options: [
             "10 - 15 cmH2O",
             "20 - 30 cmH2O",
@@ -28,11 +27,10 @@
             "70 - 80 cmH2O"
           ],
           answer: 1,
-          explanation: "Richtig ist 20-30 cmH2O. Ein Druck unter 20 cmH2O erhöht das Risiko für Aspiration. Ein Druck über 30 cmH2O schädigt die Schleimhaut der Trachea."
+          explanation: "Der Cuffdruck sollte zwischen 20 und 30 cmH2O liegen. Ein Druck unter 20 cmH2O erhöht das Risiko für eine Aspiration von Sekret. Ein Druck über 30 cmH2O schädigt die Schleimhaut der Trachea durch Ischämie."
         },
         {
-          question: "Welches Medikament ist das spezifische Antidot für Rocuronium?",
-          svgType: "meds",
+          question: "Welche Substanz ist das spezifische Antidot zur schnellen Aufhebung einer neuromuskulären Blockade durch Rocuronium?",
           options: [
             "Naloxon",
             "Flumazenil",
@@ -41,24 +39,22 @@
             "Neostigmin"
           ],
           answer: 3,
-          explanation: "Richtig ist Sugammadex. Es bindet Rocuronium im Blut. Dadurch wird die Muskelrelaxierung sehr schnell aufgehoben."
+          explanation: "Sugammadex umschließt Rocuronium-Moleküle im Plasma in einem 1:1-Komplex. Dadurch wird die Muskelrelaxierung innerhalb von wenigen Minuten sicher aufgehoben."
         },
         {
-          question: "Ein Patient mit Diabetes mellitus Typ 2 wird intubiert. Was ist der sicherste Beweis für die korrekte Lage des Tubus?",
-          svgType: "capno",
+          question: "Ein Patient mit Diabetes mellitus Typ 2 wird intubiert. Was ist der sicherste klinische Nachweis für die korrekte Lage des Tubus in der Trachea?",
           options: [
-            "Sichtbare Bewegung des Brustkorbs",
-            "Auskultation der Lunge",
-            "Kontinuierliche Kapnografie (etCO2-Kurve)",
-            "Fehlen von Geräuschen im Magen",
-            "Beschlagen des Tubus"
+            "Sichtbare und gleichmäßige Bewegung des Brustkorbs",
+            "Auskultation beidseitiger Atemgeräusche",
+            "Kontinuierliche Kapnografie mit regelrechter etCO2-Kurve über mehrere Hübe",
+            "Fehlen von Beatmungsgeräuschen über dem Magen",
+            "Beschlagen des Tubuskanals mit Feuchtigkeit"
           ],
           answer: 2,
-          explanation: "Richtig ist die kontinuierliche Kapnografie. Nur eine sichere etCO2-Kurve bestätigt, dass der Tubus genau in der Trachea liegt."
+          explanation: "Die kontinuierliche Kapnografie mit einer stabilen etCO2-Kurve über mindestens 3 bis 6 Beatmungshübe ist der wissenschaftliche Goldstandard zum sicheren Ausschluss einer ösophagealen Fehlintubation."
         },
         {
-          question: "Welche Dosierung von Rocuronium wird bei einer Blitzeinleitung (RSI) empfohlen?",
-          svgType: "meds",
+          question: "Welche Dosierung von Rocuronium wird für eine Rapid Sequence Induction (RSI / Blitzeinleitung) empfohlen?",
           options: [
             "0,1 mg/kg kgKG",
             "0,3 mg/kg kgKG",
@@ -67,37 +63,34 @@
             "2,0 mg/kg kgKG"
           ],
           answer: 3,
-          explanation: "Richtig ist 1,2 mg/kg kgKG. Bei der RSI nutzt man die doppelte Dosis, damit der Patient nach ca. 60 Sekunden entspannt ist."
+          explanation: "Bei der RSI verabreicht man 1,2 mg/kg kgKG (doppelte Standarddosis). Dadurch werden nach etwa 60 Sekunden optimale Intubationsbedingungen ohne Zwischenbeatmung erreicht."
         },
         {
-          question: "Welche Kombination von Medikamenten löst eine Maligne Hyperthermie (MH) aus?",
-          svgType: "vapor",
+          question: "Welche Kombination von Anästhesiemitteln löst bei genetischer Veranlagung eine Maligne Hyperthermie (MH) aus?",
           options: [
             "Propofol und Fentanyl",
-            "Volatile Anästhetika (z. B. Sevofluran) und Succinylcholin",
+            "Volatile Inhalationsanästhetika (z. B. Sevofluran) und Succinylcholin",
             "Midazolam und Remifentanil",
             "Rocuronium und Sugammadex",
             "Ketamin und Atropin"
           ],
           answer: 1,
-          explanation: "Richtig sind Narkosegase (z. B. Sevofluran) und Succinylcholin. Sie führen bei genetischer Veranlagung zu einer gefährlichen Stoffwechselkrise."
+          explanation: "Volatile Anästhetika (Narkosegase) und das depolarisierende Muskelrelaxans Succinylcholin sind die bekannten Haupttrigger für eine lebensgefährliche Maligne Hyperthermie."
         },
         {
-          question: "Ein Patient mit bekannter KHK zeigt im EKG ST-Strecken-Senkungen. Was bedeutet das?",
-          svgType: "ecg",
+          question: "Ein Patient mit KHK zeigt während der Narkose im EKG neu aufgetretene ST-Strecken-Senkungen von 2 mm. Was bedeutet diese Veränderung?",
           options: [
-            "Myokardiale Ischämie (Sauerstoffmangel am Herzen)",
-            "Maligne Hyperthermie",
-            "Hyperkaliämie",
-            "Laryngospasmus",
-            "Anaphylaxie Grad I"
+            "Myokardiale Ischämie (Sauerstoffmangel am Herzmuskel)",
+            "Beginnende Maligne Hyperthermie",
+            "Schwere Hyperkaliämie",
+            "Akuter Laryngospasmus",
+            "Anaphylaktischer Schock Grad I"
           ],
           answer: 0,
-          explanation: "Richtig ist myokardiale Ischämie. ST-Senkungen zeigen, dass der Herzmuskel zu wenig Sauerstoff bekommt. Das ist bei KHK gefährlich."
+          explanation: "ST-Strecken-Senkungen im Monitor-EKG weisen auf eine myokardiale Ischämie hin. Der Herzmuskel erhält aktuell zu wenig Sauerstoff, was bei Patienten mit KHK rasch therapiert werden muss."
         },
         {
-          question: "Welches Notfallmedikament muss bei einer Malignen Hyperthermie sofort gegeben werden?",
-          svgType: "meds",
+          question: "Welches spezifische Notfallmedikament muss bei der Erstbehandlung einer Malignen Hyperthermie unverzüglich i.v. gegeben werden?",
           options: [
             "Dantrolen",
             "Noradrenalin",
@@ -106,24 +99,22 @@
             "Amiodaron"
           ],
           answer: 0,
-          explanation: "Richtig ist Dantrolen. Es stoppt die unkontrollierte Calciumfreisetzung in der Muskelzelle und rettet das Leben des Patienten."
+          explanation: "Dantrolen hemmt die Calciumfreisetzung im Muskelgewebe und ist das einzige ursächliche Notfallmedikament zur Behandlung einer Malignen Hyperthermie."
         },
         {
-          question: "Wie hoch ist das Ziel-Zugvolumen (Vt) bei der lungenprotektiven Beatmung eines COPD-Patienten?",
-          svgType: "ventilator",
+          question: "Wie berechnet sich das Ziel-Zugvolumen (Vt) bei der lungenprotektiven Beatmung eines Patienten mit COPD?",
           options: [
-            "12 - 15 ml/kg tatsächliches Gewicht",
+            "12 - 15 ml/kg tatsächliches Körpergewicht",
             "6 - 8 ml/kg ideales Körpergewicht (IBW)",
             "15 - 20 ml/kg ideales Körpergewicht",
-            "Pauschal immer 800 ml",
-            "2 - 4 ml/kg tatsächliches Gewicht"
+            "Pauschal immer 800 ml für alle Erwachsenen",
+            "2 - 4 ml/kg tatsächliches Körpergewicht"
           ],
           answer: 1,
-          explanation: "Richtig ist 6-8 ml/kg des idealen Körpergewichts. Das schützt die Lunge vor Barotrauma und Volutrauma."
+          explanation: "Die lungenprotektive Beatmung nutzt 6 bis 8 ml pro Kilogramm des berechneten idealen Körpergewichts (IBW), um Druck- und Volumenschäden an den Alveolen zu verhindern."
         },
         {
-          question: "Welcher TOF-Wert (Train-of-Four) zeigt eine sichere Erholung der Muskelkraft vor der Extubation an?",
-          svgType: "tof",
+          question: "Welcher TOF-Quotient (Train-of-Four) muss vor der Extubation erreicht sein, um eine postoperative Restrelaxierung sicher auszuschließen?",
           options: [
             "TOF-Ratio > 0,25 (25 %)",
             "TOF-Ratio > 0,50 (50 %)",
@@ -132,191 +123,90 @@
             "TOF-Count 1/4"
           ],
           answer: 3,
-          explanation: "Richtig ist TOF-Ratio > 0,90 (90 %). Erst ab diesem Wert sind die Schutzreflexe und die Atemmuskulatur wieder stark genug."
+          explanation: "Ein TOF-Quotient von mindestens 0,90 (90 %) garantiert, dass die Atemmuskulatur und die Schutzreflexe wieder vollständig funktionstüchtig sind."
         },
         {
-          question: "Welcher Venenzugang hat nach ISO-Standard die Farbe Grün?",
-          svgType: "pvk",
+          question: "Welcher periphere Venenkatheter (PVK) hat nach der ISO-Farbcodierung die Nadelgröße 18 Gauge (G18)?",
           options: [
-            "22 Gauge (Blau)",
-            "20 Gauge (Rosa)",
-            "18 Gauge (Grün)",
-            "16 Gauge (Weiß)",
-            "14 Gauge (Orange)"
+            "Blau (22 G)",
+            "Rosa (20 G)",
+            "Grün (18 G)",
+            "Weiß (16 G)",
+            "Orange (14 G)"
           ],
           answer: 2,
-          explanation: "Richtig ist 18 Gauge (Grün). Diese Größe erlaubt eine schnelle Infusion von Flüssigkeiten im Notfall."
+          explanation: "Nach internationaler Farbcodierung ist der 18-Gauge-Zugang grün. Er wird häufig für Operationen und Transfusionen verwendet."
         }
       ];
 
-      // 10 FALLBASIERTE ATA FRAGEN (CASE-BASED, B1-B2 DEUTSCH)
+      // 10 FALLBASIERTE ATA FRAGEN (AUSFÜHRLICHE PATIENTENFÄLLE)
       const DEFAULT_CASE_QUESTIONS = [
         {
-          patientInfo: "PATIENTENFALL: 65-jähriger Patient mit COPD und Diabetes mellitus Typ 2. Notfall-OP wegen Ileus. Der Patient ist nicht nüchtern.",
-          question: "Welches Anästhesieverfahren wählen Sie für die Narkoseeinleitung?",
-          svgType: "ett",
+          patientInfo: "PATIENTENFALL: Ein 68-jähriger männlicher Patient (Gewicht: 88 kg, Größe: 176 cm) wird als Notfall wegen eines akuten mechanischen Dünndarmileus in den OP gebracht. Anamnestisch bestehen eine ausgeprägte COPD (Gold III) sowie ein chronischer Diabetes mellitus Typ 2. Der Patient hat vor etwa 90 Minuten noch eine feste Mahlzeit zu sich genommen und klagt über starke Bauchschmerzen sowie aktives Erbrechen.",
+          question: "Welches Anästhesieverfahren ist für die Narkoseeinleitung bei diesem Patienten zwingend indiziert?",
           options: [
-            "Standard-Einleitung mit Maskenbeatmung",
+            "Standard-Einleitung mit vorsichtiger Maskenbeatmung",
             "Rapid Sequence Induction (RSI) ohne Zwischenbeatmung",
-            "TIVA mit Larynxmaske",
+            "Total Intravenöse Anästhesie (TIVA) mit einer Larynxmaske",
             "Spinalanästhesie im Sitzen",
-            "Plexusanästhesie"
+            "Regionalanästhesie des Plexus brachialis"
           ],
           answer: 1,
-          explanation: "Richtig ist die RSI ohne Zwischenbeatmung. Da der Patient nicht nüchtern ist, verhindert dieses Verfahren eine Aspiration von Mageninhalt."
+          explanation: "Aufgrund des akuten Ileus und der fehlenden Nüchternheit besteht ein extrem hohes Aspirationsrisiko. Indiziert ist zwingend eine Rapid Sequence Induction (RSI) ohne Zwischenbeatmung, um das Eindringen von Mageninhalt in die Lunge zu verhindern."
         },
         {
-          patientInfo: "PATIENTENFALL: 58-jähriger Patient mit KHK. Während der OP steigt der etCO2-Wert von 35 auf 68 mmHg. Die Herzfrequenz steigt auf 135/min. Die Temperatur steigt schnell an.",
-          question: "Welche Komplikation liegt vor und was tun Sie zuerst?",
-          svgType: "vapor",
+          patientInfo: "PATIENTENFALL: Eine 58-jährige Patientin mit bekannter Koronarer Herzkrankheit (KHK) und arterieller Hypertonie unterzieht sich einer laparoskopischen Cholezystektomie. Die Narkose wird balanciert mit Sevofluran, Sufentanil und Rocuronium geführt. Nach 45 Minuten OP-Dauer steigt das etCO2 plötzlich von 36 mmHg auf 68 mmHg an. Die Herzfrequenz klettert von 70 auf 138/min, und die Körpertemperatur steigt innerhalb kurzer Zeit um 1,8 °C an.",
+          question: "Welche akute Narkosekomplikation liegt hier vor und was ist die unverzügliche Erstmaßnahme?",
           options: [
-            "Anaphylaxie; Adrenalin geben",
-            "Maligne Hyperthermie; Narkosegase stoppen, 100% O2 geben, Dantrolen aufziehen",
-            "CO2-Embolie; Patient flach lagern",
-            "Opioid-Überdosierung; Naloxon geben",
-            "Pneumothorax; Entlastungspunktion"
+            "Anaphylaktischer Schock; Adrenalin verabreichen",
+            "Maligne Hyperthermie; Sevofluran stoppen, 100% O2 High-Flow geben, Dantrolen verabreichen",
+            "CO2-Gasembolie; Patientin in Trendelenburg-Lagerung bringen",
+            "Opioid-Überdosierung; sofort Naloxon spritzen",
+            "Spannungspneumothorax; unverzüglich Entlastungspunktion durchführen"
           ],
           answer: 1,
-          explanation: "Richtig ist Maligne Hyperthermie. Bei hohem etCO2, Tachykardie und Fieber müssen Narkosegase sofort gestoppt und Dantrolen gegeben werden."
+          explanation: "Der steile Anstieg von etCO2, die Tachykardie und der schnelle Temperaturanstieg sind klassische Leitsymptome einer Malignen Hyperthermie. Das Narkosegas Sevofluran muss sofort gestoppt, die Patientin mit 100% Sauerstoff überbeatmet und das spezifische Medikament Dantrolen verabreicht werden."
         },
         {
-          patientInfo: "PATIENTENFALL: 70-jähriger Patient im Aufwachraum nach Bauch-OP. Er hat Diabetes und KHK. Er ist sehr müde. Atemfrequenz: 7/min. SpO2: 87 %.",
-          question: "Was ist die Ursache und was ist die beste erste Maßnahme?",
-          svgType: "capno",
+          patientInfo: "PATIENTENFALL: Ein 72-jähriger Patient mit Diabetes mellitus Typ 2 und KHK wird nach einer mehrstündigen abdominellen Operation in den Aufwachraum übernommen. Nach 30 Minuten Überwachung ist der Patient nur schwer erweckbar. Seine Atemfrequenz sinkt auf 6 bis 7 Atemzüge pro Minute, und die Sauerstoffsättigung (SpO2) fällt unter Raumluft auf 86 % ab.",
+          question: "Welche Ursache ist am wahrscheinlichsten und wie reagieren Sie primär richtig?",
           options: [
-            "Restrelaxierung; Sugammadex geben",
-            "Opioid-Überhang; Patient ansprechen, O2 geben, evtl. Naloxon vorsichtig dosieren",
-            "Lungenembolie; Lysis starten",
-            "Volumenmangel; 2000 ml Ringer-Laktat geben",
-            "Hypoglykämie; sofort 40% Glukose spritzen"
+            "Postoperative Restrelaxierung; sofort Sugammadex verabreichen",
+            "Opioid-Überhang; Patient verbal/taktil stimulieren, Sauerstoff geben und ggf. Naloxon fraktioniert titrieren",
+            "Akute Lungenembolie; sofortige Thrombolyse einleiten",
+            "Volumenmangelschock; rasche Infusion von 2000 ml Ringer-Laktat",
+            "Hypoglykämischer Schock; sofort 40%ige Glukoselösung i.v. spritzen"
           ],
           answer: 1,
-          explanation: "Richtig ist Opioid-Überhang. Eine niedrige Atemfrequenz (7/min) nach OP deutet auf Schmerzmittelwirkung hin. Zuerst O2 geben und den Patienten zum Atmen auffordern."
+          explanation: "Eine deutliche Bradypnoe (AF 6-7/min) und Somnolenz nach Narkose weisen typischerweise auf einen Opioid-Überhang hin. Der Patient muss zum Atmen aufgefordert, mit Sauerstoff versorgt und bei Bedarf vorsichtig mit Naloxon titriert werden."
         },
         {
-          patientInfo: "PATIENTENFALL: 52-jährige Patientin mit Diabetes. Nach Injektion von Propofol fällt der Blutdruck von 130/80 auf 82/48 mmHg.",
-          question: "Welche Ursache liegt vor und welches Medikament hilft als Bolus?",
-          svgType: "meds",
+          patientInfo: "PATIENTENFALL: Eine 52-jährige Patientin mit Diabetes mellitus Typ 2 wird elektiv für eine Hysterektomie vorbereitet. Zur Narkoseeinleitung erhält sie 180 mg Propofol und 25 µg Sufentanil i.v. Etwa 90 Sekunden nach der Injektion fällt der arterielle Blutdruck von initial 135/82 mmHg stark auf 80/42 mmHg ab. Die Herzfrequenz bleibt mit 70/min weitgehend stabil.",
+          question: "Was ist die Ursache für diesen Blutdruckabfall und welches Medikament ist als Bolus geeignet?",
           options: [
-            "Anaphylaktischer Schock; Adrenalin",
-            "Myokardinfarkt; Heparin",
-            "Propofol-Vasodilatation; Akrinor-Bolus geben",
-            "Volumenmangel; Erythrozytenkonzentrat",
-            "Sepsis; Antibiotikum"
+            "Anaphylaktischer Schock Grad IV; sofortige Gabe von Adrenalin",
+            "Akuter Myokardinfarkt; Gabe von Heparin und Aspirin",
+            "Propofol-induzierte periphere Vasodilatation; Gabe eines Akrinor-Bolus (Cafedrin/Theodrenalin)",
+            "Massiver Volumenmangel; sofortige Gabe von Erythrozytenkonzentraten",
+            "Sepsis im Frühstadium; sofortige Gabe von Breitbandantibiotika"
           ],
           answer: 2,
-          explanation: "Richtig ist Propofol-Vasodilatation. Propofol weitet die Gefäße. Ein Bolus Akrinor (oder Noradrenalin) stellt den Blutdruck schnell wieder her."
+          explanation: "Propofol führt regelmäßig zu einer peripheren Vasodilatation und Senkung des Sympathikustonus, was einen Blutdruckabfall bewirkt. Ein Bolus Akrinor stellt den venösen Rückfluss und den Blutdruck schnell wieder her."
         },
         {
-          patientInfo: "PATIENTENFALL: 62-jähriger Patient mit schwerer COPD. Bei der Laryngoskopie sieht der ATA nur die Epiglottis (Cormack-Lehane III).",
-          question: "Welches Gerät hilft in dieser Situation am besten?",
-          svgType: "vlaryngo",
+          patientInfo: "PATIENTENFALL: Ein 62-jähriger adipöser Patient (BMI 36 kg/m²) mit bekannter schwerer COPD soll intubiert werden. Nach Ausfall der Eigenatmung führt der Anästhesist die Laryngoskopie durch. Im Rachenraum sieht man lediglich den weichen Gaumen und die Epiglottis, jedoch keine Stimmbandstrukturen (Cormack-Lehane Grad III).",
+          question: "Welches Hilfsmittel ist im Algorithmus für den schwierigen Atemweg in dieser Situation am besten geeignet?",
           options: [
-            "Guedel-Tubus",
-            "Videolaryngoskop oder Führungsstab (Bougie)",
-            "Larynxmaske 1. Generation",
-            "Wendel-Tubus",
-            "Koniotomie-Set"
+            "Verwendung eines Guedel-Tubus",
+            "Einsatz eines Videolaryngoskops oder eines Intubations-Bougies (Führungsstab)",
+            "Einlegen einer Larynxmaske der 1. Generation",
+            "Verwendung eines Wendel-Tubus",
+            "Unverzügliche Koniotomie ohne weiteren Versuch"
           ],
           answer: 1,
-          explanation: "Richtig ist das Videolaryngoskop oder ein Bougie. Damit kann man die Stimmbandebene trotz erschwertem Atemweg besser sehen und intubieren."
+          explanation: "Bei Cormack-Lehane Grad III verbessert ein Videolaryngoskop oder ein elastischer Intubations-Bougie die Sicht auf den Kehlkopfeingang bzw. das Führen des Tubus entscheidend und ist das Standardvorgehen im DGAI-Algorithmus."
         }
       ];
-
-      // SCHEME SVG ICON COMPONENT
-      const TechnicalEquipmentSVG = ({ type }) => {
-        switch (type) {
-          case 'ett':
-            return (
-              <svg className="w-24 h-24 text-teal-400 mx-auto mb-2" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="3">
-                <path d="M20,20 C40,20 70,30 80,80" />
-                <ellipse cx="75" cy="70" rx="8" ry="5" fill="#14b8a6" fillOpacity="0.4" />
-                <line x1="20" y1="20" x2="15" y2="15" strokeWidth="5" />
-                <text x="30" y="40" fill="#22d3ee" fontSize="8" strokeWidth="0">Tubus (ETT)</text>
-              </svg>
-            );
-          case 'vlaryngo':
-            return (
-              <svg className="w-24 h-24 text-cyan-400 mx-auto mb-2" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="3">
-                <path d="M30,80 L30,40 L70,30" />
-                <circle cx="70" cy="30" r="4" fill="#f59e0b" />
-                <rect x="20" y="70" width="20" height="20" rx="3" fill="#0e7490" />
-                <text x="35" y="60" fill="#22d3ee" fontSize="8" strokeWidth="0">Videolaryngoskop</text>
-              </svg>
-            );
-          case 'vapor':
-            return (
-              <svg className="w-24 h-24 text-amber-400 mx-auto mb-2" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="3">
-                <rect x="30" y="30" width="40" height="50" rx="5" fill="#1e293b" />
-                <circle cx="50" cy="50" r="12" fill="#f59e0b" fillOpacity="0.3" />
-                <line x1="50" y1="30" x2="50" y2="20" />
-                <text x="32" y="75" fill="#f59e0b" fontSize="8" strokeWidth="0">Verdampfer</text>
-              </svg>
-            );
-          case 'capno':
-            return (
-              <svg className="w-24 h-24 text-teal-300 mx-auto mb-2" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="3">
-                <rect x="10" y="20" width="80" height="60" rx="5" fill="#0f172a" />
-                <path d="M20,60 L35,60 L40,35 L55,35 L60,60 L80,60" stroke="#10b981" strokeWidth="3" fill="none" />
-                <text x="20" y="30" fill="#10b981" fontSize="8" strokeWidth="0">etCO2 Kapnografie</text>
-              </svg>
-            );
-          case 'meds':
-            return (
-              <svg className="w-24 h-24 text-rose-400 mx-auto mb-2" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="3">
-                <rect x="40" y="20" width="20" height="50" rx="2" fill="#be123c" fillOpacity="0.4" />
-                <line x1="50" y1="70" x2="50" y2="85" strokeWidth="4" />
-                <line x1="35" y1="20" x2="65" y2="20" strokeWidth="4" />
-                <text x="25" y="95" fill="#f43f5e" fontSize="8" strokeWidth="0">Spritze / Perfusor</text>
-              </svg>
-            );
-          case 'ecg':
-            return (
-              <svg className="w-24 h-24 text-emerald-400 mx-auto mb-2" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="3">
-                <rect x="10" y="20" width="80" height="60" rx="5" fill="#020617" />
-                <path d="M15,50 L30,50 L35,30 L40,70 L45,40 L50,55 L55,50 L85,50" stroke="#10b981" strokeWidth="3" fill="none" />
-                <text x="20" y="35" fill="#10b981" fontSize="8" strokeWidth="0">EKG Monitor</text>
-              </svg>
-            );
-          case 'ventilator':
-            return (
-              <svg className="w-24 h-24 text-cyan-300 mx-auto mb-2" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="3">
-                <rect x="25" y="15" width="50" height="70" rx="4" fill="#0f172a" />
-                <line x1="35" y1="35" x2="65" y2="35" stroke="#06b6d4" />
-                <line x1="35" y1="50" x2="65" y2="50" stroke="#06b6d4" />
-                <circle cx="50" cy="68" r="6" fill="#06b6d4" />
-                <text x="28" y="28" fill="#06b6d4" fontSize="7" strokeWidth="0">Beatmungsgerät</text>
-              </svg>
-            );
-          case 'tof':
-            return (
-              <svg className="w-24 h-24 text-amber-300 mx-auto mb-2" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="3">
-                <rect x="20" y="30" width="60" height="40" rx="4" fill="#1e293b" />
-                <line x1="30" y1="45" x2="30" y2="55" stroke="#f59e0b" strokeWidth="4" />
-                <line x1="43" y1="45" x2="43" y2="55" stroke="#f59e0b" strokeWidth="4" />
-                <line x1="56" y1="45" x2="56" y2="55" stroke="#f59e0b" strokeWidth="4" />
-                <line x1="69" y1="45" x2="69" y2="55" stroke="#f59e0b" strokeWidth="4" />
-                <text x="25" y="22" fill="#f59e0b" fontSize="8" strokeWidth="0">TOF Stimulator</text>
-              </svg>
-            );
-          case 'pvk':
-            return (
-              <svg className="w-24 h-24 text-emerald-500 mx-auto mb-2" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="3">
-                <line x1="10" y1="50" x2="70" y2="50" stroke="#10b981" strokeWidth="6" />
-                <polygon points="70,45 85,50 70,55" fill="#10b981" />
-                <rect x="30" y="40" width="15" height="20" fill="#10b981" />
-                <text x="20" y="30" fill="#10b981" fontSize="8" strokeWidth="0">PVK Grün (18G)</text>
-              </svg>
-            );
-          default:
-            return (
-              <svg className="w-24 h-24 text-teal-400 mx-auto mb-2" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="3">
-                <circle cx="50" cy="50" r="30" stroke="#14b8a6" />
-                <text x="35" y="55" fill="#14b8a6" fontSize="12" strokeWidth="0">ATA</text>
-              </svg>
-            );
-        }
-      };
 
       function App() {
         const [activeMode, setActiveMode] = useState('general');
@@ -357,12 +247,12 @@
           const isCaseMode = activeMode === 'case';
           const prompt = isCaseMode
             ? `Erstelle genau 10 fallbasierte Multiple-Choice-Fragen auf Deutsch (Sprachniveau B1-B2) für die Anästhesietechnische Assistent (ATA) Kenntnisprüfung (KP) in Deutschland.
-               Berücksichtige Patientenvorerweiterungen wie COPD, Diabetes mellitus Typ 2 und KHK sowie Anästhesiegeräte (Verdampfer, ETT, Videolaryngoskop, Beatmung, Kapnografie, TOF).
-               Jede Frage MUSS ein Objekt mit "patientInfo" (kurzer Fall mit Erkrankungen), "question" (einfache B1-B2 Frage), "svgType" (eines aus: "ett", "vlaryngo", "vapor", "capno", "meds", "ecg", "ventilator", "tof", "pvk"), "options" (genau 5 Optionen A-E), "answer" (Index 0-4) und "explanation" (Erklärung warum richtig) sein.
+               Erstelle einen ausführlichen, langen Patientenfall (3-5 Sätze) mit Anamnese, Vorerkrankungen (z.B. COPD, Diabetes mellitus Typ 2, KHK) und genauen Vitalparametern.
+               Jede Frage MUSS ein Objekt mit "patientInfo" (ausführlicher Fall), "question" (Frage auf B1-B2 Deutsch), "options" (genau 5 Optionen A-E), "answer" (Index 0-4) und "explanation" (Erklärung warum richtig) sein.
                Antworte STRENG als JSON-Array von 10 Objekten ohne Codeblock-Tags.`
             : `Erstelle genau 10 allgemeine Multiple-Choice-Fragen auf Deutsch (Sprachniveau B1-B2) für die Anästhesietechnische Assistent (ATA) Kenntnisprüfung (KP) in Deutschland.
-               Integiere Vorerkrankungen (COPD, Diabetes, KHK), Anästhesiegeräte, Notfälle und Medikamente.
-               Jede Frage MUSS ein Objekt mit "question" (Frage in leichtem B1-B2 Deutsch), "svgType" (eines aus: "ett", "vlaryngo", "vapor", "capno", "meds", "ecg", "ventilator", "tof", "pvk"), "options" (genau 5 Optionen A-E), "answer" (Index 0-4) und "explanation" (Erklärung warum genau diese Antwort richtig ist) sein.
+               Integiere Vorerkrankungen (COPD, Diabetes, KHK), Anästhesiegeräte, Notfälle und Pharmakologie.
+               Jede Frage MUSS ein Objekt mit "question" (Frage in leichtem B1-B2 Deutsch), "options" (genau 5 Optionen A-E), "answer" (Index 0-4) und "explanation" (Erklärung warum genau diese Antwort richtig ist) sein.
                Antworte STRENG als JSON-Array von 10 Objekten ohne Codeblock-Tags.`;
 
           try {
@@ -531,14 +421,9 @@
                     </div>
                   </div>
 
-                  {/* Geräte- und Schemabild */}
-                  <div className="bg-black p-4 rounded-2xl border border-zinc-800 text-center">
-                    <TechnicalEquipmentSVG type={questionsList[currentQ]?.svgType} />
-                  </div>
-
-                  {/* Fallbeispiel Anzeige */}
+                  {/* Ausführliches Fallbeispiel */}
                   {questionsList[currentQ]?.patientInfo && (
-                    <div className="bg-black p-4 sm:p-6 rounded-2xl border-l-4 sm:border-l-8 border-l-cyan-400 border border-zinc-800 space-y-1 sm:space-y-2">
+                    <div className="bg-black p-5 sm:p-7 rounded-2xl border-l-4 sm:border-l-8 border-l-cyan-400 border border-zinc-800 space-y-2">
                       <span className="text-xs sm:text-sm font-black text-cyan-400 uppercase tracking-widest block">Klinischer Patientenfall</span>
                       <p className="text-base sm:text-xl text-zinc-200 leading-relaxed font-medium">
                         {questionsList[currentQ].patientInfo}
@@ -571,7 +456,7 @@
                           key={idx}
                           onClick={() => handleOptionClick(idx)}
                           disabled={selectedOption !== null}
-                          className={`w-full text-left p-3 sm:p-4 rounded-2xl border-2 transition-all duration-150 text-xs sm:text-base lg:text-lg flex items-center gap-3 sm:gap-4 ${btnStyle}`}
+                          className={`w-full text-left p-3.5 sm:p-5 rounded-2xl border-2 transition-all duration-150 text-xs sm:text-base lg:text-lg flex items-center gap-3 sm:gap-4 ${btnStyle}`}
                         >
                           <span className="w-7 h-7 sm:w-9 sm:h-9 rounded-xl bg-black border border-zinc-700 flex items-center justify-center font-mono font-black text-xs sm:text-base text-amber-400 shrink-0">
                             {optionLabels[idx]}
