@@ -321,36 +321,43 @@
                Jede Frage MUSS ein Objekt mit "question" (Frage in leichtem B1-B2 Deutsch), "options" (genau 5 Optionen A-E), "answer" (Index 0-4) und "explanation" (Erklärung warum genau diese Antwort richtig ist) sein.
                Antworte STRENG als JSON-Array von 10 Objekten ohne Codeblock-Tags.`;
 
-          try {
-            // Doğrudan stabil olan gemini-2.5-flash çağrısı
-            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${cleanApiKey}`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-            });
+          // Otomatik Yedekli Model Listesi (Google 3.8-flash şart koşuyor, tıkandığında 1.5-flash devreye girer)
+          const modelsToTry = ['gemini-3.8-flash', 'gemini-1.5-flash'];
+          let success = false;
+          let lastErrorMsg = '';
 
-            const data = await res.json();
-            if (!res.ok || data.error) {
-              throw new Error(data.error?.message || "Fehler bei der API-Anfrage.");
+          for (const model of modelsToTry) {
+            try {
+              const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${cleanApiKey}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+              });
+
+              const data = await res.json();
+              if (res.ok && !data.error && data.candidates?.[0]?.content?.parts?.[0]?.text) {
+                const text = data.candidates[0].content.parts[0].text;
+                const cleanJson = text.replace(/```json|```/g, '').trim();
+                const newQuestions = JSON.parse(cleanJson);
+
+                if (Array.isArray(newQuestions) && newQuestions.length > 0) {
+                  setQuestionsList(newQuestions);
+                  resetQuiz();
+                  success = true;
+                  break;
+                }
+              } else if (data.error?.message) {
+                lastErrorMsg = data.error.message;
+              }
+            } catch (err) {
+              lastErrorMsg = err.message;
             }
-
-            const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (!text) {
-              throw new Error("Keine gültigen Daten von der KI erhalten.");
-            }
-
-            const cleanJson = text.replace(/```json|```/g, '').trim();
-            const newQuestions = JSON.parse(cleanJson);
-
-            if (Array.isArray(newQuestions) && newQuestions.length > 0) {
-              setQuestionsList(newQuestions);
-              resetQuiz();
-            }
-          } catch (err) {
-            alert("Fehler bei der KI-Generierung: " + err.message);
-          } finally {
-            setAiGeneratingQuestions(false);
           }
+
+          if (!success) {
+            alert("Fehler bei der KI-Generierung: " + (lastErrorMsg || "Bitte versuchen Sie es in wenigen Minuten erneut."));
+          }
+          setAiGeneratingQuestions(false);
         };
 
         const handleOptionClick = (index) => {
