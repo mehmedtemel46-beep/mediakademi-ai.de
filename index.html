@@ -15,7 +15,7 @@
     <script type="text/babel">
       const { useState } = React;
 
-      // 10 ALLGEMEINE ATA FRAGEN (B1-B2 DEUTSCH, PHARMA, BEATMUNG, ANATOMIE, RECHT)
+      // 10 ALLGEMEINE ATA FRAGEN (B1-B2 DEUTSCH)
       const DEFAULT_GENERAL_QUESTIONS = [
         {
           question: "Ein 68-jähriger Patient mit bekannter COPD Gold III und Koronarer Herzkrankheit (KHK) wird für eine elektive Laparotomie intubiert. Wie hoch sollte der Cuffdruck des Endotrachealtubus eingestellt werden?",
@@ -139,10 +139,10 @@
         }
       ];
 
-      // 10 FALLBASIERTE ATA FRAGEN (AUSFÜHRLICHE PATIENTENFÄLLE)
+      // 10 FALLBASIERTE ATA FRAGEN (10 AUSFÜHRLICHE PATIENTENFÄLLE)
       const DEFAULT_CASE_QUESTIONS = [
         {
-          patientInfo: "PATIENTENFALL: Ein 68-jähriger männlicher Patient (Gewicht: 88 kg, Größe: 176 cm) wird als Notfall wegen eines akuten mechanischen Dünndarmileus in den OP gebracht. Anamnestisch bestehen eine ausgeprägte COPD (Gold III) sowie ein chronischer Diabetes mellitus Typ 2. Der Patient hat vor etwa 90 Minuten noch eine feste Mahlzeit zu sich genommen und klagt über starke Bauchschmerzen sowie aktives Erbrechen.",
+          patientInfo: "PATIENTENFALL 1: Ein 68-jähriger männlicher Patient (Gewicht: 88 kg, Größe: 176 cm) wird als Notfall wegen eines akuten mechanischen Dünndarmileus in den OP gebracht. Anamnestisch bestehen eine ausgeprägte COPD (Gold III) sowie ein chronischer Diabetes mellitus Typ 2. Der Patient hat vor etwa 90 Minuten noch eine feste Mahlzeit zu sich genommen und klagt über starke Bauchschmerzen sowie aktives Erbrechen.",
           question: "Welches Anästhesieverfahren ist für die Narkoseeinleitung bei diesem Patienten zwingend indiziert?",
           options: [
             "Standard-Einleitung mit vorsichtiger Maskenbeatmung",
@@ -155,7 +155,7 @@
           explanation: "Aufgrund des akuten Ileus und der fehlenden Nüchternheit besteht ein extrem hohes Aspirationsrisiko. Indiziert ist zwingend eine Rapid Sequence Induction (RSI) ohne Zwischenbeatmung, um das Eindringen von Mageninhalt in die Lunge zu verhindern."
         },
         {
-          patientInfo: "PATIENTENFALL: Eine 58-jährige Patientin mit bekannter Koronarer Herzkrankheit (KHK) und arterieller Hypertonie unterzieht sich einer laparoskopischen Cholezystektomie. Die Narkose wird balanciert mit Sevofluran, Sufentanil und Rocuronium geführt. Nach 45 Minuten OP-Dauer steigt das etCO2 plötzlich von 36 mmHg auf 68 mmHg an. Die Herzfrequenz klettert von 70 auf 138/min, und die Körpertemperatur steigt innerhalb kurzer Zeit um 1,8 °C an.",
+          patientInfo: "PATIENTENFALL 2: Eine 58-jährige Patientin mit bekannter Koronarer Herzkrankheit (KHK) und arterieller Hypertonie unterzieht sich einer laparoskopischen Cholezystektomie. Die Narkose wird balanciert mit Sevofluran, Sufentanil und Rocuronium geführt. Nach 45 Minuten OP-Dauer steigt das etCO2 plötzlich von 36 mmHg auf 68 mmHg an. Die Herzfrequenz klettert von 70 auf 138/min, und die Körpertemperatur steigt innerhalb kurzer Zeit um 1,8 °C an.",
           question: "Welche akute Narkosekomplikation liegt hier vor und was ist die unverzügliche Erstmaßnahme?",
           options: [
             "Anaphylaktischer Schock; Adrenalin verabreichen",
@@ -168,7 +168,7 @@
           explanation: "Der steile Anstieg von etCO2, die Tachykardie und der schnelle Temperaturanstieg sind klassische Leitsymptome einer Malignen Hyperthermie. Das Narkosegas Sevofluran muss sofort gestoppt, die Patientin mit 100% Sauerstoff überbeatmet und das spezifische Medikament Dantrolen verabreicht werden."
         },
         {
-          patientInfo: "PATIENTENFALL: Ein 72-jähriger Patient mit Diabetes mellitus Typ 2 und KHK wird nach einer mehrstündigen abdominellen Operation in den Aufwachraum übernommen. Nach 30 Minuten Überwachung ist der Patient nur schwer erweckbar. Seine Atemfrequenz sinkt auf 6 bis 7 Atemzüge pro Minute, und die Sauerstoffsättigung (SpO2) fällt unter Raumluft auf 86 % ab.",
+          patientInfo: "PATIENTENFALL 3: Ein 72-jähriger Patient mit Diabetes mellitus Typ 2 und KHK wird nach einer mehrstündigen abdominellen Operation in den Aufwachraum übernommen. Nach 30 Minuten Überwachung ist der Patient nur schwer erweckbar. Seine Atemfrequenz sinkt auf 6 bis 7 Atemzüge pro Minute, und die Sauerstoffsättigung (SpO2) fällt unter Raumluft auf 86 % ab.",
           question: "Welche Ursache ist am wahrscheinlichsten und wie reagieren Sie primär richtig?",
           options: [
             "Postoperative Restrelaxierung; sofort Sugammadex verabreichen",
@@ -181,7 +181,7 @@
           explanation: "Eine deutliche Bradypnoe (AF 6-7/min) und Somnolenz nach Narkose weisen typischerweise auf einen Opioid-Überhang hin. Der Patient muss zum Atmen aufgefordert, mit Sauerstoff versorgt und bei Bedarf vorsichtig mit Naloxon titriert werden."
         },
         {
-          patientInfo: "PATIENTENFALL: Eine 52-jährige Patientin mit Diabetes mellitus Typ 2 wird elektiv für eine Hysterektomie vorbereitet. Zur Narkoseeinleitung erhält sie 180 mg Propofol und 25 µg Sufentanil i.v. Etwa 90 Sekunden nach der Injektion fällt der arterielle Blutdruck von initial 135/82 mmHg stark auf 80/42 mmHg ab. Die Herzfrequenz bleibt mit 70/min weitgehend stabil.",
+          patientInfo: "PATIENTENFALL 4: Eine 52-jährige Patientin mit Diabetes mellitus Typ 2 wird elektiv für eine Hysterektomie vorbereitet. Zur Narkoseeinleitung erhält sie 180 mg Propofol und 25 µg Sufentanil i.v. Etwa 90 Sekunden nach der Injektion fällt der arterielle Blutdruck von initial 135/82 mmHg stark auf 80/42 mmHg ab. Die Herzfrequenz bleibt mit 70/min weitgehend stabil.",
           question: "Was ist die Ursache für diesen Blutdruckabfall und welches Medikament ist als Bolus geeignet?",
           options: [
             "Anaphylaktischer Schock Grad IV; sofortige Gabe von Adrenalin",
@@ -194,7 +194,7 @@
           explanation: "Propofol führt regelmäßig zu einer peripheren Vasodilatation und Senkung des Sympathikustonus, was einen Blutdruckabfall bewirkt. Ein Bolus Akrinor stellt den venösen Rückfluss und den Blutdruck schnell wieder her."
         },
         {
-          patientInfo: "PATIENTENFALL: Ein 62-jähriger adipöser Patient (BMI 36 kg/m²) mit bekannter schwerer COPD soll intubiert werden. Nach Ausfall der Eigenatmung führt der Anästhesist die Laryngoskopie durch. Im Rachenraum sieht man lediglich den weichen Gaumen und die Epiglottis, jedoch keine Stimmbandstrukturen (Cormack-Lehane Grad III).",
+          patientInfo: "PATIENTENFALL 5: Ein 62-jähriger adipöser Patient (BMI 36 kg/m²) mit bekannter schwerer COPD soll intubiert werden. Nach Ausfall der Eigenatmung führt der Anästhesist die Laryngoskopie durch. Im Rachenraum sieht man lediglich den weichen Gaumen und die Epiglottis, jedoch keine Stimmbandstrukturen (Cormack-Lehane Grad III).",
           question: "Welches Hilfsmittel ist im Algorithmus für den schwierigen Atemweg in dieser Situation am besten geeignet?",
           options: [
             "Verwendung eines Guedel-Tubus",
@@ -205,6 +205,71 @@
           ],
           answer: 1,
           explanation: "Bei Cormack-Lehane Grad III verbessert ein Videolaryngoskop oder ein elastischer Intubations-Bougie die Sicht auf den Kehlkopfeingang bzw. das Führen des Tubus entscheidend und ist das Standardvorgehen im DGAI-Algorithmus."
+        },
+        {
+          patientInfo: "PATIENTENFALL 6: Ein 75-jähriger Patient mit KHK und Diabetes mellitus Typ 2 erhält eine Knie-TEP in Spinalanästhesie. 10 Minuten nach der Injektion von Hyperbarem Bupivacain klagt der Patient über Schwindel und Übelkeit. Der Blutdruck sinkt von 140/85 auf 85/50 mmHg, die Herzfrequenz fällt auf 48/min.",
+          question: "Welche physiologische Ursache erklärt diese Reaktion und wie reagieren Sie?",
+          options: [
+            "Anaphylaxie auf Bupivacain; Gabe von Clemastin",
+            "Sympathikusblockade durch Spinalanästhesie; Gabe von Atropin/Akrinor und Flachlagerung/Beinhochentlastung",
+            "Lungenembolie; Intubation vorbereiten",
+            "Lokalanästhetika-Intoxikation (LAST); Lipid-Infusion verabreichen",
+            "Kardiogener Schock; Defibrillation vorbereiten"
+          ],
+          answer: 1,
+          explanation: "Die Ausbreitung des Lokalanästhetikums blockiert sympathische Fasern, was zu Vasodilatation und Bradykardie führt. Die Behandlung erfolgt primär mit Sympathomimetika (Akrinor/Atropin) und Lagerungsoptimierung."
+        },
+        {
+          patientInfo: "PATIENTENFALL 7: Eine 44-jährige Patientin mit bekanntem Asthma bronchiale soll extubiert werden. Kurz nach dem Entfernen des Endotrachealtubus entwickelt die Patientin ein inspiratorisches Stridor-Geräusch, eine paradoxe Atmung und eine stark abfallende Sauerstoffsättigung. Die Auskultation zeigt keine Atemgeräusche mehr über beiden Lungenflügeln.",
+          question: "Welche akute Komplikation liegt vor und was ist die primäre Behandlung?",
+          options: [
+            "Bronchospasmus; Gabe von Sevofluran über Maske",
+            "Laryngospasmus; Kiefereinfluss (Esmarch-Handgriff), CPAP mit 100% O2, ggf. kleine Dosis Propofol oder Succinylcholin",
+            "Aspiration; sofortiges Absaugen der Trachea",
+            "Pneumothorax; sofortige Pleuradrainage",
+            "Opioid-Überhang; Naloxon-Gabe"
+          ],
+          answer: 1,
+          explanation: "Der Verschluss der Stimmritze (Laryngospasmus) ist ein Notfall nach Extubation. Kiefereinfluss und kontinuierlicher positiver Atemwegsdruck (CPAP) mit 100% O2 sind die ersten Schritte; bei Persistenz helfen Propofol oder Succinylcholin."
+        },
+        {
+          patientInfo: "PATIENTENFALL 8: Ein 60-jähriger COPD-Patient befindet sich seit 3 Stunden in einer laparoskopischen Bauchoperation. Im Verlauf fällt das Atemzugvolumen ab und der Beatmungsspitzendruck (Pmax) steigt von 22 auf 36 cmH2O an. Die Auskultation offenbart brummende Nebengeräusche über beiden Lungenfeldern.",
+          question: "Welche Ursache liegt nahe und wie reagiert das Anästhesieteam?",
+          options: [
+            "Endobronchiale Fehlintubation; Tubus 5 cm zurückziehen",
+            "Bronchospasmus bei COPD; Gabe von inhalativen Beta-2-Sympathomimetika (z. B. Salbutamol) und Vertiefung der Narkose",
+            "Verstopfter Atemkalk; CO2-Absorber wechseln",
+            "Maligne Hyperthermie; Dantrolen geben",
+            "Kardiogenes Lungenödem; Furosemid i.v."
+          ],
+          answer: 1,
+          explanation: "Der Anstieg der Spitzendrücke bei brummenden Atemgeräuschen spricht für einen intraoperativen Bronchospasmus bei COPD. Behandlung: Narkose vertiefen und inhalative Bronchodilatatoren verabreichen."
+        },
+        {
+          patientInfo: "PATIENTENFALL 9: Ein 65-jähriger Diabetiker wird nach einer Notfall-OP extubiert. Im Aufwachraum zeigt der Patient kalten Schweiß, Tremor, Verwirrtheit und eine Herzfrequenz von 115/min. Der Blutdruck liegt bei 150/90 mmHg.",
+          question: "Welcher Wert muss unverzüglich kontrolliert werden?",
+          options: [
+            "Blutzuckerspiegel (Ausschluss einer Hypoglykämie)",
+            "Arterieller PCO2-Wert",
+            "Serum-Kalium-Spiegel",
+            "Troponin-T-Wert",
+            "Hämoglobin-Konzentration"
+          ],
+          answer: 0,
+          explanation: "Autonome Symptome wie Schwitzen, Tremor und Verwirrtheit nach OP bei Diabetikern weisen dringend auf eine postpartale Hypoglykämie hin, die sofort per BZ-Messung abgeklärt und mit Glukose behandelt werden muss."
+        },
+        {
+          patientInfo: "PATIENTENFALL 10: Während einer elektiven Operation bemerkt die ATA, dass die Sauerstoffsättigung im Pulsoximeter kontinuierlich von 99% auf 91% abfällt, obwohl eine FiO2 von 0,5 eingestellt ist. Der Beatmungsschlauch zeigt Kondenswasser und die etCO2-Kurve ist unauffällig.",
+          question: "Welcher technische bzw. klinische Schritt sollte als erster überprüft werden?",
+          options: [
+            "Überprüfung des Pulsoximeter-Sensors am Finger (Minderperfusion/Dislocation) und Kontrolle der BGA",
+            "Sofortiger Wechsel des Beatmungsgeräts",
+            "Umschalten auf TIVA",
+            "Gabe von Doxapram zur Atemstimulation",
+            "Notfall-Tracheotomie"
+          ],
+          answer: 0,
+          explanation: "Bei plötzlichem Abfall der SpO2 ohne Beatmungsdruck- oder etCO2-Veränderung muss als Erstes der Sitz des Sensors sowie die periphere Durchblutung geprüft und das Ergebnis mittels Blutgasanalyse (BGA) verifiziert werden."
         }
       ];
 
@@ -223,7 +288,7 @@
         const [isApiKeySaved, setIsApiKeySaved] = useState(!!localStorage.getItem('gemini_api_key'));
 
         const handleSaveApiKey = () => {
-          localStorage.setItem('gemini_api_key', apiKey);
+          localStorage.setItem('gemini_api_key', apiKey.trim());
           setIsApiKeySaved(true);
         };
 
@@ -238,12 +303,13 @@
         };
 
         const generate10QuestionsWithAI = async () => {
-          if (!apiKey) {
+          if (!apiKey || apiKey.trim() === '') {
             alert("Bitte geben Sie oben Ihren Gemini API-Schlüssel ein!");
             return;
           }
           setAiGeneratingQuestions(true);
 
+          const cleanApiKey = apiKey.trim();
           const isCaseMode = activeMode === 'case';
           const prompt = isCaseMode
             ? `Erstelle genau 10 fallbasierte Multiple-Choice-Fragen auf Deutsch (Sprachniveau B1-B2) für die Anästhesietechnische Assistent (ATA) Kenntnisprüfung (KP) in Deutschland.
@@ -256,12 +322,22 @@
                Antworte STRENG als JSON-Array von 10 Objekten ohne Codeblock-Tags.`;
 
           try {
-            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`, {
+            // Primärer Versuch: gemini-3.8-flash
+            let res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${cleanApiKey}`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
             });
-            
+
+            // Falls gemini-3.8-flash ausgelastet ist (High Demand / 503 / 429), automatisch auf gemini-2.5-flash ausweichen
+            if (!res.ok) {
+              res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${cleanApiKey}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+              });
+            }
+
             const data = await res.json();
             if (!res.ok || data.error) {
               throw new Error(data.error?.message || "Fehler bei der API-Anfrage.");
