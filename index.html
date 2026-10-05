@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mediakademi AI - Kenntnisprüfung & Klinik-Praxis</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              teal: {
+                50: '#f0fdfa',
+                100: '#ccfbf1',
+                400: '#2dd4bf',
+                500: '#14b8a6',
+                600: '#0d9488',
+                700: '#0f766e',
+                900: '#134e4a',
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+  <body class="bg-slate-950 text-slate-100 min-h-screen antialiased">
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const { useState, useEffect } = React;
+
+      // Profession Configs
+      const PROFESSIONS = [
+        { id: 'ata', name: 'Anästhesietechnischer Assistenz (ATA)', icon: '💉', desc: 'Anästhesie, OP-Einleitung, Narkosegeräte & Aufwachraum' },
+        { id: 'pflege', name: 'Gesundheits- & Krankenpflege', icon: '🩺', desc: 'Stationäre Pflege, Injektionen, Wundversorgung & SBAR' },
+        { id: 'altenpflege', name: 'Altenpflege / Geriatrie', icon: '👨‍🦽', desc: 'Geriatrische Pflege, Demenz, Mobilisation & Dysphagie' },
+        { id: 'physio', name: 'Physiotherapie', icon: '🏃', desc: 'Rehabilitation, Frühmobilisation & Atemtherapie' }
+      ];
+
+      // Hospital Dialogues & Sentences Database
+      const DIALOGUES_DB = [
+        {
+          category: 'sich_vorstellen',
+          profession: 'ata',
+          title: 'Sich beim Patienten vor der Anästhesie vorstellen',
+          de: 'Guten Tag, Herr/Frau Müller. Mein Name ist Mehmet Temel, ich bin der anästhesietechnische Assistent (ATA). Ich begleite Sie heute durch die Narkose und stehe Ihnen während der gesamten Operation zur Seite.',
+          tr: 'İyi günler Bay/Bayan Müller. Benim adım Mehmet Temel, anestezi teknikeri (ATA) olarak görev yapıyorum. Bugün anestezi sürecinde size eşlik edeceğim ve tüm ameliyat boyunca yanınızda olacağım.',
+          notes: 'Ruhe ausstrahlen, Blickkontakt halten'
+        },
+        {
+          category: 'sich_vorstellen',
+          profession: 'pflege',
+          title: 'Dienstbeginn & Vorstellung auf Station',
+          de: 'Guten Morgen, Frau Schneider. Mein Name ist Sarah, ich bin Ihre zuständige Pflegefachkraft für die Frühschicht. Wie haben Sie geschlafen und wie geht es Ihnen aktuell mit den Schmerzen?',
+          tr: 'Günaydın Bayan Schneider. Adım Sarah, sabah vardiyasında sizinle ilgilenecek sorumlu hemşireyim. Nasıl uyudunuz ve şu an ağrınız var mı?',
+          notes: 'Standardvorstellung zu Schichtbeginn'
+        },
+        {
+          category: 'patientenkommunikation',
+          profession: 'ata',
+          title: 'Ängstliche Patienten vor der Narkose beruhigen',
+          de: 'Es ist völlig normal, dass Sie etwas aufgeregt sind. Wir überwachen Ihre Vitalwerte lückenlos. Ich lege Ihnen jetzt die EKG-Elektroden an und gebe Ihnen etwas Sauerstoff über die Maske. Atmen Sie ganz ruhig ein und aus.',
+          tr: 'Biraz heyecanlı olmanız çok normal. Hayati bulgularınızı kesintisiz izliyoruz. Şimdi EKG elektrotlarını yerleştiriyorum ve maskeden oksijen veriyorum. Derin ve sakin nefes alın.',
+          notes: 'Empathisch & schrittweise erklären'
+        },
+        {
+          category: 'uebergabe',
+          profession: 'all',
+          title: 'SBAR-Übergabegespräch (Schichtübergabe)',
+          de: 'Situation: Ich übergebe Frau Becker, 68 Jahre, postOP nach HTEP. Hintergrund: Blutdruck stabil bei 130/80 mmHg, SpO2 97% unter 2L O2. Bewertung: Schmerzen aktuell NRS 3/10 unter Paracetamol. Empfehlung: Die nächste Antibiose ist um 14:00 Uhr fällig, Drainagenkontrolle um 12:00 Uhr.',
+          tr: 'Durum: 68 yaşında kalça protezi ameliyatı sonrası Bayan Becker\'i devrediyorum. Arka plan: Tansiyon 130/80 mmHg, %97 SpO2. Değerlendirme: Ağrı skoru Parasetamol ile 3/10. Öneri: Bir sonraki antibiyotik saat 14:00\'te, dren kontrolü 12:00\'de.',
+          notes: 'SBAR Schema: Situation, Background, Assessment, Recommendation'
+        }
+      ];
+
+      // Equipment & Anesthesia Safety Checks
+      const EQUIPMENT_CHECKS = [
+        {
+          id: 'narkosegeraet',
+          title: 'Narkosegeräte-Sicherheitscheck (Geräte-Check)',
+          steps: [
+            { step: '1. Strom- & Gasversorgung prüfen', de: 'Zentralgasversorgung (O2, Druckluft, N2O) und Reserveteilzylinder kontrollieren. USV (Notstrom) prüfen.', tr: 'Merkezi gaz beslemesini ve yedek tüpleri kontrol edin.' },
+            { step: '2. Dichtigkeits- & Leckagetest', de: 'Beatmungsschläuche auf Beschädigungen prüfen. Automatischen Selbsttest des Narkosegeräts durchführen.', tr: 'Solunum devresinin sızdırmazlık testini yapın.' },
+            { step: '3. Anästhesiegasmessung & Atemkalk', de: 'Atemkalk-Farbumschlag prüfen (Sättigung erkennen). Kapnografie (EtCO2) kalibrieren.', tr: 'Karbondiyoksit tutucu (soba-lime) rengini ve EtCO2 ölçümünü kontrol edin.' },
+            { step: '4. Absaugung & Notfall-Ambu-Beutel', de: 'Funktionsprüfung der Absaugpumpe und Vollständigkeit des Notfallbestecks.', tr: 'Aspiratör cihazının ve Ambu balunun hazır olduğunu doğrulayın.' }
+          ]
+        },
+        {
+          id: 'aufwachraum',
+          title: 'Aufwachraum (PACU) & Ausleitung Protokoll',
+          steps: [
+            { step: 'Extubation & Atemwege', de: 'Patient schutzreflexstark, spontanatmend, befolgt Aufforderungen ("Augen öffnen, Hand drücken").', tr: 'Hasta koruyucu reflekslere sahip, kendi nefes alıyor ve komutlara uyuyor.' },
+            { step: 'Schmerzbewertung (NRS)', de: 'Numerische Rating-Skala (0-10) erfragen. Bei NRS > 3 Bedarfsmedikation nach Anordnung (z.B. Piritramid/Dipidolor).', tr: 'Ağrı skorunu sorun (0-10). NRS > 3 ise ek ağrı kesici uygulayın.' },
+            { step: 'PONV-Management', de: 'Übelkeit und Erbrechen bewerten. Prophylaxe/Therapie mit Ondansetron oder Dexamethason.', tr: 'Bulantı ve kusmayı değerlendirin. Ondansetron veya Deksametazon uygulayın.' }
+          ]
+        }
+      ];
+
+      // Medications Dossier
+      const MEDS_DB = [
+        { name: 'Propofol', group: 'Hypnotikum / Anästhetikum', dosage: '1.5 - 2.5 mg/kg i.v.', indication: 'Narkoseeinleitung & TIVA', sideEffects: 'Hypotension, Apnoe, Injektionsschmerz', nursingNote: 'Aseptisch aufziehen, strenges Infektionsrisiko beachten!' },
+        { name: 'Fentanyl', group: 'Starkes Opioid-Analgetikum', dosage: '1 - 2 µg/kg i.v.', indication: 'Intraoperative Schmerzausschaltung', sideEffects: 'Atemdepression, Bradykardie, Rigidität', nursingNote: 'Naloxon als Antidot bereitkanten, Beatmung sicherstellen.' },
+        { name: 'Rocuronium', group: 'Nicht-depolarisierendes Muskelrelaxans', dosage: '0.6 mg/kg i.v.', indication: 'Endotracheale Intubation (Blitz-Relaxierung)', sideEffects: 'Tachycardie, allergische Reaktionen', nursingNote: 'Kühl lagern! Antidot: Sugammadex (Bridion).' },
+        { name: 'Noradrenalin', group: 'Vasopressor / Katecholamin', dosage: 'Perfusor (µg/kg/min)', indication: 'Schockzustände, schwere Hypotension', sideEffects: 'Gefäßkonstriktion, Reflexbradykardie', nursingNote: 'NUR über zentralen Venenkatheter (ZVK) verabreichen!' }
+      ];
+
+      function App() {
+        const [selectedProf, setSelectedProf] = useState('ata');
+        const [activeTab, setActiveTab] = useState('dialogues');
+        const [apiKey, setApiKey] = useState(localStorage.getItem('mediakademi_gemini_key') || '');
+        const [isKeySaved, setIsKeySaved] = useState(!!localStorage.getItem('mediakademi_gemini_key'));
+        
+        // AI State
+        const [aiCaseOutput, setAiCaseOutput] = useState('');
+        const [loadingAi, setLoadingAi] = useState(false);
+        const [userAnswer, setUserAnswer] = useState('');
+        const [evaluationOutput, setEvaluationOutput] = useState('');
+
+        const saveApiKey = () => {
+          localStorage.setItem('mediakademi_gemini_key', apiKey);
+          setIsKeySaved(true);
+        };
+
+        const generateAiCase = async () => {
+          if (!apiKey) {
+            alert('Bitte geben Sie zuerst Ihren Gemini API-Schlüssel ein.');
+            return;
+          }
+          setLoadingAi(true);
+          setAiCaseOutput('');
+          setEvaluationOutput('');
+
+          const profInfo = PROFESSIONS.find(p => p.id === selectedProf);
+          const prompt = `Erstelle einen hochrealistischen klinischen Fallbericht für die deutsche Kenntnisprüfung (KP) speziell für die Berufsgruppe: ${profInfo.name}.
+Structure:
+1. Patientendaten & Notfallanamnese (Patient, Alter, Befund)
+2. Vitalparameter (RR, HF, SpO2, EtCO2, Temperatur)
+3. Typische Aufgabenstellung für ${profInfo.name}
+4. 3 konkrete Prüfungsfragen zur Fachsprache, Medikamentengabe und Pflegemaßnahmen / OP-Ablauf.
+Antworte auf Deutsch in professioneller Medizinsprache.`;
+
+          try {
+            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+            });
+            const data = await res.json();
+            if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
+              setAiCaseOutput(data.candidates[0].content.parts[0].text);
+            } else {
+              setAiCaseOutput('Fehler beim Laden des Falles. Bitte API-Key überprüfen.');
+            }
+          } catch (err) {
+            setAiCaseOutput('Verbindungsfehler zur Gemini API: ' + err.message);
+          } finally {
+            setLoadingAi(false);
+          }
+        };
+
+        const evaluateUserAnswer = async () => {
+          if (!userAnswer || !aiCaseOutput) return;
+          setLoadingAi(true);
+
+          const prompt = `Du bist ein deutscher Prüfer für die Kenntnisprüfung im Bereich ${selectedProf}.
+Bewerte die folgende Antwort des Kandidaten zum aktuellen Fallbeispiel:
+Fall: ${aiCaseOutput}
+Kandidaten-Antwort: ${userAnswer}
+
+Gib konstruktives Feedback:
+1. Richtigkeit der medizinischen / pflegerischen Maßnahme
+2. Korrektur der deutschen Fachbegriffe (Fachsprache)
+3. Schulnote (Bestanden / Nachbesserung nötig).`;
+
+          try {
+            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+            });
+            const data = await res.json();
+            if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
+              setEvaluationOutput(data.candidates[0].content.parts[0].text);
+            }
+          } catch (err) {
+            setEvaluationOutput('Fehler bei der Auswertung.');
+          } finally {
+            setLoadingAi(false);
+          }
+        };
+
+        return (
+          <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
+            
+            {/* Top Bar */}
+            <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50 px-4 py-3">
+              <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-teal-500 to-emerald-600 flex items-center justify-center text-xl font-bold text-slate-950 shadow-lg shadow-teal-500/20">
+                    🏥
+                  </div>
+                  <div>
+                    <h1 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                      Mediakademi <span className="text-xs px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono border border-teal-500/30">KP & Praxis</span>
+                    </h1>
+                    <p className="text-xs text-slate-400">Kenntnisprüfung Tutor für Pflege, ATA & Physiotherapie</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <input
+                    type="password"
+                    placeholder="Gemini API-Schlüssel"
+                    value={apiKey}
+                    onChange={(e) => setApiKey(e.target.value)}
+                    className="bg-slate-950 border border-slate-800 text-xs px-3 py-2 rounded-lg text-slate-200 focus:outline-none focus:border-teal-500 w-full sm:w-64"
+                  />
+                  <button
+                    onClick={saveApiKey}
+                    className="bg-teal-600 hover:bg-teal-500 text-slate-950 font-bold text-xs px-3 py-2 rounded-lg transition shrink-0"
+                  >
+                    {isKeySaved ? 'Gespeichert ✓' : 'Speichern'}
+                  </button>
+                </div>
+              </div>
+            </header>
+
+            {/* Profession Selector Banner */}
+            <div className="bg-slate-900 border-b border-slate-800 px-4 py-3">
+              <div className="max-w-7xl mx-auto">
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Wähle deinen Fachbereich:</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
+                  {PROFESSIONS.map(p => (
+                    <button
+                      key={p.id}
+                      onClick={() => setSelectedProf(p.id)}
+                      className={`p-3 rounded-xl border text-left transition flex items-start gap-3 ${
+                        selectedProf === p.id 
+                          ? 'bg-teal-500/10 border-teal-500 text-teal-300 shadow-md shadow-teal-500/10' 
+                          : 'bg-slate-950/60 border-slate-800/80 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                      }`}
+                    >
+                      <span className="text-2xl">{p.icon}</span>
+                      <div>
+                        <div className="font-bold text-xs text-slate-100">{p.name}</div>
+                        <div className="text-[10px] text-slate-400 mt-0.5 line-clamp-1">{p.desc}</div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Main Navigation Tabs */}
+            <div className="border-b border-slate-800 bg-slate-900/50 px-4">
+              <div className="max-w-7xl mx-auto flex gap-2 overflow-x-auto py-2">
+                {[
+                  { id: 'dialogues', label: '💬 Sätze & Rollenspiele' },
+                  { id: 'anesthesia', label: '🫁 Anästhesie & OP-Technik' },
+                  { id: 'meds', label: '💊 Medikamente & Dosierung' },
+                  { id: 'ai-cases', label: '✨ KI-Fallbeispiele (KP Exam)' },
+                  { id: 'pricing', label: '⭐ Pro Mitgliedschaft' }
+                ].map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`px-4 py-2 rounded-xl font-semibold text-xs whitespace-nowrap transition ${
+                      activeTab === tab.id 
+                        ? 'bg-teal-600 text-slate-950 font-bold shadow-md shadow-teal-500/20' 
+                        : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Main Content Area */}
+            <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
+              
+              {/* TAB 1: Dialogues & Sentences */}
+              {activeTab === 'dialogues' && (
+                <div className="space-y-4">
+                  <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800">
+                    <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2">
+                      <span>💬</span> Praxissätze & Rollenspiele im Krankenhaus
+                    </h2>
+                    <p className="text-xs text-slate-400 mt-1">
+                      Wichtige Formulierungen für Patientenanweisung, Übergabe (SBAR) und Anästhesiebegleitung.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {DIALOGUES_DB.map((d, i) => (
+                      <div key={i} className="bg-slate-900/90 p-5 rounded-2xl border border-slate-800/80 space-y-3">
+                        <div className="flex justify-between items-start border-b border-slate-800 pb-2">
+                          <h3 className="font-bold text-sm text-teal-400">{d.title}</h3>
+                          <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300">
+                            {d.profession.toUpperCase()}
+                          </span>
+                        </div>
+
+                        <div>
+                          <p className="text-xs font-semibold text-slate-400 mb-1">Deutsch (Klinik-Standard):</p>
+                          <p className="text-xs text-slate-100 bg-slate-950 p-3 rounded-xl border border-slate-800/80 leading-relaxed italic">
+                            "{d.de}"
+                          </p>
+                        </div>
+
+                        <div>
+                          <p className="text-xs font-semibold text-teal-500/80 mb-1">Türkçe Açıklaması:</p>
+                          <p className="text-xs text-slate-300 bg-slate-950/60 p-3 rounded-xl leading-relaxed">
+                            {d.tr}
+                          </p>
+                        </div>
+
+                        {d.notes && (
+                          <div className="text-[11px] text-amber-400/90 flex items-center gap-1.5 pt-1">
+                            <span>💡 Tipp:</span> {d.notes}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 2: Anesthesia & Equipment */}
+              {activeTab === 'anesthesia' && (
+                <div className="space-y-6">
+                  <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800">
+                    <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2">
+                      <span>🫁</span> Anästhesiegeräte-Check & Aufwachraum
+                    </h2>
+                    <p className="text-xs text-slate-400 mt-1">
+                      Sicherheitsstandards für ATA und Pflege im OP und Aufwachraum (PACU).
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {EQUIPMENT_CHECKS.map((eq) => (
+                      <div key={eq.id} className="bg-slate-900 p-5 rounded-2xl border border-slate-800 space-y-4">
+                        <h3 className="font-bold text-base text-teal-300 border-b border-slate-800 pb-2">
+                          {eq.title}
+                        </h3>
+
+                        <div className="space-y-3">
+                          {eq.steps.map((st, idx) => (
+                            <div key={idx} className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1">
+                              <p className="font-bold text-xs text-amber-400">{st.step}</p>
+                              <p className="text-xs text-slate-200">{st.de}</p>
+                              <p className="text-[11px] text-slate-400 border-t border-slate-900 pt-1 mt-1">
+                                🇹🇷 {st.tr}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 3: Medications */}
+              {activeTab === 'meds' && (
+                <div className="space-y-4">
+                  <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800">
+                    <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2">
+                      <span>💊</span> Wichtige Notfall- & Narkosemedikamente
+                    </h2>
+                    <p className="text-xs text-slate-400 mt-1">
+                      Indikation, Dosierung und pflegerische/ATA Verantwortlichkeiten im Überwachungsraum.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {MEDS_DB.map((m, i) => (
+                      <div key={i} className="bg-slate-900 p-5 rounded-2xl border border-slate-800 space-y-2">
+                        <div className="flex justify-between items-center">
+                          <h3 className="font-bold text-base text-teal-400">{m.name}</h3>
+                          <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-mono">
+                            {m.group}
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 text-xs py-2">
+                          <div className="bg-slate-950 p-2 rounded-lg">
+                            <span className="text-slate-400 block text-[10px]">Dosierung:</span>
+                            <span className="font-semibold text-slate-200">{m.dosage}</span>
+                          </div>
+                          <div className="bg-slate-950 p-2 rounded-lg">
+                            <span className="text-slate-400 block text-[10px]">Indikation:</span>
+                            <span className="font-semibold text-slate-200">{m.indication}</span>
+                          </div>
+                        </div>
+
+                        <div className="text-xs text-slate-300 bg-slate-950/60 p-2.5 rounded-lg border border-slate-800/80">
+                          <span className="text-amber-400 font-semibold block text-[11px] mb-0.5">⚠️ Nebenwirkungen & Pflege-Verantwortung:</span>
+                          <p>{m.sideEffects}. <span className="text-teal-300 font-medium">{m.nursingNote}</span></p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 4: AI Case Simulator */}
+              {activeTab === 'ai-cases' && (
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                  
+                  <div className="lg:col-span-4 bg-slate-900 p-5 rounded-2xl border border-slate-800 space-y-4 h-fit">
+                    <h3 className="font-bold text-base text-teal-300">
+                      Fallbeispiel Generieren
+                    </h3>
+                    <p className="text-xs text-slate-400">
+                      Erstelle einen maßgeschneiderten Prüfungsfall für <span className="font-semibold text-slate-200">{PROFESSIONS.find(p => p.id === selectedProf)?.name}</span>.
+                    </p>
+
+                    <button
+                      onClick={generateAiCase}
+                      disabled={loadingAi}
+                      className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-600 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-teal-500/20 hover:opacity-90 disabled:opacity-50 transition"
+                    >
+                      {loadingAi ? 'KI verarbeitet...' : '✨ Neuen Fall Generieren'}
+                    </button>
+                  </div>
+
+                  <div className="lg:col-span-8 space-y-4">
+                    <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 min-h-[350px]">
+                      <h3 className="font-bold text-base text-slate-100 mb-4 border-b border-slate-800 pb-2">
+                        Klinischer Fallbeispiel (Kenntnisprüfung)
+                      </h3>
+
+                      {loadingAi ? (
+                        <div className="text-xs text-slate-400 animate-pulse py-10 text-center">
+                          Gemini KI erstellt ein realistisches Prüfungsszenario...
+                        </div>
+                      ) : aiCaseOutput ? (
+                        <div className="whitespace-pre-line text-xs text-slate-200 bg-slate-950 p-4 rounded-xl border border-slate-800 leading-relaxed">
+                          {aiCaseOutput}
+                        </div>
+                      ) : (
+                        <div className="text-xs text-slate-500 text-center py-10">
+                          Klicke auf "Neuen Fall Generieren", um die Prüfungssimulation zu starten.
+                        </div>
+                      )}
+                    </div>
+
+                    {aiCaseOutput && (
+                      <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 space-y-3">
+                        <h4 className="font-bold text-xs text-teal-400">Deine Antwort an den Prüfer:</h4>
+                        <textarea
+                          rows={4}
+                          value={userAnswer}
+                          onChange={(e) => setUserAnswer(e.target.value)}
+                          placeholder="Antworte auf Deutsch mit korrekten Fachbegriffen..."
+                          className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-teal-500"
+                        />
+                        <button
+                          onClick={evaluateUserAnswer}
+                          disabled={loadingAi || !userAnswer}
+                          className="px-4 py-2 bg-teal-600 hover:bg-teal-500 text-slate-950 font-bold text-xs rounded-xl transition disabled:opacity-50"
+                        >
+                          Antwort Bewerten Lassen
+                        </button>
+
+                        {evaluationOutput && (
+                          <div className="mt-3 p-4 bg-slate-950 rounded-xl border border-slate-800 text-xs text-slate-200 whitespace-pre-line">
+                            <span className="font-bold text-amber-400 block mb-1">Prüfer-Feedback:</span>
+                            {evaluationOutput}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                </div>
+              )}
+
+              {/* TAB 5: Pricing */}
+              {activeTab === 'pricing' && (
+                <div className="max-w-4xl mx-auto space-y-6 py-4">
+                  <div className="text-center space-y-2">
+                    <h2 className="text-2xl font-extrabold text-slate-100">Wähle deinen Vorbereitungs-Pass</h2>
+                    <p className="text-xs text-slate-400">Unbegrenzter Zugriff auf KI-Fallbeispiele, Rollenspiele und Fachbegriffe-Trainer.</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-6 flex flex-col justify-between">
+                      <div className="space-y-4">
+                        <h3 className="font-bold text-lg text-slate-200">Monatsabo</h3>
+                        <div className="text-3xl font-extrabold text-teal-400">49 € <span className="text-xs text-slate-400 font-normal">/ Monat</span></div>
+                        <ul className="text-xs text-slate-300 space-y-2">
+                          <li>✓ Unbegrenzte KI-Fallbeispiele (Pflege & ATA)</li>
+                          <li>✓ SBAR Übergabegespräche Trainer</li>
+                          <li>✓ Anästhesiegeräte-Check Formulare</li>
+                        </ul>
+                      </div>
+                      <button className="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs border border-slate-700">
+                        Jetzt Abonnieren
+                      </button>
+                    </div>
+
+                    <div className="bg-gradient-to-b from-slate-900 to-teal-950/40 p-6 rounded-2xl border border-teal-500/40 space-y-6 flex flex-col justify-between relative shadow-xl">
+                      <div className="space-y-4">
+                        <span className="absolute -top-3 right-4 px-3 py-1 bg-teal-500 text-slate-950 font-bold text-[10px] rounded-full uppercase">
+                          Empfohlen
+                        </span>
+                        <h3 className="font-bold text-lg text-slate-100">Prüfungs-Pass (3 Monate)</h3>
+                        <div className="text-3xl font-extrabold text-teal-400">119 € <span className="text-xs text-slate-400 font-normal">/ einmalig</span></div>
+                        <ul className="text-xs text-slate-300 space-y-2">
+                          <li>✓ Alle Funktionen des Monatsabos</li>
+                          <li>✓ Mündliche Kenntnisprüfung Simulator</li>
+                          <li>✓ Notfall-Medikamente Dossiers</li>
+                        </ul>
+                      </div>
+                      <button className="w-full py-3 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-xs shadow-lg shadow-teal-500/20">
+                        Pass Kaufen (119 €)
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+            </main>
+
+            {/* Footer */}
+            <footer className="border-t border-slate-800 bg-slate-950 p-4 text-center text-xs text-slate-500">
+              Mediakademi AI • Vorbereitung auf die Deutsche Kenntnisprüfung (KP) für Pflege & Assistenzberufe
+            </footer>
+
+          </div>
+        );
+      }
+
+      ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+  </body>
+</html>
