@@ -260,3 +260,18 @@
     </script>
 </body>
 </html>
+list.forEach((item, index) => {
+
+    const card = document.createElement('div');
+
+    card.innerHTML = `
+        <h3>${index + 1}. ${item.q}</h3>
+        ${item.opts.map((o,i)=>
+            `<button onclick="answer(${index},${i})">
+                ${String.fromCharCode(65+i)}. ${o}
+            </button>`
+        ).join('')}
+    `;
+
+    container.appendChild(card);
+});
