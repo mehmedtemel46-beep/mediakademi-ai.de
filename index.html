@@ -221,4 +221,43 @@ updateScore();
 </script>
 
 </body>
-</html>
+</html>let correct = 0;
+let answered = 0;
+
+function checkAnswer(btn,right,user){
+
+   if(btn.parentNode.dataset.done) return;
+
+   btn.parentNode.dataset.done = true;
+
+   answered++;
+
+   if(right === user){
+      correct++;
+      btn.style.background = "green";
+   }else{
+      btn.style.background = "red";
+   }
+
+   updateStats();
+}VlocalStorage.setItem(
+   "ata_progress",
+   JSON.stringify(userAnswers)
+);{
+  "module":"pharm",
+  "question":"Rocuronium RSI dozu?",
+  "options":[
+    "0.3 mg/kg",
+    "0.6 mg/kg",
+    "1.0-1.2 mg/kg",
+    "2 mg/kg",
+    "3 mg/kg"
+  ],
+  "answer":2,
+  "explanation":"RSI için 1.0-1.2 mg/kg."
+}const saved =
+JSON.parse(localStorage.getItem("ata_progress"));
+
+if(saved){
+   userAnswers = saved;
+}
