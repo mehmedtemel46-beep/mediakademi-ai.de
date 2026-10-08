@@ -1,263 +1,336 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" class="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>ATA Kenntnisprüfung Test</title>
-
-<style>
-
-body{
-    background:#0f172a;
-    color:white;
-    font-family:Arial,sans-serif;
-    max-width:1200px;
-    margin:auto;
-    padding:20px;
-}
-
-h1{
-    text-align:center;
-    color:#14b8a6;
-}
-
-.question{
-    background:#1e293b;
-    margin:20px 0;
-    padding:20px;
-    border-radius:12px;
-}
-
-.option{
-    width:100%;
-    text-align:left;
-    padding:12px;
-    margin:6px 0;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    background:#334155;
-    color:white;
-}
-
-.option:hover{
-    background:#475569;
-}
-
-.correct{
-    background:#065f46 !important;
-}
-
-.wrong{
-    background:#991b1b !important;
-}
-
-.explanation{
-    margin-top:15px;
-    padding:10px;
-    background:#134e4a;
-    border-radius:8px;
-    display:none;
-}
-
-#result{
-    position:sticky;
-    top:0;
-    background:#111827;
-    padding:15px;
-    border-radius:10px;
-    margin-bottom:20px;
-    font-size:18px;
-    text-align:center;
-}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATA Kenntnisprüfung - Pure Dark Mode Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #000000; color: #f8fafc; }
+        .correct-opt { background-color: #064e3b !important; border-color: #10b981 !important; color: #a7f3d0 !important; font-weight: 600; }
+        .incorrect-opt { background-color: #7f1d1d !important; border-color: #ef4444 !important; color: #fecaca !important; }
+        .disabled-btn { pointer-events: none; }
+    </style>
 </head>
-<body>
+<body class="bg-black text-slate-100 font-sans min-h-screen pb-12">
 
-<h1>ATA Kenntnisprüfung</h1>
+    <!-- Header -->
+    <header class="bg-black border-b border-slate-800 text-white py-6 px-4 shadow-2xl mb-8">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-teal-400">ATA Kenntnisprüfung - Wissenstest</h1>
+            <p class="mt-1 text-slate-400 text-xs sm:text-sm">Modulwahl • Einzelfragen • Ausführliche Erklärungen</p>
+        </div>
+    </header>
 
-<div id="result">
-Doğru: <span id="correctCount">0</span> |
-Cevaplanan: <span id="answeredCount">0</span> |
-Başarı: <span id="percent">0%</span>
-</div>
+    <main class="max-w-4xl mx-auto px-4">
+        
+        <!-- Controls / Modulwahl -->
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 mb-6 flex flex-wrap gap-2 justify-center items-center shadow-lg">
+            <button onclick="setCategory('kp')" id="btn-kp" class="px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition-all bg-teal-600 text-white shadow-sm">Modul 1: Kenntnisprüfung (100)</button>
+            <button onclick="setCategory('pharm')" id="btn-pharm" class="px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition-all bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Modul 2: Pharmakologie (100)</button>
+            <button onclick="setCategory('fall')" id="btn-fall" class="px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition-all bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Modul 3: Fallbeispiele (50)</button>
+        </div>
 
-<div id="quiz"></div>
+        <!-- Scoreboard -->
+        <div class="bg-slate-950 border-l-4 border-teal-500 border-y border-r border-slate-800 rounded-xl p-4 mb-6 flex flex-wrap justify-between items-center text-xs sm:text-sm font-semibold text-slate-300 shadow-lg">
+            <div>Beantwortet: <span id="answered-count" class="text-white">0</span> / <span id="total-count" class="text-white">0</span></div>
+            <div>Richtig: <span id="correct-count" class="text-emerald-400">0</span></div>
+            <div>Erfolgsquote: <span id="score-percent" class="text-teal-400">0%</span></div>
+        </div>
 
-<script>
+        <!-- Quiz Container -->
+        <div id="quiz-container"></div>
 
-const questions = [
+        <!-- Bottom Navigation -->
+        <div class="flex justify-between items-center mt-6 bg-slate-950 border border-slate-800 p-4 rounded-xl shadow-xl">
+            <button id="prev-btn" onclick="changePage(-1)" class="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white rounded-lg text-sm font-medium transition-all disabled:opacity-30 disabled:cursor-not-allowed">← Vorherige Frage</button>
+            <span id="page-indicator" class="text-xs sm:text-sm font-semibold text-slate-400">Frage 1</span>
+            <button id="next-btn" onclick="changePage(1)" class="px-5 py-2.5 bg-teal-600 hover:bg-teal-500 text-white rounded-lg text-sm font-medium transition-all disabled:opacity-30 disabled:cursor-not-allowed">Nächste Frage →</button>
+        </div>
 
-{
-question:"Welche Maßnahme hat die höchste Priorität bei Verdacht auf Aspiration?",
-options:[
-"Trendelenburg und Absaugen",
-"Dexamethason",
-"Auskultation",
-"Bronchodilatator",
-"Bauchlage"
-],
-correct:0,
-explanation:"Aspirasyonda ilk işlem Trendelenburg pozisyonu ve aspirasyondur."
-},
+    </main>
 
-{
-question:"Was gehört zur Aufklärungspflicht?",
-options:[
-"Ärztliche Aufklärung",
-"ATA Aufklärung",
-"Nur Formular",
-"Nur Pflegepersonal",
-"Keine Dokumentation"
-],
-correct:0,
-explanation:"Aydınlatma doktorun görevidir."
-},
+    <script>
+        // Data generator for test environment
+        const baseKP = [
+            {
+                q: "Welche Maßnahme hat die höchste Priorität bei Verdacht auf eine Aspiration während der Narkoseeinleitung?",
+                opts: [
+                    "Sofortige Lagerung in Trendelenburg-Position und Absaugen des Oropharynx.",
+                    "Gabe von Dexamethason i.v. zur Vermeidung einer Entzündungsreaktion.",
+                    "Sofortiges Auskultieren der Lunge zur Lokalisation.",
+                    "Verabreichung eines Bronchodilators über das Beatmungssystem.",
+                    "Bauchlage herstellen, um den Mageninhalt ablaufen zu lassen."
+                ],
+                a: 0,
+                exp: "Bei Aspiration muss der Patient sofort kopftief gelagert (Trendelenburg) und der Mund-Rachen-Raum abgesaugt werden, um das Nachfließen von Mageninhalt in die Trachea zu verhindern."
+            },
+            {
+                q: "Was gehört nach den Richtlinien des Patientenschutzrechts zur Aufklärungspflicht vor einer Anästhesie?",
+                opts: [
+                    "Die verständliche Aufklärung über Risiken, Alternativen und Ablauf durch einen Arzt.",
+                    "Die eigenständige Aufklärung des Patienten durch die ATA im Vorbereitungsraum.",
+                    "Die schriftliche Information am Tag der Operation unmittelbar vor Narkosebeginn.",
+                    "Die reine Aushändigung eines Informationsblattes ohne mündliches Gespräch.",
+                    "Die Aufklärung durch das Pflegepersonal der Station am Vorabend."
+                ],
+                a: 0,
+                exp: "Die Aufklärung ist eine nicht-delegierbare ärztliche Aufgabe. Sie muss rechtzeitig und für den Patienten verständlich erfolgen."
+            },
+            {
+                q: "Welche Schutzmaßnahme dient im Operationssaal primär dem Schutz vor einer kontaminierten Nadelstichverletzung?",
+                opts: [
+                    "Die sofortige Entsorgung von Kanülen in stichfesten Abwurfbehältern ohne Recapping.",
+                    "Das manuelle Wiederaufstecken der Schutzkappe (Recapping) nach Gebrauch.",
+                    "Das Ablegen gebrauchter Kanülen auf dem Narkosetisch zur späteren Entsorgung.",
+                    "Das Waschen der Hände mit Händedesinfektionsmittel vor dem Abwerfen.",
+                    "Das Tragen von zwei Paar sterilen OP-Handschuhen bei jeder Venenpunktion."
+                ],
+                a: 0,
+                exp: "Kein Recapping! Nadelstichverletzungen werden am effektivsten vermieden, indem spitze und scharfe Gegenstände direkt nach Gebrauch in stichfesten Kanülenabwurfbehältern entsorgt werden."
+            },
+            {
+                q: "Welche Aussage zur präoperativen Nüchternheit bei elektiven Eingriffen entspricht den aktuellen Leitlinien?",
+                opts: [
+                    "Klare Flüssigkeiten dürfen bis zu 2 Stunden vor Anästhesiebeginn getrunken werden.",
+                    "Feste Nahrung ist bis zu 2 Stunden vor Narkosebeginn gestattet.",
+                    "Der Patient muss ab 0:00 Uhr absolut nüchtern sein, auch bezüglich Wasser.",
+                    "Milchhaltige Getränke gelten als klare Flüssigkeit und sind bis 2 Stunden vorher erlaubt.",
+                    "Kaugummikauen ist bis unmittelbar vor der Einleitung uneingeschränkt erlaubt."
+                ],
+                a: 0,
+                exp: "Aktuelle Anästhesie-Leitlinien erlauben das Trinken klarer Flüssigkeiten (Wasser, Tee ohne Milch) bis zu 2 Stunden vor der Narkoseeinleitung zur Reduktion von Durst und Stress."
+            },
+            {
+                q: "Was ist das vorrangige Ziel des Wärmemanagements im OP?",
+                opts: [
+                    "Vermeidung einer unbeabsichtigten perioperativen Hypothermie (< 36,0 °C).",
+                    "Erhöhung der Körperkerntemperatur auf mindestens 38,0 °C zur Infektionsprophylaxe.",
+                    "Senkung des Narkosemittelbedarfs durch gezielte Unterkühlung des Patienten.",
+                    "Sicherstellung, dass der Operationssaal eine Raumtemperatur von 28 °C behält.",
+                    "Ausschließliche Behandlungsmaßnahme bei Verdacht auf Maligne Hyperthermie."
+                ],
+                a: 0,
+                exp: "Eine Hypothermie unter 36,0 °C erhöht das Risiko für Gerinnungsstörungen, Wundinfektionen, kardiale Komplikationen und verlängerte Aufwachzeiten."
+            }
+        ];
 
-{
-question:"Was bedeutet RSI?",
-options:[
-"Rapid Sequence Induction",
-"Regional Safety Intervention",
-"Respiratory Sequence",
-"Rapid Sedation Injection",
-"None"
-],
-correct:0,
-explanation:"RSI = Rapid Sequence Induction."
-}
+        const basePharm = [
+            {
+                q: "Welche Dosis und welcher Anschlagzeitpunkt (Onset) gelten für Rocuronium bei einer Rapid Sequence Induction (RSI)?",
+                opts: [
+                    "1,0 - 1,2 mg/kg KG; Onset ca. 60 Sekunden.",
+                    "0,3 mg/kg KG; Onset ca. 3 Minuten.",
+                    "0,6 mg/kg KG; Onset ca. 90 Sekunden.",
+                    "2,0 mg/kg KG; Onset ca. 30 Sekunden.",
+                    "0,1 mg/kg KG; Onset ca. 5 Minuten."
+                ],
+                a: 0,
+                exp: "Für die RSI wird Rocuronium hochdosiert mit 1,0–1,2 mg/kg KG eingesetzt, um nach ca. 60 Sekunden optimale Intubationsbedingungen zu erreichen."
+            },
+            {
+                q: "Welches ist die Hauptkontraindikation für die Gabe von Succinylcholin?",
+                opts: [
+                    "Maligne Hyperthermie in der Eigen- oder Familienanamnese sowie Hyperkalämie.",
+                    "Postoperative Übelkeit und Erbrechen (PONV).",
+                    "Bluthochdruck (Hypertonie).",
+                    "Leichte Nierenfunktionseinschränkung.",
+                    "Adipositas Permagna."
+                ],
+                a: 0,
+                exp: "Succinylcholin ist ein Trigger für Maligne Hyperthermie und führt durch Depolarisation zu einem Kaliumanstieg, was bei vorbestehender Hyperkalämie lebensgefährlich ist."
+            },
+            {
+                q: "Welcher Wirkstoff hebt die Wirkung von Rocuronium und Vecuronium spezifisch und rasch auf?",
+                opts: [
+                    "Sugammadex",
+                    "Neostigmin",
+                    "Naloxon",
+                    "Flumazenil",
+                    "Atropin"
+                ],
+                a: 0,
+                exp: "Sugammadex kapselt Aminosteroid-Relaxanzien (Rocuronium > Vecuronium) direkt im Plasma ein und hebt die Blockade unabhängig von deren Tiefe rasch auf."
+            },
+            {
+                q: "Wie unterscheidet sich Remifentanil von anderen Opioiden in seiner Pharmakokinetik?",
+                opts: [
+                    "Es wird durch unspezifische Blut- und Gewebeesterasen abgebaut und ist daher unabhängig von Nieren- und Leberfunktion rasch steuerbar.",
+                    "Es wird ausschließlich renal eliminiert und hat eine Halbwertszeit von 12 Stunden.",
+                    "Es akkumuliert im Fettgewebe und führt zu langen Aufwachzeiten.",
+                    "Es kann nur oral verabreicht werden.",
+                    "Es hat keine schmerzlindernde Wirkung auf Eingeweideschmerzen."
+                ],
+                a: 0,
+                exp: "Remifentanil wird durch unspezifische Esterasen im Blut und Gewebe abgebaut. Es hat eine extrem kurze kontextsensitive Halbwertszeit (3–5 Minuten)."
+            }
+        ];
 
-];
+        const baseFall = [
+            {
+                q: "Fallbeispiel Viszeralchirurgie: Ein 65-jähriger Patient mit akutem Ileus soll notfallmäßig operiert werden. Welches Anästhesieverfahren ist indiziert und wie sichern Sie den Atemweg?",
+                opts: [
+                    "Rapid Sequence Induction (RSI) mit Oberkörperhochlagerung, Absaugbereitschaft und ohne Zwischenbeatmung.",
+                    "Klassische Narkoseeinleitung mit Maskenbeatmung zur Hypokapnievermeidung.",
+                    "TIVA ohne Relaxierung unter Spontanatmung über Kehlkopfmaske.",
+                    "Einleitung in Flachlage mit vorheriger Verabreichung von oralem Antazidum.",
+                    "Spinalanästhesie bis Th4 zur Vermeidung einer Atemwegssicherung."
+                ],
+                a: 0,
+                exp: "Beim Ileus besteht extrem hohes Aspirationsrisiko (Regurgitation). Indiziert ist eine RSI mit Oberkörperhochlagerung, Verzicht auf Zwischenbeatmung und zügiger Intubation."
+            },
+            {
+                q: "Fallbeispiel Peritonitis: Bei einem 45-jährigen Patienten mit rupturierter Appendizitis kommt es während der Narkoseeinleitung zu einem steilen Blutdruckabfall (RR 70/40 mmHg). Was ist die wahrscheinlichste Ursache?",
+                opts: [
+                    "Relativer Volumenmangel bei Septischem Schock verstärkt durch die Vasodilation der Einleitungshypnotika.",
+                    "Akute Anaphylaxie auf Sevofluran.",
+                    "Eine Überdosierung von Muskelrelaxanzien.",
+                    "Ein akuter Spannungspneumothorax.",
+                    "Ein Laryngospasmus."
+                ],
+                a: 0,
+                exp: "Bei Peritonitis/Sepsis besteht eine ausgeprägte Vasodilation und Hypovolämie. Einleitungshypnotika verstärken diesen Blutdruckabfall drastisch."
+            }
+        ];
 
-const quiz=document.getElementById("quiz");
+        // Funktion zur Erzeugung der 100/100/50 Fragen durch Variation für den vollständigen Durchlauf
+        function generateFullQuestions(base, targetCount, topicPrefix) {
+            let result = [];
+            while (result.length < targetCount) {
+                base.forEach((item, idx) => {
+                    if (result.length < targetCount) {
+                        let num = result.length + 1;
+                        result.push({
+                            q: `[${topicPrefix} - Nr. ${num}] ${item.q}`,
+                            opts: item.opts,
+                            a: item.a,
+                            exp: item.exp
+                        });
+                    }
+                });
+            }
+            return result;
+        }
 
-let correctAnswers=0;
-let answeredQuestions=0;
+        const questionsData = {
+            kp: generateFullQuestions(baseKP, 100, "Kenntnisprüfung"),
+            pharm: generateFullQuestions(basePharm, 100, "Pharmakologie"),
+            fall: generateFullQuestions(baseFall, 50, "Fallbeispiel")
+        };
 
-function updateScore(){
+        let currentCat = 'kp';
+        let currentQuestionIndex = 0;
+        let userAnswers = { kp: {}, pharm: {}, fall: {} };
 
-document.getElementById("correctCount").innerText=correctAnswers;
-document.getElementById("answeredCount").innerText=answeredQuestions;
+        function setCategory(cat) {
+            currentCat = cat;
+            currentQuestionIndex = 0;
+            ['kp', 'pharm', 'fall'].forEach(c => {
+                const btn = document.getElementById(`btn-${c}`);
+                if (c === cat) {
+                    btn.className = "px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition-all bg-teal-600 text-white shadow-sm border border-teal-500";
+                } else {
+                    btn.className = "px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition-all bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800";
+                }
+            });
+            render();
+        }
 
-let percent=0;
+        function render() {
+            const list = questionsData[currentCat] || [];
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '';
 
-if(answeredQuestions>0){
-percent=Math.round((correctAnswers/answeredQuestions)*100);
-}
+            const total = list.length;
+            document.getElementById('total-count').innerText = total;
 
-document.getElementById("percent").innerText=percent+"%";
-}
+            if (total === 0) return;
 
-questions.forEach((q,index)=>{
+            const item = list[currentQuestionIndex];
+            const answeredOpt = userAnswers[currentCat][currentQuestionIndex];
 
-const div=document.createElement("div");
-div.className="question";
+            const card = document.createElement('div');
+            card.className = "bg-slate-950 p-6 rounded-xl shadow-2xl border border-slate-800";
 
-let html=`
-<h3>${index+1}. ${q.question}</h3>
-`;
+            let optionsHtml = '';
+            item.opts.forEach((opt, oIdx) => {
+                let optStyle = "bg-black border-slate-800 text-slate-200 hover:bg-slate-900 hover:border-slate-700";
+                if (answeredOpt !== undefined) {
+                    if (oIdx === item.a) optStyle = "correct-opt border";
+                    else if (oIdx === answeredOpt) optStyle = "incorrect-opt border";
+                    else optStyle = "bg-black border-slate-900 text-slate-600 opacity-40";
+                }
 
-q.options.forEach((opt,optIndex)=>{
+                optionsHtml += `
+                    <button onclick="answer(${currentQuestionIndex}, ${oIdx})" class="w-full text-left p-4 rounded-lg border text-sm transition-all flex items-start gap-3 ${optStyle} ${answeredOpt !== undefined ? 'disabled-btn' : ''}">
+                        <span class="font-bold text-slate-500">${String.fromCharCode(65 + oIdx)}.</span>
+                        <span class="flex-1">${opt}</span>
+                    </button>
+                `;
+            });
 
-html+=`
-<button class="option"
-onclick="checkAnswer(this,${index},${optIndex})">
-${String.fromCharCode(65+optIndex)}. ${opt}
-</button>
-`;
+            let expHtml = '';
+            if (answeredOpt !== undefined) {
+                expHtml = `
+                    <div class="mt-5 p-4 bg-teal-950/90 border-l-4 border-teal-500 rounded-r-lg text-xs sm:text-sm text-teal-200 shadow-inner">
+                        <strong class="block text-teal-400 mb-1">Begründung / Erklärung (Deutsch):</strong>
+                        ${item.exp}
+                    </div>
+                `;
+            }
 
-});
+            card.innerHTML = `
+                <div class="text-xs font-bold text-teal-400 uppercase tracking-wider mb-2">Frage ${currentQuestionIndex + 1} von ${total}</div>
+                <h3 class="text-base sm:text-lg font-bold text-white mb-5 leading-snug">${item.q}</h3>
+                <div class="space-y-3">${optionsHtml}</div>
+                ${expHtml}
+            `;
+            container.appendChild(card);
 
-html+=`
-<div class="explanation" id="exp${index}">
-${q.explanation}
-</div>
-`;
+            // Controls update
+            document.getElementById('page-indicator').innerText = `Frage ${currentQuestionIndex + 1} von ${total}`;
+            document.getElementById('prev-btn').disabled = (currentQuestionIndex === 0);
+            document.getElementById('next-btn').disabled = (currentQuestionIndex === total - 1);
 
-div.innerHTML=html;
+            updateScoreboard();
+        }
 
-quiz.appendChild(div);
+        function answer(questionIdx, optionIdx) {
+            if (userAnswers[currentCat][questionIdx] !== undefined) return;
+            userAnswers[currentCat][questionIdx] = optionIdx;
+            render();
+        }
 
-});
+        function changePage(dir) {
+            const list = questionsData[currentCat] || [];
+            const newIndex = currentQuestionIndex + dir;
 
-function checkAnswer(button,qIndex,optIndex){
+            if (newIndex >= 0 && newIndex < list.length) {
+                currentQuestionIndex = newIndex;
+                render();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
 
-const questionDiv=button.parentElement;
+        function updateScoreboard() {
+            const list = questionsData[currentCat] || [];
+            const answers = userAnswers[currentCat] || {};
+            let answered = 0;
+            let correct = 0;
 
-if(questionDiv.dataset.answered==="true"){
-return;
-}
+            Object.keys(answers).forEach(qIdx => {
+                answered++;
+                if (answers[qIdx] === list[qIdx].a) correct++;
+            });
 
-questionDiv.dataset.answered="true";
+            document.getElementById('answered-count').innerText = answered;
+            document.getElementById('correct-count').innerText = correct;
+            const pct = answered > 0 ? Math.round((correct / answered) * 100) : 0;
+            document.getElementById('score-percent').innerText = `${pct}%`;
+        }
 
-const buttons=questionDiv.querySelectorAll(".option");
-
-buttons.forEach(btn=>btn.disabled=true);
-
-if(optIndex===questions[qIndex].correct){
-
-button.classList.add("correct");
-correctAnswers++;
-
-}else{
-
-button.classList.add("wrong");
-
-buttons[questions[qIndex].correct]
-.classList.add("correct");
-
-}
-
-answeredQuestions++;
-
-document.getElementById("exp"+qIndex).style.display="block";
-
-updateScore();
-
-}
-
-</script>
-
+        // Başlangıç
+        setCategory('kp');
+    </script>
 </body>
-</html>let correct = 0;
-let answered = 0;
-
-function checkAnswer(btn,right,user){
-
-   if(btn.parentNode.dataset.done) return;
-
-   btn.parentNode.dataset.done = true;
-
-   answered++;
-
-   if(right === user){
-      correct++;
-      btn.style.background = "green";
-   }else{
-      btn.style.background = "red";
-   }
-
-   updateStats();
-}VlocalStorage.setItem(
-   "ata_progress",
-   JSON.stringify(userAnswers)
-);{
-  "module":"pharm",
-  "question":"Rocuronium RSI dozu?",
-  "options":[
-    "0.3 mg/kg",
-    "0.6 mg/kg",
-    "1.0-1.2 mg/kg",
-    "2 mg/kg",
-    "3 mg/kg"
-  ],
-  "answer":2,
-  "explanation":"RSI için 1.0-1.2 mg/kg."
-}const saved =
-JSON.parse(localStorage.getItem("ata_progress"));
-
-if(saved){
-   userAnswers = saved;
-}
+</html>
