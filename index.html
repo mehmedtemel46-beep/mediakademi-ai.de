@@ -1,49 +1,51 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ATA Kenntnisprüfung & Pharmakologie & Fallbeispiele</title>
+    <title>ATA Kenntnisprüfung - Dark Mode Test</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .correct-opt { background-color: #d1fae5 !important; border-color: #10b981 !important; color: #065f46 !important; font-weight: 600; }
-        .incorrect-opt { background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b !important; }
+        body { background-color: #0f172a; color: #f8fafc; }
+        .correct-opt { background-color: #064e3b !important; border-color: #10b981 !important; color: #a7f3d0 !important; font-weight: 600; }
+        .incorrect-opt { background-color: #7f1d1d !important; border-color: #ef4444 !important; color: #fecaca !important; }
         .disabled-btn { pointer-events: none; }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans min-h-screen pb-12">
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen pb-12">
 
-    <header class="bg-gradient-to-r from-teal-800 to-cyan-900 text-white py-8 px-4 shadow-lg mb-8">
-        <div class="max-w-5xl mx-auto text-center">
-            <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight">ATA Kenntnisprüfung - Interaktiver Wissenstest</h1>
-            <p class="mt-2 text-teal-100 text-sm sm:text-base">250 Fragen: Allgemeine Kenntnisprüfung (100) • Pharmakologie (100) • Viszeralchirurgische Fallbeispiele (50)</p>
+    <!-- Header -->
+    <header class="bg-slate-950 border-b border-slate-800 text-white py-6 px-4 shadow-xl mb-8">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-teal-400">ATA Kenntnisprüfung - Wissenstest</h1>
+            <p class="mt-1 text-slate-400 text-xs sm:text-sm">Modulwahl • Einzelfragen • Ausführliche Erklärungen</p>
         </div>
     </header>
 
-    <main class="max-w-5xl mx-auto px-4">
+    <main class="max-w-4xl mx-auto px-4">
         
-        <!-- Controls -->
-        <div class="bg-white rounded-xl shadow-sm p-4 mb-6 flex flex-wrap gap-2 justify-center items-center">
-            <button onclick="setCategory('kp')" id="btn-kp" class="px-4 py-2 rounded-lg font-medium text-sm transition-all bg-teal-700 text-white shadow-sm">Modul 1: Kenntnisprüfung (100)</button>
-            <button onclick="setCategory('pharm')" id="btn-pharm" class="px-4 py-2 rounded-lg font-medium text-sm transition-all bg-slate-200 text-slate-700 hover:bg-slate-300">Modul 2: Pharmakologie (100)</button>
-            <button onclick="setCategory('fall')" id="btn-fall" class="px-4 py-2 rounded-lg font-medium text-sm transition-all bg-slate-200 text-slate-700 hover:bg-slate-300">Modul 3: Fallbeispiele (50)</button>
+        <!-- Controls / Modulwahl -->
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-3 mb-6 flex flex-wrap gap-2 justify-center items-center">
+            <button onclick="setCategory('kp')" id="btn-kp" class="px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition-all bg-teal-600 text-white shadow-sm">Modul 1: Kenntnisprüfung (100)</button>
+            <button onclick="setCategory('pharm')" id="btn-pharm" class="px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition-all bg-slate-700 text-slate-300 hover:bg-slate-600">Modul 2: Pharmakologie (100)</button>
+            <button onclick="setCategory('fall')" id="btn-fall" class="px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition-all bg-slate-700 text-slate-300 hover:bg-slate-600">Modul 3: Fallbeispiele (50)</button>
         </div>
 
         <!-- Scoreboard -->
-        <div class="bg-white rounded-xl shadow-sm p-4 mb-6 border-l-4 border-teal-600 flex flex-wrap justify-between items-center text-sm font-semibold text-slate-700">
-            <div>Beantwortet: <span id="answered-count">0</span> / <span id="total-count">100</span></div>
-            <div>Richtig: <span id="correct-count" class="text-emerald-600">0</span></div>
-            <div>Erfolgsquote: <span id="score-percent" class="text-teal-700">0%</span></div>
+        <div class="bg-slate-800 border-l-4 border-teal-500 border-y border-r border-slate-700 rounded-xl p-4 mb-6 flex flex-wrap justify-between items-center text-xs sm:text-sm font-semibold text-slate-300">
+            <div>Beantwortet: <span id="answered-count" class="text-white">0</span> / <span id="total-count" class="text-white">100</span></div>
+            <div>Richtig: <span id="correct-count" class="text-emerald-400">0</span></div>
+            <div>Erfolgsquote: <span id="score-percent" class="text-teal-400">0%</span></div>
         </div>
 
         <!-- Quiz Container -->
-        <div id="quiz-container" class="space-y-6"></div>
+        <div id="quiz-container"></div>
 
-        <!-- Pagination -->
-        <div class="flex justify-between items-center mt-8 bg-white p-4 rounded-xl shadow-sm">
-            <button id="prev-btn" onclick="changePage(-1)" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-lg text-sm font-medium transition-all">← Vorherige</button>
-            <span id="page-indicator" class="text-sm font-semibold text-slate-600">Seite 1 von 10</span>
-            <button id="next-btn" onclick="changePage(1)" class="px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white rounded-lg text-sm font-medium transition-all">Nächste →</button>
+        <!-- Bottom Navigation -->
+        <div class="flex justify-between items-center mt-6 bg-slate-800 border border-slate-700 p-4 rounded-xl shadow-md">
+            <button id="prev-btn" onclick="changePage(-1)" class="px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm font-medium transition-all disabled:opacity-30 disabled:cursor-not-allowed">← Vorherige Frage</button>
+            <span id="page-indicator" class="text-xs sm:text-sm font-semibold text-slate-400">Frage 1 von 100</span>
+            <button id="next-btn" onclick="changePage(1)" class="px-5 py-2.5 bg-teal-600 hover:bg-teal-500 text-white rounded-lg text-sm font-medium transition-all disabled:opacity-30 disabled:cursor-not-allowed">Nächste Frage →</button>
         </div>
 
     </main>
@@ -74,6 +76,18 @@
                     ],
                     a: 0,
                     exp: "Die Aufklärung ist eine nicht-delegierbare ärztliche Aufgabe. Sie muss rechtzeitig und für den Patienten verständlich erfolgen."
+                },
+                {
+                    q: "Welche Schutzmaßnahme dient im Operationssaal primär dem Schutz vor einer kontaminierten Nadelstichverletzung?",
+                    opts: [
+                        "Die sofortige Entsorgung von Kanülen in stichfesten Abwurfbehältern ohne Recapping.",
+                        "Das manuelle Wiederaufstecken der Schutzkappe (Recapping) nach Gebrauch.",
+                        "Das Ablegen gebrauchter Kanülen auf dem Narkosetisch zur späteren Entsorgung.",
+                        "Das Waschen der Hände mit Händedesinfektionsmittel vor dem Abwerfen.",
+                        "Das Tragen von zwei Paar sterilen OP-Handschuhen bei jeder Venenpunktion."
+                    ],
+                    a: 0,
+                    exp: "Kein Recapping! Nadelstichverletzungen werden am effektivsten vermieden, indem spitze und scharfe Gegenstände direkt nach Gebrauch in stichfesten Kanülenabwurfbehältern entsorgt werden."
                 }
             ],
             pharm: [
@@ -90,7 +104,7 @@
                     exp: "Für die RSI wird Rocuronium hochdosiert mit 1,0–1,2 mg/kg KG eingesetzt, um nach ca. 60 Sekunden optimale Intubationsbedingungen zu erreichen."
                 },
                 {
-                    q: "Welches Ist die Hauptkontraindikation für die Gabe von Succinylcholin?",
+                    q: "Welches ist die Hauptkontraindikation für die Gabe von Succinylcholin?",
                     opts: [
                         "Maligne Hyperthermie in der Eigen- oder Familienanamnese sowie Hyperkalämie.",
                         "Postoperative Übelkeit und Erbrechen (PONV).",
@@ -119,19 +133,18 @@
         };
 
         let currentCat = 'kp';
-        let currentPage = 1;
-        const itemsPerPage = 10;
+        let currentQuestionIndex = 0; // 0-based index
         let userAnswers = { kp: {}, pharm: {}, fall: {} };
 
         function setCategory(cat) {
             currentCat = cat;
-            currentPage = 1;
+            currentQuestionIndex = 0;
             ['kp', 'pharm', 'fall'].forEach(c => {
                 const btn = document.getElementById(`btn-${c}`);
                 if (c === cat) {
-                    btn.className = "px-4 py-2 rounded-lg font-medium text-sm transition-all bg-teal-700 text-white shadow-sm";
+                    btn.className = "px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition-all bg-teal-600 text-white shadow-sm";
                 } else {
-                    btn.className = "px-4 py-2 rounded-lg font-medium text-sm transition-all bg-slate-200 text-slate-700 hover:bg-slate-300";
+                    btn.className = "px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition-all bg-slate-700 text-slate-300 hover:bg-slate-600";
                 }
             });
             render();
@@ -145,58 +158,53 @@
             const total = list.length;
             document.getElementById('total-count').innerText = total;
 
-            const start = (currentPage - 1) * itemsPerPage;
-            const end = Math.min(start + itemsPerPage, total);
-            const pageItems = list.slice(start, end);
+            if (total === 0) return;
 
-            pageItems.forEach((item, idx) => {
-                const realIdx = start + idx;
-                const answeredOpt = userAnswers[currentCat][realIdx];
+            const item = list[currentQuestionIndex];
+            const answeredOpt = userAnswers[currentCat][currentQuestionIndex];
 
-                const card = document.createElement('div');
-                card.className = "bg-white p-6 rounded-xl shadow-sm border border-slate-200";
+            const card = document.createElement('div');
+            card.className = "bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-700";
 
-                let optionsHtml = '';
-                item.opts.forEach((opt, oIdx) => {
-                    let optStyle = "bg-slate-50 border-slate-200 hover:bg-slate-100";
-                    if (answeredOpt !== undefined) {
-                        if (oIdx === item.a) optStyle = "correct-opt border";
-                        else if (oIdx === answeredOpt) optStyle = "incorrect-opt border";
-                        else optStyle = "bg-slate-50 border-slate-200 opacity-60";
-                    }
-
-                    optionsHtml += `
-                        <button onclick="answer(${realIdx}, ${oIdx})" class="w-full text-left p-3.5 rounded-lg border text-sm transition-all flex items-start gap-3 ${optStyle} ${answeredOpt !== undefined ? 'disabled-btn' : ''}">
-                            <span class="font-bold text-slate-500">${String.fromCharCode(65 + oIdx)}.</span>
-                            <span class="flex-1">${opt}</span>
-                        </button>
-                    `;
-                });
-
-                let expHtml = '';
+            let optionsHtml = '';
+            item.opts.forEach((opt, oIdx) => {
+                let optStyle = "bg-slate-900 border-slate-700 text-slate-200 hover:bg-slate-700";
                 if (answeredOpt !== undefined) {
-                    expHtml = `
-                        <div class="mt-4 p-4 bg-teal-50 border-l-4 border-teal-600 rounded-r-lg text-xs sm:text-sm text-teal-900">
-                            <strong class="block text-teal-950 mb-1">Begründung / Erklärung (Deutsch):</strong>
-                            ${item.exp}
-                        </div>
-                    `;
+                    if (oIdx === item.a) optStyle = "correct-opt border";
+                    else if (oIdx === answeredOpt) optStyle = "incorrect-opt border";
+                    else optStyle = "bg-slate-900 border-slate-800 text-slate-500 opacity-50";
                 }
 
-                card.innerHTML = `
-                    <div class="text-xs font-bold text-teal-700 uppercase tracking-wider mb-2">Frage ${realIdx + 1} von ${total}</div>
-                    <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-4">${item.q}</h3>
-                    <div class="space-y-2.5">${optionsHtml}</div>
-                    ${expHtml}
+                optionsHtml += `
+                    <button onclick="answer(${currentQuestionIndex}, ${oIdx})" class="w-full text-left p-4 rounded-lg border text-sm transition-all flex items-start gap-3 ${optStyle} ${answeredOpt !== undefined ? 'disabled-btn' : ''}">
+                        <span class="font-bold text-slate-400">${String.fromCharCode(65 + oIdx)}.</span>
+                        <span class="flex-1">${opt}</span>
+                    </button>
                 `;
-                container.appendChild(card);
             });
 
-            // Pagination UI
-            const totalPages = Math.ceil(total / itemsPerPage) || 1;
-            document.getElementById('page-indicator').innerText = `Seite ${currentPage} von ${totalPages}`;
-            document.getElementById('prev-btn').disabled = currentPage === 1;
-            document.getElementById('next-btn').disabled = currentPage === totalPages;
+            let expHtml = '';
+            if (answeredOpt !== undefined) {
+                expHtml = `
+                    <div class="mt-5 p-4 bg-teal-950/80 border-l-4 border-teal-500 rounded-r-lg text-xs sm:text-sm text-teal-200">
+                        <strong class="block text-teal-400 mb-1">Begründung / Erklärung (Deutsch):</strong>
+                        ${item.exp}
+                    </div>
+                `;
+            }
+
+            card.innerHTML = `
+                <div class="text-xs font-bold text-teal-400 uppercase tracking-wider mb-2">Frage ${currentQuestionIndex + 1} von ${total}</div>
+                <h3 class="text-base sm:text-lg font-bold text-white mb-5 leading-snug">${item.q}</h3>
+                <div class="space-y-3">${optionsHtml}</div>
+                ${expHtml}
+            `;
+            container.appendChild(card);
+
+            // Controls update
+            document.getElementById('page-indicator').innerText = `Frage ${currentQuestionIndex + 1} von ${total}`;
+            document.getElementById('prev-btn').disabled = currentQuestionIndex === 0;
+            document.getElementById('next-btn').disabled = currentQuestionIndex === total - 1;
 
             updateScoreboard();
         }
@@ -209,10 +217,10 @@
 
         function changePage(dir) {
             const list = questionsData[currentCat] || [];
-            const totalPages = Math.ceil(list.length / itemsPerPage) || 1;
-            
-            if (currentPage + dir >= 1 && currentPage + dir <= totalPages) {
-                currentPage += dir;
+            const newIndex = currentQuestionIndex + dir;
+
+            if (newIndex >= 0 && newIndex < list.length) {
+                currentQuestionIndex = newIndex;
                 render();
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
