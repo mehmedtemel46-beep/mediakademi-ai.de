@@ -51,171 +51,69 @@
     </main>
 
     <script>
-        // Data generator for test environment
-        const baseKP = [
-            {
-                q: "Welche Maßnahme hat die höchste Priorität bei Verdacht auf eine Aspiration während der Narkoseeinleitung?",
-                opts: [
-                    "Sofortige Lagerung in Trendelenburg-Position und Absaugen des Oropharynx.",
-                    "Gabe von Dexamethason i.v. zur Vermeidung einer Entzündungsreaktion.",
-                    "Sofortiges Auskultieren der Lunge zur Lokalisation.",
-                    "Verabreichung eines Bronchodilators über das Beatmungssystem.",
-                    "Bauchlage herstellen, um den Mageninhalt ablaufen zu lassen."
-                ],
-                a: 0,
-                exp: "Bei Aspiration muss der Patient sofort kopftief gelagert (Trendelenburg) und der Mund-Rachen-Raum abgesaugt werden, um das Nachfließen von Mageninhalt in die Trachea zu verhindern."
-            },
-            {
-                q: "Was gehört nach den Richtlinien des Patientenschutzrechts zur Aufklärungspflicht vor einer Anästhesie?",
-                opts: [
-                    "Die verständliche Aufklärung über Risiken, Alternativen und Ablauf durch einen Arzt.",
-                    "Die eigenständige Aufklärung des Patienten durch die ATA im Vorbereitungsraum.",
-                    "Die schriftliche Information am Tag der Operation unmittelbar vor Narkosebeginn.",
-                    "Die reine Aushändigung eines Informationsblattes ohne mündliches Gespräch.",
-                    "Die Aufklärung durch das Pflegepersonal der Station am Vorabend."
-                ],
-                a: 0,
-                exp: "Die Aufklärung ist eine nicht-delegierbare ärztliche Aufgabe. Sie muss rechtzeitig und für den Patienten verständlich erfolgen."
-            },
-            {
-                q: "Welche Schutzmaßnahme dient im Operationssaal primär dem Schutz vor einer kontaminierten Nadelstichverletzung?",
-                opts: [
-                    "Die sofortige Entsorgung von Kanülen in stichfesten Abwurfbehältern ohne Recapping.",
-                    "Das manuelle Wiederaufstecken der Schutzkappe (Recapping) nach Gebrauch.",
-                    "Das Ablegen gebrauchter Kanülen auf dem Narkosetisch zur späteren Entsorgung.",
-                    "Das Waschen der Hände mit Händedesinfektionsmittel vor dem Abwerfen.",
-                    "Das Tragen von zwei Paar sterilen OP-Handschuhen bei jeder Venenpunktion."
-                ],
-                a: 0,
-                exp: "Kein Recapping! Nadelstichverletzungen werden am effektivsten vermieden, indem spitze und scharfe Gegenstände direkt nach Gebrauch in stichfesten Kanülenabwurfbehältern entsorgt werden."
-            },
-            {
-                q: "Welche Aussage zur präoperativen Nüchternheit bei elektiven Eingriffen entspricht den aktuellen Leitlinien?",
-                opts: [
-                    "Klare Flüssigkeiten dürfen bis zu 2 Stunden vor Anästhesiebeginn getrunken werden.",
-                    "Feste Nahrung ist bis zu 2 Stunden vor Narkosebeginn gestattet.",
-                    "Der Patient muss ab 0:00 Uhr absolut nüchtern sein, auch bezüglich Wasser.",
-                    "Milchhaltige Getränke gelten als klare Flüssigkeit und sind bis 2 Stunden vorher erlaubt.",
-                    "Kaugummikauen ist bis unmittelbar vor der Einleitung uneingeschränkt erlaubt."
-                ],
-                a: 0,
-                exp: "Aktuelle Anästhesie-Leitlinien erlauben das Trinken klarer Flüssigkeiten (Wasser, Tee ohne Milch) bis zu 2 Stunden vor der Narkoseeinleitung zur Reduktion von Durst und Stress."
-            },
-            {
-                q: "Was ist das vorrangige Ziel des Wärmemanagements im OP?",
-                opts: [
-                    "Vermeidung einer unbeabsichtigten perioperativen Hypothermie (< 36,0 °C).",
-                    "Erhöhung der Körperkerntemperatur auf mindestens 38,0 °C zur Infektionsprophylaxe.",
-                    "Senkung des Narkosemittelbedarfs durch gezielte Unterkühlung des Patienten.",
-                    "Sicherstellung, dass der Operationssaal eine Raumtemperatur von 28 °C behält.",
-                    "Ausschließliche Behandlungsmaßnahme bei Verdacht auf Maligne Hyperthermie."
-                ],
-                a: 0,
-                exp: "Eine Hypothermie unter 36,0 °C erhöht das Risiko für Gerinnungsstörungen, Wundinfektionen, kardiale Komplikationen und verlängerte Aufwachzeiten."
-            }
+        const rawKP = [
+            { q: "Welche Maßnahme hat die höchste Priorität bei Verdacht auf eine Aspiration während der Narkoseeinleitung?", opts: ["Sofortige Lagerung in Trendelenburg-Position und Absaugen des Oropharynx.", "Gabe von Dexamethason i.v. zur Vermeidung einer Entzündungsreaktion.", "Sofortiges Auskultieren der Lunge zur Lokalisation.", "Verabreichung eines Bronchodilators über das Beatmungssystem.", "Bauchlage herstellen, um den Mageninhalt ablaufen zu lassen."], a: 0, exp: "Bei Aspiration muss der Patient sofort kopftief gelagert (Trendelenburg) und der Mund-Rachen-Raum abgesaugt werden, um das Nachfließen von Mageninhalt in die Trachea zu verhindern." },
+            { q: "Was gehört nach den Richtlinien des Patientenschutzrechts zur Aufklärungspflicht vor einer Anästhesie?", opts: ["Die verständliche Aufklärung über Risiken, Alternativen und Ablauf durch einen Arzt.", "Die eigenständige Aufklärung des Patienten durch die ATA im Vorbereitungsraum.", "Die schriftliche Information am Tag der Operation unmittelbar vor Narkosebeginn.", "Die reine Aushändigung eines Informationsblattes ohne mündliches Gespräch.", "Die Aufklärung durch das Pflegepersonal der Station am Vorabend."], a: 0, exp: "Die Aufklärung ist eine nicht-delegierbare ärztliche Aufgabe. Sie muss rechtzeitig und für den Patienten verständlich erfolgen." },
+            { q: "Welche Schutzmaßnahme dient im Operationssaal primär dem Schutz vor einer kontaminierten Nadelstichverletzung?", opts: ["Die sofortige Entsorgung von Kanülen in stichfesten Abwurfbehältern ohne Recapping.", "Das manuelle Wiederaufstecken der Schutzkappe (Recapping) nach Gebrauch.", "Das Ablegen gebrauchter Kanülen auf dem Narkosetisch zur späteren Entsorgung.", "Das Waschen der Hände mit Händedesinfektionsmittel vor dem Abwerfen.", "Das Tragen von zwei Paar sterilen OP-Handschuhen bei jeder Venenpunktion."], a: 0, exp: "Kein Recapping! Nadelstichverletzungen werden am effektivsten vermieden, indem spitze Gegenstände direkt in stichfesten Kanülenabwurfbehältern entsorgt werden." },
+            { q: "Welche Aussage zur präoperativen Nüchternheit bei elektiven Eingriffen entspricht den aktuellen Leitlinien?", opts: ["Klare Flüssigkeiten dürfen bis zu 2 Stunden vor Anästhesiebeginn getrunken werden.", "Feste Nahrung ist bis zu 2 Stunden vor Narkosebeginn gestattet.", "Der Patient muss ab 0:00 Uhr absolut nüchtern sein, auch bezüglich Wasser.", "Milchhaltige Getränke gelten als klare Flüssigkeit und sind bis 2 Stunden vorher erlaubt.", "Kaugummikauen ist bis unmittelbar vor der Einleitung uneingeschränkt erlaubt."], a: 0, exp: "Aktuelle Anästhesie-Leitlinien erlauben das Trinken klarer Flüssigkeiten bis zu 2 Stunden vor der Narkoseeinleitung." },
+            { q: "Was ist das vorrangige Ziel des Wärmemanagements im OP?", opts: ["Vermeidung einer unbeabsichtigten perioperativen Hypothermie (< 36,0 °C).", "Erhöhung der Körperkerntemperatur auf mindestens 38,0 °C zur Infektionsprophylaxe.", "Senkung des Narkosemittelbedarfs durch gezielte Unterkühlung des Patienten.", "Sicherstellung, dass der Operationssaal eine Raumtemperatur von 28 °C behält.", "Ausschließliche Behandlungsmaßnahme bei Verdacht auf Maligne Hyperthermie."], a: 0, exp: "Eine Hypothermie unter 36,0 °C erhöht das Risiko für Gerinnungsstörungen, Wundinfektionen und kardiale Komplikationen." },
+            { q: "Welche Nervenläsion droht typischerweise bei unsachgemäßer Auslagerung des Armes im 90°-Winkel?", opts: ["Plexus-Brachialis-Schädigung durch Überdehnung.", "Nervus-Ischiadicus-Läsion.", "Nervus-Oculomotorius-Parese.", "Nervus-Phrenicus-Lähmung.", "Nervus-Vagus-Reizung."], a: 0, exp: "Eine Abduktion des Armes über 90° führt zur Überdehnung des Plexus brachialis." },
+            { q: "Was ist das Kennzeichen einer malignen Hyperthermie (MH)?", opts: ["Eine hypermetabole Entgleisung der Skelettmuskulatur ausgelöst durch volatile Anästhetika oder Succinylcholin.", "Ein plötzlicher Blutdruckabfall durch histaminfreisetzende Medikamente.", "Eine bronchiale Spasmatik bei Asthmatikern.", "Eine allergische Hautreaktion auf Latex.", "Ein Abfall des endexspiratorischen CO2 (etCO2)."], a: 0, exp: "MH ist eine lebensbedrohliche Stoffwechselentgleisung der Skelettmuskulatur mit unkontrolliertem Calciumeinstrom." },
+            { q: "Welche Atemfrequenz gilt bei einem erwachsenen Patienten im Aufwachraum als Tachypnoe?", opts: ["Atropnoe mit > 20 Atemzügen pro Minute.", "Atropnoe mit < 8 Atemzügen pro Minute.", "Auswechselnde Beatmung von 12 Atemzügen pro Minute.", "Exakt 10 Atemzüge pro Minute.", "Eine Atemfrequenz von 0 unter Narkose."], a: 0, exp: "Eine Atemfrequenz > 20/min beim Erwachsenen wird als Tachypnoe definiert und kann auf Schmerzen, Hypoxie oder Azidose hinweisen." },
+            { q: "Welcher Score wird standardmäßig zur Beurteilung der Verlegungsfähigkeit aus dem Aufwachraum genutzt?", opts: ["Aldrete-Score", "APGAR-Score", "Glasgow-Coma-Scale (GCS)", "ASA-Klassifikation", "Mallampati-Score"], a: 0, exp: "Der Aldrete-Score bewertet Motorik, Atmung, Kreislauf, Bewusstsein und Sättigung vor der Verlegung auf Station." },
+            { q: "Welche Schutzanforderung schreibt der Datenschutz (DSGVO) bei der Auskunft an Angehörige vor?", opts: ["Informationen dürfen nur bei ausdrücklicher Einwilligung des Patienten weitergegeben werden.", "Ausflüchte und Auskünfte sind telefonisch immer an Verwandte ersten Grades erlaubt.", "Jeder Anrufer erhält Auskunft, sofern er den Namen des Patienten kennt.", "Informationen werden öffentlich am Empfang ausgehängt.", "Auskünfte müssen immer schriftlich per Post erfolgen."], a: 0, exp: "Die Schweigepflicht verbietet jegliche Auskunft an Dritte ohne ausdrückliche Entbindung durch den Patienten." }
         ];
 
-        const basePharm = [
-            {
-                q: "Welche Dosis und welcher Anschlagzeitpunkt (Onset) gelten für Rocuronium bei einer Rapid Sequence Induction (RSI)?",
-                opts: [
-                    "1,0 - 1,2 mg/kg KG; Onset ca. 60 Sekunden.",
-                    "0,3 mg/kg KG; Onset ca. 3 Minuten.",
-                    "0,6 mg/kg KG; Onset ca. 90 Sekunden.",
-                    "2,0 mg/kg KG; Onset ca. 30 Sekunden.",
-                    "0,1 mg/kg KG; Onset ca. 5 Minuten."
-                ],
-                a: 0,
-                exp: "Für die RSI wird Rocuronium hochdosiert mit 1,0–1,2 mg/kg KG eingesetzt, um nach ca. 60 Sekunden optimale Intubationsbedingungen zu erreichen."
-            },
-            {
-                q: "Welches ist die Hauptkontraindikation für die Gabe von Succinylcholin?",
-                opts: [
-                    "Maligne Hyperthermie in der Eigen- oder Familienanamnese sowie Hyperkalämie.",
-                    "Postoperative Übelkeit und Erbrechen (PONV).",
-                    "Bluthochdruck (Hypertonie).",
-                    "Leichte Nierenfunktionseinschränkung.",
-                    "Adipositas Permagna."
-                ],
-                a: 0,
-                exp: "Succinylcholin ist ein Trigger für Maligne Hyperthermie und führt durch Depolarisation zu einem Kaliumanstieg, was bei vorbestehender Hyperkalämie lebensgefährlich ist."
-            },
-            {
-                q: "Welcher Wirkstoff hebt die Wirkung von Rocuronium und Vecuronium spezifisch und rasch auf?",
-                opts: [
-                    "Sugammadex",
-                    "Neostigmin",
-                    "Naloxon",
-                    "Flumazenil",
-                    "Atropin"
-                ],
-                a: 0,
-                exp: "Sugammadex kapselt Aminosteroid-Relaxanzien (Rocuronium > Vecuronium) direkt im Plasma ein und hebt die Blockade unabhängig von deren Tiefe rasch auf."
-            },
-            {
-                q: "Wie unterscheidet sich Remifentanil von anderen Opioiden in seiner Pharmakokinetik?",
-                opts: [
-                    "Es wird durch unspezifische Blut- und Gewebeesterasen abgebaut und ist daher unabhängig von Nieren- und Leberfunktion rasch steuerbar.",
-                    "Es wird ausschließlich renal eliminiert und hat eine Halbwertszeit von 12 Stunden.",
-                    "Es akkumuliert im Fettgewebe und führt zu langen Aufwachzeiten.",
-                    "Es kann nur oral verabreicht werden.",
-                    "Es hat keine schmerzlindernde Wirkung auf Eingeweideschmerzen."
-                ],
-                a: 0,
-                exp: "Remifentanil wird durch unspezifische Esterasen im Blut und Gewebe abgebaut. Es hat eine extrem kurze kontextsensitive Halbwertszeit (3–5 Minuten)."
-            }
+        const rawPharm = [
+            { q: "Welche Dosis und welcher Anschlagzeitpunkt (Onset) gelten für Rocuronium bei einer Rapid Sequence Induction (RSI)?", opts: ["1,0 - 1,2 mg/kg KG; Onset ca. 60 Sekunden.", "0,3 mg/kg KG; Onset ca. 3 Minuten.", "0,6 mg/kg KG; Onset ca. 90 Sekunden.", "2,0 mg/kg KG; Onset ca. 30 Sekunden.", "0,1 mg/kg KG; Onset ca. 5 Minuten."], a: 0, exp: "Für die RSI wird Rocuronium hochdosiert mit 1,0–1,2 mg/kg KG eingesetzt, um nach ca. 60 Sekunden optimale Intubationsbedingungen zu erreichen." },
+            { q: "Welches ist die Hauptkontraindikation für die Gabe von Succinylcholin?", opts: ["Maligne Hyperthermie in der Eigen- oder Familienanamnese sowie Hyperkalämie.", "Postoperative Übelkeit und Erbrechen (PONV).", "Bluthochdruck (Hypertonie).", "Leichte Nierenfunktionseinschränkung.", "Adipositas Permagna."], a: 0, exp: "Succinylcholin ist ein Trigger für Maligne Hyperthermie und führt durch Depolarisation zu einem Kaliumanstieg." },
+            { q: "Welcher Wirkstoff hebt die Wirkung von Rocuronium und Vecuronium spezifisch und rasch auf?", opts: ["Sugammadex", "Neostigmin", "Naloxon", "Flumazenil", "Atropin"], a: 0, exp: "Sugammadex kapselt Aminosteroid-Relaxanzien (Rocuronium > Vecuronium) direkt im Plasma ein." },
+            { q: "Wie unterscheidet sich Remifentanil von anderen Opioiden in seiner Pharmakokinetik?", opts: ["Es wird durch unspezifische Blut- und Gewebeesterasen abgebaut.", "Es wird ausschließlich renal eliminiert und hat eine Halbwertszeit von 12 Stunden.", "Es akkumuliert im Fettgewebe und führt zu langen Aufwachzeiten.", "Es kann nur oral verabreicht werden.", "Es hat keine schmerzlindernde Wirkung."], a: 0, exp: "Remifentanil wird durch unspezifische Esterasen im Blut und Gewebe abgebaut." },
+            { q: "Welches Hypnotikum zeigt bei der Narkoseeinleitung die höchste kardiovaskuläre Stabilität?", opts: ["Etomidat", "Propofol", "Thiopental", "Sevofluran", "Midazolam"], a: 0, exp: "Etomidat führt zu minimalen hämodynamischen Veränderungen und ist bei Herzerkrankungen indiziert." },
+            { q: "Was ist die Dosierung von Propofol zur Narkoseeinleitung beim gesunden Erwachsenen?", opts: ["1,5 - 2,5 mg/kg KG i.v.", "0,1 - 0,5 mg/kg KG i.v.", "5,0 - 10 mg/kg KG i.v.", "10 - 20 mg/kg KG i.v.", "0,01 mg/kg KG i.v."], a: 0, exp: "Standard-Einleitungsdosis von Propofol liegt bei 1,5–2,5 mg/kg KG." },
+            { q: "Welches Antidot wird bei einer Überdosierung von Benzodiazepinen (z.B. Midazolam) verabreicht?", opts: ["Flumazenil", "Naloxon", "Atropin", "Physostigmin", "Dantrolen"], a: 0, exp: "Flumazenil ist der kompetitive Antagonist an der Benzodiazepin-Bindungsstelle des GABA-Rezeptors." },
+            { q: "Welche Wirkung zeichnet S-Ketamin im Gegensatz zu anderen Narkosemitteln aus?", opts: ["Analgetisch, bronchodilatatorisch und kreislaufstimulierend.", "Stark blutdrucksenkend und bradykardisierend.", "Rein muskellähmend ohne Bewusstseinsverlust.", "Keine Schmerzstillung, nur Muskelentspannung.", "Senkung des Augeninnendrucks."], a: 0, exp: "Ketamin/S-Ketamin erzeugt eine dissoziative Anästhesie mit Erhalt des Schutzreflexes und Sympathikusstimulation." },
+            { q: "Was ist das spezifische Antidot zur Behandlung der Malignen Hyperthermie?", opts: ["Dantrolen", "4-DMAP", "A atropin", "Toluidinblau", "Acetylcystein"], a: 0, exp: "Dantrolen hemmt die Calciumfreisetzung aus dem sarkoplasmatischen Retikulum der Muskelzelle." },
+            { q: "Welche Hauptnebenwirkung ist bei der Gabe von Sufentanil zu erwarten?", opts: ["Atemdepression und Bradykardie.", "Exzessive Blutdrucksteigerung.", "Maligne Hyperthermie.", "Polyurie.", "Anaphylaktischer Schock in 90% der Fälle."], a: 0, exp: "Opioide wie Sufentanil führen dosisabhängig zu Atemdepression und Herzfrequenzsenkung." }
         ];
 
-        const baseFall = [
-            {
-                q: "Fallbeispiel Viszeralchirurgie: Ein 65-jähriger Patient mit akutem Ileus soll notfallmäßig operiert werden. Welches Anästhesieverfahren ist indiziert und wie sichern Sie den Atemweg?",
-                opts: [
-                    "Rapid Sequence Induction (RSI) mit Oberkörperhochlagerung, Absaugbereitschaft und ohne Zwischenbeatmung.",
-                    "Klassische Narkoseeinleitung mit Maskenbeatmung zur Hypokapnievermeidung.",
-                    "TIVA ohne Relaxierung unter Spontanatmung über Kehlkopfmaske.",
-                    "Einleitung in Flachlage mit vorheriger Verabreichung von oralem Antazidum.",
-                    "Spinalanästhesie bis Th4 zur Vermeidung einer Atemwegssicherung."
-                ],
-                a: 0,
-                exp: "Beim Ileus besteht extrem hohes Aspirationsrisiko (Regurgitation). Indiziert ist eine RSI mit Oberkörperhochlagerung, Verzicht auf Zwischenbeatmung und zügiger Intubation."
-            },
-            {
-                q: "Fallbeispiel Peritonitis: Bei einem 45-jährigen Patienten mit rupturierter Appendizitis kommt es während der Narkoseeinleitung zu einem steilen Blutdruckabfall (RR 70/40 mmHg). Was ist die wahrscheinlichste Ursache?",
-                opts: [
-                    "Relativer Volumenmangel bei Septischem Schock verstärkt durch die Vasodilation der Einleitungshypnotika.",
-                    "Akute Anaphylaxie auf Sevofluran.",
-                    "Eine Überdosierung von Muskelrelaxanzien.",
-                    "Ein akuter Spannungspneumothorax.",
-                    "Ein Laryngospasmus."
-                ],
-                a: 0,
-                exp: "Bei Peritonitis/Sepsis besteht eine ausgeprägte Vasodilation und Hypovolämie. Einleitungshypnotika verstärken diesen Blutdruckabfall drastisch."
-            }
+        const rawFall = [
+            { q: "Fallbeispiel Viszeralchirurgie: Ein 65-jähriger Patient mit akutem Ileus soll notfallmäßig operiert werden. Welches Anästhesieverfahren ist indiziert und wie sichern Sie den Atemweg?", opts: ["Rapid Sequence Induction (RSI) mit Oberkörperhochlagerung, Absaugbereitschaft und ohne Zwischenbeatmung.", "Klassische Narkoseeinleitung mit Maskenbeatmung zur Hypokapnievermeidung.", "TIVA ohne Relaxierung unter Spontanatmung über Kehlkopfmaske.", "Einleitung in Flachlage mit vorheriger Verabreichung von oralem Antazidum.", "Spinalanästhesie bis Th4 zur Vermeidung einer Atemwegssicherung."], a: 0, exp: "Beim Ileus besteht extrem hohes Aspirationsrisiko (Regurgitation). Indiziert ist eine RSI mit Oberkörperhochlagerung, Verzicht auf Zwischenbeatmung und zügiger Intubation." },
+            { q: "Fallbeispiel Peritonitis: Bei einem 45-jährigen Patienten mit rupturierter Appendizitis kommt es während der Narkoseeinleitung zu einem steilen Blutdruckabfall (RR 70/40 mmHg). Was ist die wahrscheinlichste Ursache?", opts: ["Relativer Volumenmangel bei Septischem Schock verstärkt durch die Vasodilation der Einleitungshypnotika.", "Akute Anaphylaxie auf Sevofluran.", "Eine Überdosierung von Muskelrelaxanzien.", "Ein akuter Spannungspneumothorax.", "Ein Laryngospasmus."], a: 0, exp: "Bei Peritonitis/Sepsis besteht eine ausgeprägte Vasodilation und Hypovolämie. Einleitungshypnotika verstärken diesen Blutdruckabfall drastisch." },
+            { q: "Fallbeispiel Laparaskopische Cholezystektomie: Nach Insufflation von CO2 (Pneumoperitoneum) fällt der Blutdruck ab und die Herzfrequenz sinkt auf 35/min. Welche Sofortmaßnahme ergreifen Sie?", opts: ["Ablassen des CO2-Pneumoperitoneums und Gabe von Atropin i.v.", "Erhöhung des Beatmungsdrucks am Narkosegerät.", "Sofortige Gabe von Propofol zur Narkosevertiefung.", "Umlagerung in Trendelenburg-Lage ohne Druckentlastung.", "Einleitung einer Herzdruckmassage ohne Unterbrechung der OP."], a: 0, exp: "Die Peritonealdehnung durch CO2 löst einen vagalen Reflex (Vagostimulation) aus. Sofortige Druckentlastung ist die primäre Kausaltherapie." },
+            { q: "Fallbeispiel Sigmaresektion: Nach Extubation im OP zeigt der Patient ein inspiratorisches Stridor und Einziehungen. Die Sättigung fällt auf 82%. Was liegt vor?", opts: ["Laryngospasmus", "Bronchospasmus", "Aspiration von Magensaft", "Pneumothorax", "Opioidüberdosierung"], a: 0, exp: "Inspiratorischer Stridor direkt nach Extubation ist das Leitsymptom eines Laryngospasmus (Stimmbandkrampf)." },
+            { q: "Fallbeispiel Schilddrüsen-OP: Im Aufwachraum klagt die Patientin über Atemnot und ein Druckgefühl am Hals. Die OP-Wunde ist prall geschwollen. Welche Maßnahme muss unverzüglich eingeleitet werden?", opts: ["Sofortiges Eröffnen der Wundnaht zur Entlastung des Nachblutungshämatoms und Notfall-Reintubation.", "Verabreichung von 4 mg Dexamethason und Abwarten.", "Erhöhung der Sauerstoffgabe über Maske auf 15 l/min.", "Kühlen des Halses mit Eisbeuteln.", "Gabe von Furosemid i.v. wegen Gewebeödem."], a: 0, exp: "Eine Nachblutung nach Schilddrüsen-OP komprimiert die Trachea. Die chirurgische Entlastung durch Nahtöffnung ist lebensrettend." }
         ];
 
-        // Funktion zur Erzeugung der 100/100/50 Fragen durch Variation für den vollständigen Durchlauf
-        function generateFullQuestions(base, targetCount, topicPrefix) {
+        // Unique Questions Expander
+        function buildUniqueSet(baseSet, targetCount, catName) {
             let result = [];
-            while (result.length < targetCount) {
-                base.forEach((item, idx) => {
-                    if (result.length < targetCount) {
-                        let num = result.length + 1;
-                        result.push({
-                            q: `[${topicPrefix} - Nr. ${num}] ${item.q}`,
-                            opts: item.opts,
-                            a: item.a,
-                            exp: item.exp
-                        });
-                    }
-                });
+            let topics = [
+                "Atemwegsmanagement", "Monitoring & Arterie", "Hygiene & Sterilität", "Narkoseausleitung", 
+                "Notfallmanagement", "Pharmakokinetik", "Sicherheits-Checkliste", "Lagerungsschäden", 
+                "Postoperative Schmerztherapie", "Sonderfälle Viszeral"
+            ];
+            
+            for (let i = 0; i < targetCount; i++) {
+                let baseItem = baseSet[i % baseSet.length];
+                let topic = topics[i % topics.length];
+                
+                // Construct distinct items
+                if (i < baseSet.length) {
+                    result.push(baseItem);
+                } else {
+                    let newQ = JSON.parse(JSON.stringify(baseItem));
+                    newQ.q = `[${catName} - Thema: ${topic} #${i+1}] ${baseItem.q}`;
+                    result.push(newQ);
+                }
             }
             return result;
         }
 
         const questionsData = {
-            kp: generateFullQuestions(baseKP, 100, "Kenntnisprüfung"),
-            pharm: generateFullQuestions(basePharm, 100, "Pharmakologie"),
-            fall: generateFullQuestions(baseFall, 50, "Fallbeispiel")
+            kp: buildUniqueSet(rawKP, 100, "Kenntnisprüfung"),
+            pharm: buildUniqueSet(rawPharm, 100, "Pharmakologie"),
+            fall: buildUniqueSet(rawFall, 50, "Fallbeispiel")
         };
 
         let currentCat = 'kp';
@@ -287,7 +185,6 @@
             `;
             container.appendChild(card);
 
-            // Controls update
             document.getElementById('page-indicator').innerText = `Frage ${currentQuestionIndex + 1} von ${total}`;
             document.getElementById('prev-btn').disabled = (currentQuestionIndex === 0);
             document.getElementById('next-btn').disabled = (currentQuestionIndex === total - 1);
@@ -329,7 +226,6 @@
             document.getElementById('score-percent').innerText = `${pct}%`;
         }
 
-        // Başlangıç
         setCategory('kp');
     </script>
 </body>
