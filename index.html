@@ -49,7 +49,6 @@
     </main>
 
     <script>
-        // Database Sample Template (Extendable to 250 Questions)
         const questionsData = {
             kp: [
                 {
@@ -209,9 +208,14 @@
         }
 
         function changePage(dir) {
-            currentPage += dir;
-            render();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            const list = questionsData[currentCat] || [];
+            const totalPages = Math.ceil(list.length / itemsPerPage) || 1;
+            
+            if (currentPage + dir >= 1 && currentPage + dir <= totalPages) {
+                currentPage += dir;
+                render();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
         }
 
         function updateScoreboard() {
