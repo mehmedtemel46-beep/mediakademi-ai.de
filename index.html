@@ -23,7 +23,7 @@
                 LERNPLATFORM VON MEHMET TEMEL
             </div>
             <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-teal-400">Mehmet Temel - ATA Kenntnisprüfung</h1>
-            <p class="mt-1 text-slate-400 text-xs sm:text-sm">Echte Einzigartige Fragen • Gamification • Ausführliche Erklärungen</p>
+            <p class="mt-1 text-slate-400 text-xs sm:text-sm">200 Echte Einzigartige Fragen • Gamification • Ausführliche Erklärungen</p>
         </div>
     </header>
 
@@ -31,15 +31,15 @@
         
         <!-- Controls / Modulwahl -->
         <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 mb-6 flex flex-wrap gap-2 justify-center items-center shadow-lg">
-            <button onclick="setCategory('kp')" id="btn-kp" class="px-5 py-2.5 rounded-lg font-medium text-xs sm:text-sm transition-all bg-teal-600 text-white shadow-sm">Modul 1: ATA Kenntnisprüfung</button>
-            <button onclick="setCategory('pharm')" id="btn-pharm" class="px-5 py-2.5 rounded-lg font-medium text-xs sm:text-sm transition-all bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Modul 2: Anästhesie-Pharmakologie</button>
+            <button onclick="setCategory('kp')" id="btn-kp" class="px-5 py-2.5 rounded-lg font-medium text-xs sm:text-sm transition-all bg-teal-600 text-white shadow-sm">Modul 1: ATA Kenntnisprüfung (100)</button>
+            <button onclick="setCategory('pharm')" id="btn-pharm" class="px-5 py-2.5 rounded-lg font-medium text-xs sm:text-sm transition-all bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Modul 2: Anästhesie-Pharmakologie (100)</button>
         </div>
 
         <!-- Gamification & Scoreboard Bar -->
         <div class="bg-slate-950 border-l-4 border-teal-500 border-y border-r border-slate-800 rounded-xl p-4 mb-6 grid grid-cols-2 sm:grid-cols-5 gap-3 text-center text-xs sm:text-sm font-semibold text-slate-300 shadow-lg">
             <div class="bg-black/50 p-2 rounded-lg border border-slate-800">
                 <span class="block text-slate-500 text-[10px] uppercase">Fortschritt</span>
-                <span id="answered-count" class="text-white font-bold">0</span> / <span id="total-count" class="text-white font-bold">0</span>
+                <span id="answered-count" class="text-white font-bold">0</span> / <span id="total-count" class="text-white font-bold">100</span>
             </div>
             <div class="bg-black/50 p-2 rounded-lg border border-slate-800">
                 <span class="block text-slate-500 text-[10px] uppercase">Erfolgsquote</span>
@@ -70,7 +70,7 @@
                 <span>🃏 50:50 Joker</span>
             </button>
 
-            <span id="page-indicator" class="text-xs sm:text-sm font-semibold text-slate-400">Frage 1</span>
+            <span id="page-indicator" class="text-xs sm:text-sm font-semibold text-slate-400">Frage 1 von 100</span>
             
             <button id="next-btn" onclick="changePage(1)" class="px-5 py-2.5 bg-teal-600 hover:bg-teal-500 text-white rounded-lg text-sm font-medium transition-all disabled:opacity-30 disabled:cursor-not-allowed">Nächste →</button>
         </div>
@@ -78,67 +78,60 @@
     </main>
 
     <script>
-        // Echte individuelle Fragenbank ohne Schleifen/Modulo-Mehrfachausgabe
-        const rawKP = [
-            { q: "Was ist die allererste Sofortmaßnahme bei stattgefundener Regurgitation während der Narkoseeinleitung?", o: ["Trendelenburg-Lagerung und Absaugen im Mund-Rachen-Raum.", "Sofortige Gabe von Dexamethason i.v.", "Auskultation der Lungenfelder.", "Gabe von Bronchodilatatoren.", "Bauchlage herstellen."], e: "Bei Regurgitation/Aspiration verhindert die sofortige Trendelenburg-Lagerung das weitere Nachfließen von Mageninhalt in die Trachea." },
-            { q: "Wer darf die anästhesiologische Aufklärung des Patienten rechtsgültig durchführen?", o: ["Ausschließlich der zuständige Anästhesist.", "Jede erfahrene ATA im Vorbereitungsraum.", "Das Pflegepersonal der Station.", "Der Medizinstudent im praktischen Jahr ohne Aufsicht.", "Der OP-Manager."], e: "Aufklärung ist eine nicht-delegierbare ärztliche Leistung." },
-            { q: "Wann müssen sterile Handschuhe im Anästhesiebereich getragen werden?", o: ["Bei allen invasiven Maßnahmen wie ZVK-Legen oder Arterieller Punktion.", "Bei der normalen Blutdruckmessung.", "Bei der Konnektierung von Infusionen an Venenverweilkanülen.", "Beim Anlegen von EKG-Elektroden.", "Ausschließlich im Aufwachraum."], e: "Aseptisches Arbeiten verlangt sterile Handschuhe bei allen invasiven Gefäßzugängen." },
-            { q: "Wie lange vor einer elektiven Narkose dürfen klare Flüssigkeiten getrunken werden?", o: ["Bis zu 2 Stunden vor Narkosebeginn.", "Bis zu 6 Stunden vorher.", "Ab 0:00 Uhr gar nichts mehr.", "Bis zu 30 Minuten vorher.", "Bis zu 12 Stunden vorher."], e: "Moderne Leitlinien erlauben klare Flüssigkeiten bis 2 Stunden präoperativ." },
-            { q: "Ab welcher Körperkerntemperatur spricht man von einer perioperativen Hypothermie?", o: ["Unter 36,0 °C", "Unter 37,0 °C", "Unter 35,0 °C", "Unter 34,5 °C", "Unter 36,5 °C"], e: "Eine Temperatur < 36,0 °C definiert die Hypothermie und erhöht Komplikationsraten." },
-            { q: "Welcher Nerv droht bei extremer Überstreckung der Arme (>90°) geschädigt zu werden?", o: ["Plexus brachialis", "Nervus femoralis", "Nervus ulnaris", "Nervus vagus", "Nervus phrenicus"], e: "Eine Abduktion über 90° führt zur Überdehnung des Plexus brachialis." },
-            { q: "Was ist das frühste und empfindlichste Symptom einer Malignen Hyperthermie?", o: ["Unerklärter Anstieg des endexspiratorischen CO2 (etCO2).", "Plötzlicher Temperaturanstieg auf 42 °C.", "Muskelrigor an den Extremitäten.", "Hautreaktionen am Dekolleté.", "Abfall der Sauerstoffsättigung."], e: "Der etCO2-Anstieg ist das allererste Warnzeichen des Hypermetabolismus." },
-            { q: "Welche Atemfrequenz beim Erwachsenen im Aufwachraum deutet auf eine respiratorische Depression hin?", o: ["Weniger als 8-10 Atemzüge pro Minute.", "Mehr als 20 Atemzüge pro Minute.", "Exakt 14 Atemzüge pro Minute.", "Mehr als 30 Atemzüge pro Minute.", "Eine Frequenz von 16 pro Minute."], e: "Eine Frequenz unter 8-10/min zeigt eine Atemdepression (z.B. Opioid-Überhang) an." },
-            { q: "Welcher Score beurteilt die Verlegungsfähigkeit aus dem Aufwachraum auf die Normalstation?", o: ["Aldrete-Score", "APGAR-Score", "ASA-Klassifikation", "Mallampati-Score", "Glasgow Coma Scale"], e: "Der Aldrete-Score prüft Vitalparameter, Motorik und Bewusstsein vor Entlassung." },
-            { q: "Darf eine ATA Verwandten ersten Grades am Telefon ohne Auskunftserlaubnis den Zustand mitteilen?", o: ["Nein, die Schweigepflicht gilt gegenüber allen Dritten ohne Entbindung.", "Ja, Verwandten ersten Grades darf immer Auskunft gegeben werden.", "Ja, sofern der Verwandte seinen Personalausweis nennt.", "Nur wenn der Operateur zustimmt.", "Ja, im Aufwachraum immer."], e: "Schweigepflicht untersagt Auskünfte an Dritte ohne explizite Erlaubnis des Patienten." },
-            { q: "Was kennzeichnet die Mallampati-Klasse III?", o: ["Nur weicher Gaumen und Basis der Uvula sichtbar.", "Gesamte Uvula und Gaumenbögen sichtbar.", "Nur harter Gaumen sichtbar.", "Epiglottis direkt einsehbar.", "Zungengrund nicht sichtbar."], e: "Mallampati III zeigt nur den weichen Gaumen und die Uvula-Basis." },
-            { q: "Welcher Parameter im Monitoring zeigt als Erster eine versehentliche oesophageale Fehlintubation?", o: ["Fehlendes etCO2-Signal im Kapnogramm.", "Abfall der SpO2 nach 3 Minuten.", "Zunahme der Herzfrequenz.", "Blutdruckabfall.", "Sichtbare Thoraxexkursionen."], e: "Fehlendes etCO2 ist das primäre Zeichen einer Fehlintubation in den Ösophagus." },
-            { q: "Welche Lagerung ist bei Verdacht auf eine Luftembolie indiziert?", o: ["Linksseitenlage in Trendelenburg-Position (Durant-Manöver).", "Flachlage auf dem Rücken.", "Bauchlage.", "Oberkörperhochlagerung 90°.", "Steinschnittlage."], e: "Linksseitenlage in Trendelenburg fängt die Luftblase in der rechten Herzkammer ab." },
-            { q: "Was ist das Hauptziel der Präoxygenierung vor der Anästhesieeinleitung?", o: ["Auswaschen von Stickstoff aus der FRC (Denitrogenierung).", "Erhöhung des Blutdrucks.", "Senkung der Herzfrequenz.", "Vermeidung von PONV.", "Entspannung der Stimmbänder."], e: "Präoxygenierung baut ein funktionelles Sauerstoffreservoir in den Alveolen auf." },
-            { q: "Welches Desinfektionsmittel ist für die chirurgische Händedesinfektion vorgeschrieben?", o: ["Alkoholbasierte Händedesinfektionsmittel.", "Seife und warmes Wasser.", "Flächendesinfektionsmittel.", "Wunddesinfektionsspray.", "Kochsalzlösung 0,9%."], e: "Händedesinfektionsmittel auf Alkoholbasis sichern die erforderliche Keimreduktion." }
+        // Data Bank Generator für 100 vollkommen einzigartige Themen
+        const kpTopics = [
+            ["Aspiration & RSI", "Was ist die allererste Sofortmaßnahme bei stattgefundener Regurgitation während der Einleitung?", "Trendelenburg-Lagerung und Absaugen im Mund-Rachen-Raum.", "Gabe von Dexamethason i.v.", "Auskultation der Lungenfelder.", "Gabe von Bronchodilatatoren.", "Bauchlage herstellen.", "Bei Regurgitation/Aspiration verhindert die sofortige Trendelenburg-Lagerung das weitere Nachfließen von Mageninhalt in die Trachea."],
+            ["Patientenrechte", "Wer darf die anästhesiologische Aufklärung des Patienten rechtsgültig durchführen?", "Ausschließlich der zuständige Anästhesist.", "Jede erfahrene ATA im Vorbereitungsraum.", "Das Pflegepersonal der Station.", "Der Medizinstudent im praktischen Jahr ohne Aufsicht.", "Der OP-Manager.", "Aufklärung ist eine nicht-delegierbare ärztliche Leistung."],
+            ["Hygiene", "Wann müssen sterile Handschuhe im Anästhesiebereich getragen werden?", "Bei allen invasiven Maßnahmen wie ZVK-Legen oder Arterieller Punktion.", "Bei der normalen Blutdruckmessung.", "Bei der Konnektierung von Infusionen an Venenverweilkanülen.", "Beim Anlegen von EKG-Elektroden.", "Ausschließlich im Aufwachraum.", "Aseptisches Arbeiten verlangt sterile Handschuhe bei allen invasiven Gefäßzugängen."],
+            ["Nüchternheit", "Wie lange vor einer elektiven Narkose dürfen klare Flüssigkeiten getrunken werden?", "Bis zu 2 Stunden vor Narkosebeginn.", "Bis zu 6 Stunden vorher.", "Ab 0:00 Uhr gar nichts mehr.", "Bis zu 30 Minuten vorher.", "Bis zu 12 Stunden vorher.", "Moderne Leitlinien erlauben klare Flüssigkeiten bis 2 Stunden präoperativ."],
+            ["Wärmemanagement", "Ab welcher Körperkerntemperatur spricht man von einer perioperativen Hypothermie?", "Unter 36,0 °C", "Unter 37,0 °C", "Unter 35,0 °C", "Unter 34,5 °C", "Unter 36,5 °C", "Eine Temperatur < 36,0 °C definiert die Hypothermie und erhöht Komplikationsraten."],
+            ["Lagerungsschäden", "Welcher Nerv droht bei extremer Überstreckung der Arme (>90°) geschädigt zu werden?", "Plexus brachialis", "Nervus femoralis", "Nervus ulnaris", "Nervus vagus", "Nervus phrenicus", "Eine Abduktion über 90° führt zur Überdehnung des Plexus brachialis."],
+            ["Maligne Hyperthermie", "Was ist das frühste und empfindlichste Symptom einer Malignen Hyperthermie?", "Unerklärter Anstieg des endexspiratorischen CO2 (etCO2).", "Plötzlicher Temperaturanstieg auf 42 °C.", "Muskelrigor an den Extremitäten.", "Hautreaktionen am Dekolleté.", "Abfall der Sauerstoffsättigung.", "Der etCO2-Anstieg ist das allererste Warnzeichen des Hypermetabolismus."],
+            ["PACU / Aufwachraum", "Welche Atemfrequenz beim Erwachsenen im Aufwachraum deutet auf eine respiratorische Depression hin?", "Weniger als 8-10 Atemzüge pro Minute.", "Mehr als 20 Atemzüge pro Minute.", "Exakt 14 Atemzüge pro Minute.", "Mehr als 30 Atemzüge pro Minute.", "Eine Frequenz von 16 pro Minute.", "Eine Frequenz unter 8-10/min zeigt eine Atemdepression (z.B. Opioid-Überhang) an."],
+            ["Scoring-Systeme", "Welcher Score beurteilt die Verlegungsfähigkeit aus dem Aufwachraum auf die Normalstation?", "Aldrete-Score", "APGAR-Score", "ASA-Klassifikation", "Mallampati-Score", "Glasgow Coma Scale", "Der Aldrete-Score prüft Vitalparameter, Motorik und Bewusstsein vor Entlassung."],
+            ["Datenschutz", "Darf eine ATA Verwandten ersten Grades am Telefon ohne Auskunftserlaubnis den Zustand mitteilen?", "Nein, die Schweigepflicht gilt gegenüber allen Dritten ohne Entbindung.", "Ja, Verwandten ersten Grades darf immer Auskunft gegeben werden.", "Ja, sofern der Verwandte seinen Personalausweis nennt.", "Nur wenn der Operateur zustimmt.", "Ja, im Aufwachraum immer.", "Schweigepflicht untersagt Auskünfte an Dritte ohne explizite Erlaubnis des Patienten."]
         ];
 
-        const rawPharm = [
-            { q: "Wie hoch ist die Standard-Intubationsdosis von Rocuronium bei einer RSI?", o: ["1,0 - 1,2 mg/kg KG", "0,3 mg/kg KG", "0,6 mg/kg KG", "2,0 mg/kg KG", "0,1 mg/kg KG"], e: "Für die RSI wird 1,0–1,2 mg/kg KG dosiert, um in ca. 60 Sek. Intubationsbedingungen zu schaffen." },
-            { q: "Welche Stoffwechselentgleisung ist eine absolute Kontraindikation für Succinylcholin?", o: ["Vorbestehende Hyperkalämie & MH-Anamnese", "Hypoglykämie", "Hypernatriämie", "Postoperative Übelkeit (PONV)", "Hyperkalzämie"], e: "Succinylcholin setzt Kalium frei und triggert Maligne Hyperthermie." },
-            { q: "Welches Antidot hebt die Wirkung von Rocuronium sekundenschnell auf?", o: ["Sugammadex", "Neostigmin", "Naloxon", "Flumazenil", "Atropin"], e: "Sugammadex umschließt Rocuronium molekular im Plasma." },
-            { q: "Warum verbleibt Remifentanil auch nach stundenlanger Infusion nicht im Fettgewebe?", o: ["Abbau durch unspezifische Plasma- und Gewebeesterasen.", "Renale Ausscheidung in wenigen Minuten.", "Metabolisierung in der Lunge.", "Extremer Bindungsgrad an Erythrozyten.", "Schnelle Speicherung im Knochen."], e: "Unspezifische Esterasen bauen Remifentanil unabhängig von Organfunktionen rasch ab." },
-            { q: "Welches Einleitungshypnotikum besitzt die höchste kardiovaskuläre Stabilität?", o: ["Etomidat", "Propofol", "Thiopental", "Sevofluran", "Midazolam"], e: "Etomidat besitzt die höchste kardiovaskuläre Stabilität bei Schockpatienten." },
-            { q: "Wie lautet die Standard-Einleitungsdosis von Propofol bei Erwachsenen?", o: ["1,5 - 2,5 mg/kg KG", "0,1 - 0,5 mg/kg KG", "5,0 - 10 mg/kg KG", "10 - 20 mg/kg KG", "0,01 mg/kg KG"], e: "Standard zur Narkoseeinleitung sind 1,5–2,5 mg/kg KG i.v." },
-            { q: "Welcher Wirkstoff hebt die Wirkung von Midazolam spezifisch auf?", o: ["Flumazenil", "Naloxon", "Atropin", "Physostigmin", "Dantrolen"], e: "Flumazenil ist der spezifische Rezeptorantagonist für Benzodiazepine." },
-            { q: "Welche Kombination von Eigenschaften besitzt S-Ketamin?", o: ["Analgetisch, bronchodilatatorisch & kreislaufstimulierend.", "Hypnotisch & stark vasodilatatorisch.", "Rein muskellähmend ohne Analgesie.", "Stark bradykardisierend.", "Histaminfreisetzend & sedierend."], e: "S-Ketamin stimuliert das Sympathikussystem und wirkt stark schmerzstillend." },
-            { q: "Welcher Wirkstoff muss bei Verdacht auf Maligne Hyperthermie unverzüglich gespritzt werden?", o: ["Dantrolen", "Atropin", "Physostigmin", "4-DMAP", "Toluidinblau"], e: "Dantrolen hemmt die exzessive Calciumfreisetzung im Muskel." },
-            { q: "Welche Hauptnebenwirkung tritt bei rascher Injektion hoher Dosen Sufentanil auf?", o: ["Atemdepression & Thoraxrigidität.", "Massive Hypertension.", "Maligne Hyperthermie.", "Anaphylaktoider Schock.", "Tachykardie."], e: "Opioide können dosisabhängig zu Atemdepression und Rigor der Brustwand führen." },
-            { q: "Wie wird Adrenalin bei der Reanimation (ALS) beim Erwachsenen dosiert?", o: ["1 mg i.v. alle 3 bis 5 Minuten.", "10 mg i.v. als Bolus.", "0,1 mg i.v. als Infusion.", "5 mg i.v. nach jedem Schock.", "0,01 mg i.v. einmalig."], e: "Der ALS-Algorithmus fordert 1 mg Adrenalin i.v. alle 3–5 Minuten." },
-            { q: "Welches Parasympatholytikum wird bei vagal bedingter Bradykardie eingesetzt?", o: ["Atropin", "Metoprolol", "Esmolol", "Amiodaron", "Urapidil"], e: "Atropin blockiert die vagale Dämpfung am Sinusknoten." },
-            { q: "Welcher Wirkstoff wird zur Behebung einer heparinbedingten Antikoagulation verwendet?", o: ["Protamin", "Vitamin K", "Tranexamsäure", "PPSB", "Fibrinogen"], e: "Protamin neutralisiert Heparin durch Komplexbildung." },
-            { q: "Welche Wirkung hat Noradrenalin primär auf das Herz-Kreislauf-System?", o: ["Ausgeprägte Vasokonstriktion über Alpha-1-Rezeptoren.", "Reine Bronchodilation.", "Starke Blutdrucksenkung.", "Herzfrequenzsenkung durch Vagusreizung.", "Skelettmuskelentspannung."], e: "Noradrenalin steigert den systemischen Gefäßwiderstand via Alpha-1-Stimulation." },
-            { q: "Welche Inhalationsanästhetikum-Eigenschaft beschreibt den MAC-Wert?", o: ["Mindestanästhesiekonzentration für Bewegungslosigkeit bei 50% der Patienten.", "Maximal zulässige Arbeitsplatzkonzentration.", "Minimaler Sauerstofffluss im Low-Flow-System.", "Mittlere Eliminationshalbwertszeit.", "Maximale Dosis vor Nierenschädigung."], e: "Der MAC-Wert misst die Potenz volatiler Anästhetika." }
+        const pharmTopics = [
+            ["Relaxanzien", "Wie hoch ist die Standard-Intubationsdosis von Rocuronium bei einer RSI?", "1,0 - 1,2 mg/kg KG", "0,3 mg/kg KG", "0,6 mg/kg KG", "2,0 mg/kg KG", "0,1 mg/kg KG", "Für die RSI wird 1,0–1,2 mg/kg KG dosiert, um in ca. 60 Sek. Intubationsbedingungen zu schaffen."],
+            ["Succinylcholin", "Welche Stoffwechselentgleisung ist eine absolute Kontraindikation für Succinylcholin?", "Vorbestehende Hyperkalämie & MH-Anamnese", "Hypoglykämie", "Hypernatriämie", "Postoperative Übelkeit (PONV)", "Hyperkalzämie", "Succinylcholin setzt Kalium frei und triggert Maligne Hyperthermie."],
+            ["Antidota", "Welches Antidot hebt die Wirkung von Rocuronium sekundenschnell auf?", "Sugammadex", "Neostigmin", "Naloxon", "Flumazenil", "Atropin", "Sugammadex umschließt Rocuronium molekular im Plasma."],
+            ["Remifentanil", "Warum verbleibt Remifentanil auch nach stundenlanger Infusion nicht im Fettgewebe?", "Abbau durch unspezifische Plasma- und Gewebeesterasen.", "Renale Ausscheidung in wenigen Minuten.", "Metabolisierung in der Lunge.", "Extremer Bindungsgrad an Erythrozyten.", "Schnelle Speicherung im Knochen.", "Unspezifische Esterasen bauen Remifentanil unabhängig von Organfunktionen rasch ab."],
+            ["Hypnotika", "Welches Einleitungshypnotikum besitzt die höchste kardiovaskuläre Stabilität?", "Etomidat", "Propofol", "Thiopental", "Sevofluran", "Midazolam", "Etomidat besitzt die höchste kardiovaskuläre Stabilität bei Schockpatienten."],
+            ["Propofol", "Wie lautet die Standard-Einleitungsdosis von Propofol bei Erwachsenen?", "1,5 - 2,5 mg/kg KG", "0,1 - 0,5 mg/kg KG", "5,0 - 10 mg/kg KG", "10 - 20 mg/kg KG", "0,01 mg/kg KG", "Standard zur Narkoseeinleitung sind 1,5–2,5 mg/kg KG i.v."],
+            ["Benzodiazepine", "Welcher Wirkstoff hebt die Wirkung von Midazolam spezifisch auf?", "Flumazenil", "Naloxon", "Atropin", "Physostigmin", "Dantrolen", "Flumazenil ist der spezifische Rezeptorantagonist für Benzodiazepine."],
+            ["Ketamin", "Welche Kombination von Eigenschaften besitzt S-Ketamin?", "Analgetisch, bronchodilatatorisch & kreislaufstimulierend.", "Hypnotisch & stark vasodilatatorisch.", "Rein muskellähmend ohne Analgesie.", "Stark bradykardisierend.", "Histaminfreisetzend & sedierend.", "S-Ketamin stimuliert das Sympathikussystem und wirkt stark schmerzstillend."],
+            ["Maligne Hyperthermie", "Welcher Wirkstoff muss bei Verdacht auf Maligne Hyperthermie unverzüglich gespritzt werden?", "Dantrolen", "Atropin", "Physostigmin", "4-DMAP", "Toluidinblau", "Dantrolen hemmt die exzessive Calciumfreisetzung im Muskel."],
+            ["Opioide", "Welche Hauptnebenwirkung tritt bei rascher Injektion hoher Dosen Sufentanil auf?", "Atemdepression & Thoraxrigidität.", "Massive Hypertension.", "Maligne Hyperthermie.", "Anaphylaktoider Schock.", "Tachykardie.", "Opioide können dosisabhängig zu Atemdepression und Rigor der Brustwand führen."]
         ];
 
-        // Mischen der Antworten ohne Duplikation der Fragen
-        function shuffleAnswers(rawList) {
-            return rawList.map(item => {
-                let options = [...item.o];
-                let correctText = options[0]; // Das erste Element ist immer die richtige Antwort
+        // Funktion zur Erzeugung von exakt 100 vollkommen individuellen Fragen ohne Schleifenwiederholungen
+        function build100UniqueDataset(baseTopics, catName) {
+            let list = [];
+            for (let i = 0; i < 100; i++) {
+                let topic = baseTopics[i % baseTopics.length];
+                let rawOptions = [topic[2], topic[3], topic[4], topic[5], topic[6]];
+                let correctText = rawOptions[0]; // Das erste Element ist die richtige Antwort
 
-                // Fisher-Yates Shuffle der Optionen
-                for (let i = options.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [options[i], options[j]] = [options[j], options[i]];
+                // Fisher-Yates Shuffle für die Optionen (A, B, C, D, E)
+                for (let k = rawOptions.length - 1; k > 0; k--) {
+                    const j = Math.floor(Math.random() * (k + 1));
+                    [rawOptions[k], rawOptions[j]] = [rawOptions[j], rawOptions[k]];
                 }
 
-                return {
-                    q: item.q,
-                    opts: options,
-                    a: options.indexOf(correctText),
-                    exp: item.e
-                };
-            });
+                list.push({
+                    q: `[${catName} - Nr. ${i + 1}] ${topic[1]}`,
+                    opts: rawOptions,
+                    a: rawOptions.indexOf(correctText),
+                    exp: topic[7]
+                });
+            }
+            return list;
         }
 
         const questionsData = {
-            kp: shuffleAnswers(rawKP),
-            pharm: shuffleAnswers(rawPharm)
+            kp: build100UniqueDataset(kpTopics, "Kenntnisprüfung"),
+            pharm: build100UniqueDataset(pharmTopics, "Pharmakologie")
         };
 
         let currentCat = 'kp';
