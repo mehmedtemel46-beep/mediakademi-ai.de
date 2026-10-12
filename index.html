@@ -50,7 +50,7 @@
     </main>
 
     <script>
-        // Datenbank mit 100 Fragen für Kenntnisprüfung
+        // Rohe Fragenbank (Richtige Antwort ist anfänglich auf Index 0)
         const rawKP = [
             { q: "Welche Maßnahme hat die höchste Priorität bei Verdacht auf eine Aspiration während der Narkoseeinleitung?", opts: ["Sofortige Lagerung in Trendelenburg-Position und Absaugen des Oropharynx.", "Gabe von Dexamethason i.v. zur Vermeidung einer Entzündungsreaktion.", "Sofortiges Auskultieren der Lunge zur Lokalisation.", "Verabreichung eines Bronchodilators über das Beatmungssystem.", "Bauchlage herstellen, um den Mageninhalt ablaufen zu lassen."], a: 0, exp: "Bei Aspiration muss der Patient sofort kopftief gelagert (Trendelenburg) und der Mund-Rachen-Raum abgesaugt werden, um das Nachfließen von Mageninhalt in die Trachea zu verhindern." },
             { q: "Was gehört nach den Richtlinien des Patientenschutzrechts zur Aufklärungspflicht vor einer Anästhesie?", opts: ["Die verständliche Aufklärung über Risiken, Alternativen und Ablauf durch einen Arzt.", "Die eigenständige Aufklärung des Patienten durch die ATA im Vorbereitungsraum.", "Die schriftliche Information am Tag der Operation unmittelbar vor Narkosebeginn.", "Die reine Aushändigung eines Informationsblattes ohne mündliches Gespräch.", "Die Aufklärung durch das Pflegepersonal der Station am Vorabend."], a: 0, exp: "Die Aufklärung ist eine nicht-delegierbare ärztliche Aufgabe. Sie muss rechtzeitig und für den Patienten verständlich erfolgen." },
@@ -64,12 +64,11 @@
             { q: "Welche Schutzanforderung schreibt der Datenschutz (DSGVO) bei der Auskunft an Angehörige vor?", opts: ["Informationen dürfen nur bei ausdrücklicher Einwilligung des Patienten weitergegeben werden.", "Telefonische Auskünfte sind immer an Verwandte ersten Grades erlaubt.", "Jeder Anrufer erhält Auskunft, sofern er den Namen des Patienten kennt.", "Informationen werden öffentlich am Empfang ausgehängt.", "Auskünfte müssen immer schriftlich per Post erfolgen."], a: 0, exp: "Die Schweigepflicht verbietet jegliche Auskunft an Dritte ohne ausdrückliche Entbindung durch den Patienten." },
             { q: "Was kennzeichnet die Mallampati-Klassifikation Klasse IV?", opts: ["Nur der harte Gaumen ist sichtbar.", "Uvula und Gaumenbögen sind vollständig einsehbar.", "Die Uvula ist teilweise sichtbar.", "Der weiche Gaumen ist komplett sichtbar.", "Die Epiglottis ist direkt spiegelbar."], a: 0, exp: "Bei Mallampati IV ist lediglich der harte Gaumen einsehbar, was auf eine schwierige Intubation hinweist." },
             { q: "Was ist die primäre Ursache für eine postoperative Relaxtionsblock-Rekurarisierung?", opts: ["Ausklingen der Antagonisierung bei noch vorhandenen Muskelrelaxans-Wirkspiegeln.", "Zu hohe Dosen von Sugammadex.", "Eine Hyperthermie über 39 °C.", "Eine Überdosierung von Naloxon.", "Die Gabe von Ringer-Laktat."], a: 0, exp: "Eine Rekurarisierung tritt auf, wenn der Antagonist (z.B. Neostigmin) schneller abgebaut wird als das Relaxans." },
-            { q: "Welche Komplikation kann bei der Lagerung in Steinschnittlage bei zu langer OP-Dauer entstehen?", opts: ["Kompartmentsyndrom der Unterschenkel.", "Plexus-Läsion der Arme.", "Drucknekrose am Hinterkopf.", "Kompression der Arteria carotis.", "Zwerchfelllähmung."], a: 0, exp: "Lange Steinschnittlagen beinträchtigen die Mikrozirkulation der Unterschenkel und können ein Kompartmentsyndrom auslösen." },
+            { q: "Welche Komplikation kann bei der Lagerung in Steinschnittlage bei zu langer OP-Dauer entstehen?", opts: ["Kompartmentsyndrom der Unterschenkel.", "Plexus-Läsion der Arme.", "Drucknekrose am Hinterkopf.", "Kompression der Arteria carotis.", "Zwerchfelllähmung."], a: 0, exp: "Lange Steinschnittlagen beeinträchtigen die Mikrozirkulation der Unterschenkel und können ein Kompartmentsyndrom auslösen." },
             { q: "Welcher Parameter im Monitoring zeigt als Erster eine erfolgreiche endotracheale Intubation an?", opts: ["Nachweis von etCO2 in mindestens 3-5 aufeinanderfolgenden Atemzügen.", "Anstieg der Pulsoxymetrie auf 100%.", "Blutdruckanstieg um 20 mmHg.", "Auskultation der Magenregion.", "Sichtbare Thoraxexkursion ohne CO2-Kurve."], a: 0, exp: "Die Kapnografie (etCO2) ist der Goldstandard zur Bestätigung der endotrachealen Tubuslage." },
             { q: "Was bedeutet das Prinzip der Delegationskette im Operationssaal?", opts: ["Der Arzt trägt die Anordnungsverantwortung, die ATA die Durchführungsverantwortung.", "Die ATA entscheidet eigenständig über die Anästhesieverfahren.", "Der Arzt übernimmt alle pflegerischen Aufgaben.", "Die Pflegekraft trägt die alleinige rechtliche Haftung für ärztliche Anordnungen.", "Anordnungen müssen nicht dokumentiert werden."], a: 0, exp: "Der Arzt verantwortet die Indikation und Anordnung, die qualifizierte ATA die fachgerechte Durchführung." }
         ];
 
-        // Datenbank mit 100 Fragen für Pharmakologie
         const rawPharm = [
             { q: "Welche Dosis und welcher Anschlagzeitpunkt (Onset) gelten für Rocuronium bei einer Rapid Sequence Induction (RSI)?", opts: ["1,0 - 1,2 mg/kg KG; Onset ca. 60 Sekunden.", "0,3 mg/kg KG; Onset ca. 3 Minuten.", "0,6 mg/kg KG; Onset ca. 90 Sekunden.", "2,0 mg/kg KG; Onset ca. 30 Sekunden.", "0,1 mg/kg KG; Onset ca. 5 Minuten."], a: 0, exp: "Für die RSI wird Rocuronium hochdosiert mit 1,0–1,2 mg/kg KG eingesetzt, um nach ca. 60 Sekunden optimale Intubationsbedingungen zu erreichen." },
             { q: "Welches ist die Hauptkontraindikation für die Gabe von Succinylcholin?", opts: ["Maligne Hyperthermie in der Eigen- oder Familienanamnese sowie Hyperkalämie.", "Postoperative Übelkeit und Erbrechen (PONV).", "Bluthochdruck (Hypertonie).", "Leichte Nierenfunktionseinschränkung.", "Adipositas Permagna."], a: 0, exp: "Succinylcholin ist ein Trigger für Maligne Hyperthermie und führt durch Depolarisation zu einem Kaliumanstieg." },
@@ -88,24 +87,44 @@
             { q: "Welche Wirkstoffgruppe vertritt das Lokalanästhetikum Bupivacain?", opts: ["Lokalanästhetikum vom Säureamid-Typ.", "Lokalanästhetikum vom Ester-Typ.", "Inhalationsanästhetikum.", "Depolarisierendes Muskelrelaxans.", "Benzodiazepin-Derivat."], a: 0, exp: "Bupivacain gehört zu den Aminoamiden und wird häufig in der Regionalanästhesie verwendet." }
         ];
 
-        // Funktion zur Generierung von exakt 100 vollkommen individuellen Fragen pro Kategorie
-        function buildFull100Set(baseArr, catTitle) {
+        // Funktion zum zufälligen Mischen der Optionen, damit die richtige Antwort nicht immer A ist
+        function shuffleOptions(item) {
+            let options = [...item.opts];
+            let correctAnswerText = options[0]; // Das erste Element ist im Rohmaterial immer richtig
+            
+            // Fisher-Yates Shuffle
+            for (let i = options.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [options[i], options[j]] = [options[j], options[i]];
+            }
+
+            return {
+                q: item.q,
+                opts: options,
+                a: options.indexOf(correctAnswerText), // Neuer Index der richtigen Antwort
+                exp: item.exp
+            };
+        }
+
+        // Generiere 100 Fragen pro Kategorie mit gemischten Antwortmöglichkeiten
+        function buildFull100SetShuffled(baseArr, catTitle) {
             let result = [];
             for (let i = 0; i < 100; i++) {
-                let base = baseArr[i % baseArr.length];
+                let baseItem = baseArr[i % baseArr.length];
+                let shuffled = shuffleOptions(baseItem);
                 result.push({
-                    q: `[${catTitle} - Frage ${i + 1}] ${base.q}`,
-                    opts: base.opts,
-                    a: base.a,
-                    exp: base.exp
+                    q: `[${catTitle} - Frage ${i + 1}] ${shuffled.q}`,
+                    opts: shuffled.opts,
+                    a: shuffled.a,
+                    exp: shuffled.exp
                 });
             }
             return result;
         }
 
         const questionsData = {
-            kp: buildFull100Set(rawKP, "Kenntnisprüfung"),
-            pharm: buildFull100Set(rawPharm, "Pharmakologie")
+            kp: buildFull100SetShuffled(rawKP, "Kenntnisprüfung"),
+            pharm: buildFull100SetShuffled(rawPharm, "Pharmakologie")
         };
 
         let currentCat = 'kp';
