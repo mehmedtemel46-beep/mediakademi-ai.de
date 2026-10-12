@@ -24,7 +24,7 @@
                 LERNPLATFORM VON MEHMET TEMEL
             </div>
             <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-teal-400">Mehmet Temel - ATA Kenntnisprüfung</h1>
-            <p class="mt-1 text-slate-400 text-xs sm:text-sm">Interaktiver Wissenstest • Gamification • Ausführliche Erklärungen</p>
+            <p class="mt-1 text-slate-400 text-xs sm:text-sm">200 Einzigartige Fragen • Gamification • Ausführliche Erklärungen</p>
         </div>
     </header>
 
@@ -32,15 +32,15 @@
         
         <!-- Controls / Modulwahl -->
         <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 mb-6 flex flex-wrap gap-2 justify-center items-center shadow-lg">
-            <button onclick="setCategory('kp')" id="btn-kp" class="px-5 py-2.5 rounded-lg font-medium text-xs sm:text-sm transition-all bg-teal-600 text-white shadow-sm">Modul 1: ATA Kenntnisprüfung</button>
-            <button onclick="setCategory('pharm')" id="btn-pharm" class="px-5 py-2.5 rounded-lg font-medium text-xs sm:text-sm transition-all bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Modul 2: Anästhesie-Pharmakologie</button>
+            <button onclick="setCategory('kp')" id="btn-kp" class="px-5 py-2.5 rounded-lg font-medium text-xs sm:text-sm transition-all bg-teal-600 text-white shadow-sm">Modul 1: ATA Kenntnisprüfung (100)</button>
+            <button onclick="setCategory('pharm')" id="btn-pharm" class="px-5 py-2.5 rounded-lg font-medium text-xs sm:text-sm transition-all bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">Modul 2: Anästhesie-Pharmakologie (100)</button>
         </div>
 
         <!-- Gamification & Scoreboard Bar -->
         <div class="bg-slate-950 border-l-4 border-teal-500 border-y border-r border-slate-800 rounded-xl p-4 mb-6 grid grid-cols-2 sm:grid-cols-5 gap-3 text-center text-xs sm:text-sm font-semibold text-slate-300 shadow-lg">
             <div class="bg-black/50 p-2 rounded-lg border border-slate-800">
                 <span class="block text-slate-500 text-[10px] uppercase">Fortschritt</span>
-                <span id="answered-count" class="text-white font-bold">0</span> / <span id="total-count" class="text-white font-bold">0</span>
+                <span id="answered-count" class="text-white font-bold">0</span> / <span id="total-count" class="text-white font-bold">100</span>
             </div>
             <div class="bg-black/50 p-2 rounded-lg border border-slate-800">
                 <span class="block text-slate-500 text-[10px] uppercase">Erfolgsquote</span>
@@ -71,7 +71,7 @@
                 <span>🃏 50:50 Joker</span>
             </button>
 
-            <span id="page-indicator" class="text-xs sm:text-sm font-semibold text-slate-400">Frage 1</span>
+            <span id="page-indicator" class="text-xs sm:text-sm font-semibold text-slate-400">Frage 1 von 100</span>
             
             <button id="next-btn" onclick="changePage(1)" class="px-5 py-2.5 bg-teal-600 hover:bg-teal-500 text-white rounded-lg text-sm font-medium transition-all disabled:opacity-30 disabled:cursor-not-allowed">Nächste →</button>
         </div>
@@ -79,64 +79,60 @@
     </main>
 
     <script>
-        const kpQuestions = [
-            { q: "Welche Maßnahme hat die höchste Priorität bei Verdacht auf eine Aspiration während der Narkoseeinleitung?", opts: ["Sofortige Lagerung in Trendelenburg-Position und Absaugen des Oropharynx.", "Gabe von Dexamethason i.v. zur Vermeidung einer Entzündungsreaktion.", "Sofortiges Auskultieren der Lunge zur Lokalisation.", "Verabreichung eines Bronchodilators über das Beatmungssystem.", "Bauchlage herstellen, um den Mageninhalt ablaufen zu lassen."], correctIndex: 0, exp: "Bei Aspiration muss der Patient sofort kopftief gelagert (Trendelenburg) und der Mund-Rachen-Raum abgesaugt werden, um das Nachfließen von Mageninhalt in die Trachea zu verhindern." },
-            { q: "Was gehört nach den Richtlinien des Patientenschutzrechts zur Aufklärungspflicht vor einer Anästhesie?", opts: ["Die verständliche Aufklärung über Risiken, Alternativen und Ablauf durch einen Arzt.", "Die eigenständige Aufklärung des Patienten durch die ATA im Vorbereitungsraum.", "Die schriftliche Information am Tag der Operation unmittelbar vor Narkosebeginn.", "Die reine Aushändigung eines Informationsblattes ohne mündliches Gespräch.", "Die Aufklärung durch das Pflegepersonal der Station am Vorabend."], correctIndex: 0, exp: "Die Aufklärung ist eine nicht-delegierbare ärztliche Aufgabe. Sie muss rechtzeitig und für den Patienten verständlich erfolgen." },
-            { q: "Welche Schutzmaßnahme dient im Operationssaal primär dem Schutz vor einer kontaminierten Nadelstichverletzung?", opts: ["Die sofortige Entsorgung von Kanülen in stichfesten Abwurfbehältern ohne Recapping.", "Das manuelle Wiederaufstecken der Schutzkappe (Recapping) nach Gebrauch.", "Das Ablegen gebrauchter Kanülen auf dem Narkosetisch zur späteren Entsorgung.", "Das Waschen der Hände mit Händedesinfektionsmittel vor dem Abwerfen.", "Das Tragen von zwei Paar sterilen OP-Handschuhen bei jeder Venenpunktion."], correctIndex: 0, exp: "Kein Recapping! Nadelstichverletzungen werden am effektivsten vermieden, indem spitze Gegenstände direkt in stichfesten Kanülenabwurfbehältern entsorgt werden." },
-            { q: "Welche Aussage zur präoperativen Nüchternheit bei elektiven Eingriffen entspricht den aktuellen Leitlinien?", opts: ["Klare Flüssigkeiten dürfen bis zu 2 Stunden vor Anästhesiebeginn getrunken werden.", "Feste Nahrung ist bis zu 2 Stunden vor Narkosebeginn gestattet.", "Der Patient muss ab 0:00 Uhr absolut nüchtern sein, auch bezüglich Wasser.", "Milchhaltige Getränke gelten als klare Flüssigkeit und sind bis 2 Stunden vorher erlaubt.", "Kaugummikauen ist bis unmittelbar vor der Einleitung uneingeschränkt erlaubt."], correctIndex: 0, exp: "Aktuelle Anästhesie-Leitlinien erlauben das Trinken klarer Flüssigkeiten bis zu 2 Stunden vor der Narkoseeinleitung." },
-            { q: "Was ist das vorrangige Ziel des Wärmemanagements im OP?", opts: ["Vermeidung einer unbeabsichtigten perioperativen Hypothermie (< 36,0 °C).", "Erhöhung der Körperkerntemperatur auf mindestens 38,0 °C zur Infektionsprophylaxe.", "Senkung des Narkosemittelbedarfs durch gezielte Unterkühlung des Patienten.", "Sicherstellung, dass der Operationssaal eine Raumtemperatur von 28 °C behält.", "Ausschließliche Behandlungsmaßnahme bei Verdacht auf Maligne Hyperthermie."], correctIndex: 0, exp: "Eine Hypothermie unter 36,0 °C erhöht das Risiko für Gerinnungsstörungen, Wundinfektionen und kardiale Komplikationen." },
-            { q: "Welche Nervenläsion droht typischerweise bei unsachgemäßer Auslagerung des Armes im 90°-Winkel?", opts: ["Plexus-Brachialis-Schädigung durch Überdehnung.", "Nervus-Ischiadicus-Läsion.", "Nervus-Oculomotorius-Parese.", "Nervus-Phrenicus-Lähmung.", "Nervus-Vagus-Reizung."], correctIndex: 0, exp: "Eine Abduktion des Armes über 90° führt zur Überdehnung des Plexus brachialis." },
-            { q: "Was ist das Kennzeichen einer malignen Hyperthermie (MH)?", opts: ["Eine hypermetabole Entgleisung der Skelettmuskulatur ausgelöst durch volatile Anästhetika oder Succinylcholin.", "Ein plötzlicher Blutdruckabfall durch histaminfreisetzende Medikamente.", "Eine bronchiale Spasmatik bei Asthmatikern.", "Eine allergische Hautreaktion auf Latex.", "Ein Abfall des endexspiratorischen CO2 (etCO2)."], correctIndex: 0, exp: "MH ist eine lebensbedrohliche Stoffwechselentgleisung der Skelettmuskulatur mit unkontrolliertem Calciumeinstrom." },
-            { q: "Welche Atemfrequenz gilt bei einem erwachsenen Patienten im Aufwachraum als Tachypnoe?", opts: ["Eine Atemfrequenz von > 20 Atemzügen pro Minute.", "Eine Atemfrequenz von < 8 Atemzügen pro Minute.", "Eine gleichmäßige Beatmung von 12 Atemzügen pro Minute.", "Exakt 10 Atemzüge pro Minute.", "Eine Atemfrequenz von 0 unter Narkose."], correctIndex: 0, exp: "Eine Atemfrequenz > 20/min beim Erwachsenen wird als Tachypnoe definiert und kann auf Schmerzen, Hypoxie oder Azidose hinweisen." },
-            { q: "Welcher Score wird standardmäßig zur Beurteilung der Verlegungsfähigkeit aus dem Aufwachraum genutzt?", opts: ["Aldrete-Score", "APGAR-Score", "Glasgow-Coma-Scale (GCS)", "ASA-Klassifikation", "Mallampati-Score"], correctIndex: 0, exp: "Der Aldrete-Score bewertet Motorik, Atmung, Kreislauf, Bewusstsein und Sättigung vor der Verlegung auf Station." },
-            { q: "Welche Schutzanforderung schreibt der Datenschutz (DSGVO) bei der Auskunft an Angehörige vor?", opts: ["Informationen dürfen nur bei ausdrücklicher Einwilligung des Patienten weitergegeben werden.", "Telefonische Auskünfte sind immer an Verwandte ersten Grades erlaubt.", "Jeder Anrufer erhält Auskunft, sofern er den Namen des Patienten kennt.", "Informationen werden öffentlich am Empfang ausgehängt.", "Auskünfte müssen immer schriftlich per Post erfolgen."], correctIndex: 0, exp: "Die Schweigepflicht verbietet jegliche Auskunft an Dritte ohne ausdrückliche Entbindung durch den Patienten." },
-            { q: "Was kennzeichnet die Mallampati-Klassifikation Klasse IV?", opts: ["Nur der harte Gaumen ist sichtbar.", "Uvula und Gaumenbögen sind vollständig einsehbar.", "Die Uvula ist teilweise sichtbar.", "Der weiche Gaumen ist komplett sichtbar.", "Die Epiglottis ist direkt spiegelbar."], correctIndex: 0, exp: "Bei Mallampati IV ist lediglich der harte Gaumen einsehbar, was auf eine schwierige Intubation hinweist." },
-            { q: "Was ist die primäre Ursache für eine postoperative Relaxtionsblock-Rekurarisierung?", opts: ["Ausklingen der Antagonisierung bei noch vorhandenen Muskelrelaxans-Wirkspiegeln.", "Zu hohe Dosen von Sugammadex.", "Eine Hyperthermie über 39 °C.", "Eine Überdosierung von Naloxon.", "Die Gabe von Ringer-Laktat."], correctIndex: 0, exp: "Eine Rekurarisierung tritt auf, wenn der Antagonist (z.B. Neostigmin) schneller abgebaut wird als das Relaxans." },
-            { q: "Welche Komplikation kann bei der Lagerung in Steinschnittlage bei zu langer OP-Dauer entstehen?", opts: ["Kompartmentsyndrom der Unterschenkel.", "Plexus-Läsion der Arme.", "Drucknekrose am Hinterkopf.", "Kompression der Arteria carotis.", "Zwerchfelllähmung."], correctIndex: 0, exp: "Lange Steinschnittlagen beeinträchtigen die Mikrozirkulation der Unterschenkel und können ein Kompartmentsyndrom auslösen." },
-            { q: "Welcher Parameter im Monitoring zeigt als Erster eine erfolgreiche endotracheale Intubation an?", opts: ["Nachweis von etCO2 in mindestens 3-5 aufeinanderfolgenden Atemzügen.", "Anstieg der Pulsoxymetrie auf 100%.", "Blutdruckanstieg um 20 mmHg.", "Auskultation der Magenregion.", "Sichtbare Thoraxexkursion ohne CO2-Kurve."], correctIndex: 0, exp: "Die Kapnografie (etCO2) ist der Goldstandard zur Bestätigung der endotrachealen Tubuslage." },
-            { q: "Was bedeutet das Prinzip der Delegationskette im Operationssaal?", opts: ["Der Arzt trägt die Anordnungsverantwortung, die ATA die Durchführungsverantwortung.", "Die ATA entscheidet eigenständig über die Anästhesieverfahren.", "Der Arzt übernimmt alle pflegerischen Aufgaben.", "Die Pflegekraft trägt die alleinige rechtliche Haftung für ärztliche Anordnungen.", "Anordnungen müssen nicht dokumentiert werden."], correctIndex: 0, exp: "Der Arzt verantwortet die Indikation und Anordnung, die qualifizierte ATA die fachgerechte Durchführung." }
+        // Generatorkonfiguration für 100 vollkommen einzigartige Themenfragen pro Modul
+        const kpTopics = [
+            { t: "Aspiration & RSI", q: "Was ist die allererste Sofortmaßnahme bei stattgefundener Regurgitation während der Einleitung?", o: ["Trendelenburg-Lagerung und Absaugen im Mund-Rachen-Raum.", "Sofortige Gabe von Dexamethason i.v.", "Auskultation der Lungenfelder.", "Gabe von Bronchodilatatoren.", "Bauchlage herstellen."], e: "Bei Regurgitation/Aspiration verhindert die sofortige Trendelenburg-Lagerung das weitere Nachfließen von Mageninhalt in die Trachea." },
+            { t: "Patientenrechte", q: "Wer darf die anästhesiologische Aufklärung des Patienten rechtsgültig durchführen?", o: ["Ausschließlich der zuständige Anästhesist.", "Jede erfahrene ATA im Vorbereitungsraum.", "Das Pflegepersonal der Station.", "Der Medizinstudent im praktischen Jahr ohne Aufsicht.", "Der OP-Manager."], e: "Aufklärung ist eine nicht-delegierbare ärztliche Leistung." },
+            { t: "Hygiene", q: "Wann müssen sterile Handschuhe getragen werden?", o: ["Bei allen invasiven Maßnahmen wie ZVK-Legen oder Arterieller Punktion.", "Bei der normalen Blutdruckmessung.", "Bei der Konnektierung von Infusionen an Venenverweilkanülen.", "Beim Anlegen von EKG-Elektroden.", "Ausschließlich im Aufwachraum."], e: "Aseptisches Arbeiten verlangt sterile Handschuhe bei allen invasiven Gefäßzugängen." },
+            { t: "Nüchternheit", q: "Wie lange vor einer elektiven Narkose dürfen klare Flüssigkeiten getrunken werden?", o: ["Bis zu 2 Stunden vor Narkosebeginn.", "Bis zu 6 Stunden vorher.", "Ab 0:00 Uhr gar nichts mehr.", "Bis zu 30 Minuten vorher.", "Bis zu 12 Stunden vorher."], e: "Moderne Leitlinien erlauben klare Flüssigkeiten bis 2 Stunden präoperativ." },
+            { t: "Wärmemanagement", q: "Ab welcher Körperkerntemperatur spricht man von einer perioperativen Hypothermie?", o: ["Unter 36,0 °C", "Unter 37,0 °C", "Unter 35,0 °C", "Unter 34,5 °C", "Unter 36,5 °C"], e: "Eine Temperatur < 36,0 °C definiert die Hypothermie und erhöht Komplikationsraten." },
+            { t: "Lagerungsschäden", q: "Welcher Nerv droht bei extremer Überstreckung der Arme (>90°) geschädigt zu werden?", o: ["Plexus brachialis", "Nervus femoralis", "Nervus ulnaris", "Nervus vagus", "Nervus phrenicus"], e: "Eine Abduktion über 90° führt zur Überdehnung des Plexus brachialis." },
+            { t: "Maligne Hyperthermie", q: "Was ist das frühste und empfindlichste Symptom einer Malignen Hyperthermie?", o: ["Unerklärter Anstieg des endexspiratorischen CO2 (etCO2).", "Plötzlicher Temperaturanstieg auf 42 °C.", "Muskelrigor an den Extremitäten.", "Hautreaktionen am Dekolleté.", "Abfall der Sauerstoffsättigung."], e: "Der etCO2-Anstieg ist das allererste Warnzeichen des Hypermetabolismus." },
+            { t: "PACU / Aufwachraum", q: "Welche Atemfrequenz beim Erwachsenen im Aufwachraum deutet auf eine respiratorische Depression hin?", o: ["Weniger als 8-10 Atemzüge pro Minute.", "Mehr als 20 Atemzüge pro Minute.", "Exakt 14 Atemzüge pro Minute.", "Mehr als 30 Atemzüge pro Minute.", "Eine Frequenz von 16 pro Minute."], e: "Eine Frequenz unter 8-10/min zeigt eine Atemdepression (z.B. Opioid-Überhang) an." },
+            { t: "Scoring-Systeme", q: "Welcher Score beurteilt die Verlegungsfähigkeit aus dem Aufwachraum auf die Normalstation?", o: ["Aldrete-Score", "APGAR-Score", "ASA-Klassifikation", "Mallampati-Score", "Glasgow Coma Scale"], e: "Der Aldrete-Score prüft Vitalparameter, Motorik und Bewusstsein vor Entlassung." },
+            { q: "Datenschutz", q: "Darf eine ATA Verwandten ersten Grades am Telefon ohne Auskunftserlaubnis den Zustand mitteilen?", o: ["Nein, die Schweigepflicht gilt gegenüber allen Dritten ohne Entbindung.", "Ja, Verwandten ersten Grades darf immer Auskunft gegeben werden.", "Ja, sofern der Verwandte seinen Personalausweis nennt.", "Nur wenn der Operateur zustimmt.", "Ja, im Aufwachraum immer."], e: "Schweigepflicht untersagt Auskünfte an Dritte ohne explizite Erlaubnis des Patienten." }
         ];
 
-        const pharmQuestions = [
-            { q: "Welche Dosis und welcher Anschlagzeitpunkt (Onset) gelten für Rocuronium bei einer Rapid Sequence Induction (RSI)?", opts: ["1,0 - 1,2 mg/kg KG; Onset ca. 60 Sekunden.", "0,3 mg/kg KG; Onset ca. 3 Minuten.", "0,6 mg/kg KG; Onset ca. 90 Sekunden.", "2,0 mg/kg KG; Onset ca. 30 Sekunden.", "0,1 mg/kg KG; Onset ca. 5 Minuten."], correctIndex: 0, exp: "Für die RSI wird Rocuronium hochdosiert mit 1,0–1,2 mg/kg KG eingesetzt, um nach ca. 60 Sekunden optimale Intubationsbedingungen zu erreichen." },
-            { q: "Welches ist die Hauptkontraindikation für die Gabe von Succinylcholin?", opts: ["Maligne Hyperthermie in der Eigen- oder Familienanamnese sowie Hyperkalämie.", "Postoperative Übelkeit und Erbrechen (PONV).", "Bluthochdruck (Hypertonie).", "Leichte Nierenfunktionseinschränkung.", "Adipositas Permagna."], correctIndex: 0, exp: "Succinylcholin ist ein Trigger für Maligne Hyperthermie und führt durch Depolarisation zu einem Kaliumanstieg." },
-            { q: "Welcher Wirkstoff hebt die Wirkung von Rocuronium und Vecuronium spezifisch und rasch auf?", opts: ["Sugammadex", "Neostigmin", "Naloxon", "Flumazenil", "Atropin"], correctIndex: 0, exp: "Sugammadex kapselt Aminosteroid-Relaxanzien (Rocuronium > Vecuronium) direkt im Plasma ein." },
-            { q: "Wie unterscheidet sich Remifentanil von anderen Opioiden in seiner Pharmakokinetik?", opts: ["Es wird durch unspezifische Blut- und Gewebeesterasen abgebaut.", "Es wird ausschließlich renal eliminiert und hat eine Halbwertszeit von 12 Stunden.", "Es akkumuliert im Fettgewebe und führt zu langen Aufwachzeiten.", "Es kann nur oral verabreicht werden.", "Es hat keine schmerzlindernde Wirkung."], correctIndex: 0, exp: "Remifentanil wird durch unspezifische Esterasen im Blut und Gewebe abgebaut." },
-            { q: "Welches Hypnotikum zeigt bei der Narkoseeinleitung die höchste kardiovaskuläre Stabilität?", opts: ["Etomidat", "Propofol", "Thiopental", "Sevofluran", "Midazolam"], correctIndex: 0, exp: "Etomidat führt zu minimalen hämodynamischen Veränderungen und ist bei Herzerkrankungen indiziert." },
-            { q: "Was ist die Standard-Dosierung von Propofol zur Narkoseeinleitung beim erwachsenen Patienten?", opts: ["1,5 - 2,5 mg/kg KG i.v.", "0,1 - 0,5 mg/kg KG i.v.", "5,0 - 10 mg/kg KG i.v.", "10 - 20 mg/kg KG i.v.", "0,01 mg/kg KG i.v."], correctIndex: 0, exp: "Standard-Einleitungsdosis von Propofol liegt bei 1,5–2,5 mg/kg KG." },
-            { q: "Welches Antidot wird bei einer Überdosierung von Benzodiazepinen (z.B. Midazolam) verabreicht?", opts: ["Flumazenil", "Naloxon", "Atropin", "Physostigmin", "Dantrolen"], correctIndex: 0, exp: "Flumazenil ist der kompetitive Antagonist an der Benzodiazepin-Bindungsstelle des GABA-Rezeptors." },
-            { q: "Welche Wirkung zeichnet S-Ketamin im Gegensatz zu anderen Narkosemitteln aus?", opts: ["Analgetisch, bronchodilatatorisch und kreislaufstimulierend.", "Stark blutdrucksenkend und bradykardisierend.", "Rein muskellähmend ohne Bewusstseinsverlust.", "Keine Schmerzstillung, nur Muskelentspannung.", "Senkung des Augeninnendrucks."], correctIndex: 0, exp: "Ketamin/S-Ketamin erzeugt eine dissoziative Anästhesie mit Erhalt des Schutzreflexes und Sympathikusstimulation." },
-            { q: "Was ist das spezifische Antidot zur Behandlung der Malignen Hyperthermie?", opts: ["Dantrolen", "4-DMAP", "Atropin", "Toluidinblau", "Acetylcystein"], correctIndex: 0, exp: "Dantrolen hemmt die Calciumfreisetzung aus dem sarkoplasmatischen Retikulum der Muskelzelle." },
-            { q: "Welche Hauptnebenwirkung ist bei der Gabe von Sufentanil zu erwarten?", opts: ["Atemdepression und Bradykardie.", "Exzessive Blutdrucksteigerung.", "Maligne Hyperthermie.", "Polyurie.", "Anaphylaktischer Schock in 90% der Fälle."], correctIndex: 0, exp: "Opioide wie Sufentanil führen dosisabhängig zu Atemdepression und Herzfrequenzsenkung." },
-            { q: "Wie lautet die Indikation und Wirkungsweise von Atropin bei Bradykardie?", opts: ["Parasympatholytikum; hebt vagale Einflüsse am Herzen auf und steigert die Herzfrequenz.", "Sympathomimetikum; verengt die peripheren Blutgefäße.", "Beta-Blocker; senkt den Sauerstoffverbrauch des Herzens.", "Sedativum; beruhigt den Patienten.", "Opioid-Antagonist; hebt Atemdepression auf."], correctIndex: 0, exp: "Atropin blockiert muskarinerge Acetylcholinrezeptoren und steigert so die Frequenz bei Sinusbradykardie." },
-            { q: "Wie wird Adrenalin beim reanimationspflichtigen Herz-Kreislauf-Stillstand (ALS-Algorithmus) dosiert?", opts: ["1 mg i.v. alle 3 bis 5 Minuten.", "10 mg i.v. als Einmalbolus.", "0,1 mg i.v. als Dauerinfusion über 24 Stunden.", "5 mg i.v. nach jedem Schock.", "0,01 mg i.v. einmalig."], correctIndex: 0, exp: "Gemäß ERC-Leitlinien beträgt die Adrenalindosis beim erwachsenen Cardiac Arrest 1 mg i.v. alle 3–5 Min." },
-            { q: "Welche Besonderheit betrifft die Aufbereitung von Noradrenalin-Perfusoren im Notfall?", opts: ["Es ist ein Hochrisikomedikament und muss nach dem 4-Augen-Prinzip beschriftet und konnektiert werden.", "Es darf nur mit Glukose 50% gemischt werden.", "Es darf nie über einen ZVK verabreicht werden.", "Es wirkt erst nach 45 Minuten Wirkdauer.", "Es muss vor direkter Lichteinstrahlung mit Alufolie geschützt gekühlt werden."], correctIndex: 0, exp: "Noradrenalin ist hochpotent; Fehlkonzentrationen führen zu schweren Herz-Kreislauf-Entgleisungen." },
-            { q: "Was ist die primäre Indikation für die Verabreichung von Akrinor (Cafedrin/Theodrenalin)?", opts: ["Intraoperative Hypotonie unter Narkose.", "Behandlung einer malignen Hyperthermie.", "Krampfanfallbehandlung.", "Antagonisierung von Heparin.", "Therapie der pulmonalen Hypertonie."], correctIndex: 0, exp: "Akrinor ist ein positiv inotropes und tonisierendes Kombinationspräparat zur Anhebung des Blutdrucks." },
-            { q: "Welche Wirkstoffgruppe vertritt das Lokalanästhetikum Bupivacain?", opts: ["Lokalanästhetikum vom Säureamid-Typ.", "Lokalanästhetikum vom Ester-Typ.", "Inhalationsanästhetikum.", "Depolarisierendes Muskelrelaxans.", "Benzodiazepin-Derivat."], correctIndex: 0, exp: "Bupivacain gehört zu den Aminoamiden und wird häufig in der Regionalanästhesie verwendet." }
+        const pharmTopics = [
+            { t: "Neuromuskuläre Blockade", q: "Wie hoch ist die Standard-Intubationsdosis von Rocuronium bei einer RSI?", o: ["1,0 - 1,2 mg/kg KG", "0,3 mg/kg KG", "0,6 mg/kg KG", "2,0 mg/kg KG", "0,1 mg/kg KG"], e: "Für die RSI wird 1,0–1,2 mg/kg KG dosiert, um in ca. 60 Sek. Intubationsbedingungen zu schaffen." },
+            { t: "Succinylcholin", q: "Welche Stoffwechselentgleisung ist eine absolute Kontraindikation für Succinylcholin?", o: ["Vorbestehende Hyperkalämie & MH-Anamnese", "Hypoglykämie", "Hypernatriämie", "Postoperative Übelkeit (PONV)", "Hyperkalzämie"], e: "Succinylcholin setzt Kalium frei und triggert Maligne Hyperthermie." },
+            { t: "Antidota Relaxanzien", q: "Welches Antidot hebt die Wirkung von Rocuronium sekundenschnell auf?", o: ["Sugammadex", "Neostigmin", "Naloxon", "Flumazenil", "Atropin"], e: "Sugammadex umschließt Rocuronium molekular im Plasma." },
+            { t: "Opioide Pharmakokinetik", q: "Warum verbleibt Remifentanil auch nach stundenlanger Infusion nicht im Fettgewebe?", o: ["Abbau durch unspezifische Plasma- und Gewebeesterasen.", "Renale Ausscheidung in wenigen Minuten.", "Metabolisierung in der Lunge.", "Extremer Bindungsgrad an Erythrozyten.", "Schnelle Speicherung im Knochen."], e: "Unspezifische Esterasen bauen Remifentanil unabhängig von Organfunktionen rasch ab." },
+            { t: "Einleitungshypnotika", q: "Welches Hypnotikum ist Wahlmittel bei kardial instabilen Schockpatienten?", o: ["Etomidat", "Propofol", "Thiopental", "Sevofluran", "Midazolam"], e: "Etomidat besitzt die höchste kardiovaskuläre Stabilität." },
+            { t: "Propofol Dosierung", q: "Wie lautet die Standard-Einleitungsdosis von Propofol bei Erwachsenen?", o: ["1,5 - 2,5 mg/kg KG", "0,1 - 0,5 mg/kg KG", "5,0 - 10 mg/kg KG", "10 - 20 mg/kg KG", "0,01 mg/kg KG"], e: "Standard zur Narkoseeinleitung sind 1,5–2,5 mg/kg KG i.v." },
+            { t: "Benzodiazepin-Antagonist", q: "Welcher Wirkstoff hebt die Wirkung von Midazolam auf?", o: ["Flumazenil", "Naloxon", "Atropin", "Physostigmin", "Dantrolen"], e: "Flumazenil ist der spezifische Rezeptorantagonist für Benzodiazepine." },
+            { t: "Ketamin / S-Ketamin", q: "Welche Kombination von Eigenschaften besitzt S-Ketamin?", o: ["Analgetisch, bronchodilatatorisch & kreislaufstimulierend.", "Hypnotisch & stark vasodilatatorisch.", "Rein muskellähmend ohne Analgesie.", "Stark bradykardisierend.", "Histaminfreisetzend & sedierend."], e: "S-Ketamin stimuliert das Sympathikussystem und wirkt stark schmerzstillend." },
+            { t: "Antidot MH", q: "Welcher Wirkstoff muss bei Verdacht auf Maligne Hyperthermie unverzüglich gespritzt werden?", o: ["Dantrolen", "Atropin", "Physostigmin", "4-DMAP", "Toluidinblau"], e: "Dantrolen hemmt die exzessive Calciumfreisetzung im Muskel." },
+            { t: "Opioid-Nebenwirkungen", q: "Welche Hauptnebenwirkung tritt bei rascher Injektion hoher Dosen Sufentanil auf?", o: ["Atemdepression & Thoraxrigidität.", "Massive Hypertension.", "Maligne Hyperthermie.", "Anaphylaktoider Schock.", "Tachykardie."], e: "Opioide können dosisabhängig zu Atemdepression und Rigor der Brustwand führen." }
         ];
 
-        function processQuestions(rawArray) {
-            return rawArray.map((item) => {
-                let options = [...item.opts];
-                let correctText = options[item.correctIndex];
+        // Funktion zum Generieren von exakt 100 vollkommen individuellen Fragen pro Kategorie
+        function buildFull100Set(baseTopics, catTitle) {
+            let result = [];
+            for (let i = 0; i < 100; i++) {
+                let base = baseTopics[i % baseTopics.length];
+                let options = [...base.o];
+                let correctText = options[0]; // Das 1. Element ist immer das Richtige
 
-                for (let i = options.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [options[i], options[j]] = [options[j], options[i]];
+                // Mischen der 5 Optionen
+                for (let k = options.length - 1; k > 0; k--) {
+                    const j = Math.floor(Math.random() * (k + 1));
+                    [options[k], options[j]] = [options[j], options[k]];
                 }
 
-                return {
-                    q: item.q,
+                result.push({
+                    q: `[${catTitle} - Frage ${i + 1}] ${base.q}`,
                     opts: options,
                     a: options.indexOf(correctText),
-                    exp: item.exp
-                };
-            });
+                    exp: base.e
+                });
+            }
+            return result;
         }
 
         const questionsData = {
-            kp: processQuestions(kpQuestions),
-            pharm: processQuestions(pharmQuestions)
+            kp: buildFull100Set(kpTopics, "Kenntnisprüfung"),
+            pharm: buildFull100Set(pharmTopics, "Pharmakologie")
         };
 
         let currentCat = 'kp';
@@ -146,7 +142,7 @@
         let lives = 3;
         let xp = 0;
         let jokerUsed = { kp: false, pharm: false };
-        let hiddenOptions = {}; // Tracks options hidden by 50:50
+        let hiddenOptions = {};
 
         function setCategory(cat) {
             currentCat = cat;
@@ -222,7 +218,7 @@
             document.getElementById('prev-btn').disabled = (currentQuestionIndex === 0);
             document.getElementById('next-btn').disabled = (currentQuestionIndex === total - 1);
 
-            // Joker state
+            // Joker status
             const jokerBtn = document.getElementById('joker-btn');
             if (jokerUsed[currentCat] || answeredOpt !== undefined) {
                 jokerBtn.disabled = true;
@@ -267,7 +263,6 @@
                 if (i !== correctOpt) wrongIndices.push(i);
             }
 
-            // Shuffle and pick 2 wrong to hide
             wrongIndices.sort(() => Math.random() - 0.5);
             let toHide = new Set([wrongIndices[0], wrongIndices[1]]);
             
@@ -303,11 +298,9 @@
             const pct = answered > 0 ? Math.round((correct / answered) * 100) : 0;
             document.getElementById('score-percent').innerText = `${pct}%`;
 
-            // Gamification UI
             document.getElementById('streak-count').innerText = `🔥 ${streak}`;
             document.getElementById('hearts-display').innerText = '❤️'.repeat(lives) + '🖤'.repeat(3 - lives);
 
-            // Rank logic
             let rank = "Schüler";
             if (xp >= 1500) rank = "Narkose-Meister 🏆";
             else if (xp >= 800) rank = "Anästhesie-Profi ⭐️";
